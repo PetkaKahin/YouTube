@@ -1,0 +1,4 @@
+interface:
+  display_name: "Бэкенд"
+  short_description: "Бэкенд: модули, API и обработка видео"
+  default_prompt: "Используй $backend для работы над бэкендом этого проекта по документации и ТЗ."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Фронтенд"
+  short_description: "Фронтенд на Vue и FSD для ПК и телефонов"
+  default_prompt: "Используй $frontend для работы над интерфейсом этого проекта по документации и ТЗ."
