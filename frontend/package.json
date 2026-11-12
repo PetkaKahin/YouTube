@@ -1,0 +1,43 @@
+{
+  "name": "youtube-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=26 <27"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
+    "build": "npm run typecheck && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "api:generate": "openapi-ts"
+  },
+  "dependencies": {
+    "@tanstack/vue-query": "5.107.1",
+    "pinia": "4.1.0",
+    "vue": "3.5.45",
+    "vue-router": "5.5.0"
+  },
+  "overrides": {
+    "js-yaml": "4.3.2",
+    "minimatch": "11.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@hey-api/openapi-ts": "0.99.0",
+    "@types/node": "26.6.6",
+    "@vitejs/plugin-vue": "6.0.10",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-vue": "10.12.1",
+    "globals": "17.14.0",
+    "prettier": "3.10.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.8",
+    "vue-tsc": "3.3.14"
+  }
+}

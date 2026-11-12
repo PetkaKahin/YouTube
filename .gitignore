@@ -1,1 +1,42 @@
-.idea
+# Local configuration at any level; examples belong in Git
+.env
+.env.*
+!.env.example
+.envrc
+/docker/secrets/
+
+# Editors and operating systems
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Python environments, caches, packaging and coverage
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.tach/
+.mypy_cache/
+.cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.egg-info/
+/backend/build/
+/backend/dist/
+
+# Node dependencies, build output and tool caches
+node_modules/
+.npm/
+.vite/
+*.tsbuildinfo
+/frontend/dist/
+/frontend/coverage/
+
+# Local logs; uv.lock and package-lock.json remain tracked
+*.log

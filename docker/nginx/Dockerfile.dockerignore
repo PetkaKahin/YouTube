@@ -1,0 +1,9 @@
+**
+!docker/
+docker/**
+!docker/nginx/
+docker/nginx/**
+!docker/nginx/Dockerfile
+!docker/nginx/*.conf
+docker/secrets
+docker/secrets/**

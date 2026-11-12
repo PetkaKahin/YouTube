@@ -1,0 +1,5 @@
+source_roots = ["src"]
+
+[[modules]]
+path = "youtube.bootstrap"
+depends_on = []

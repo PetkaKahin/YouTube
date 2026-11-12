@@ -1,0 +1,31 @@
+name: youtube-bootstrap
+
+services:
+  python:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+      target: base
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:?Use docker/run}
+      additional_contexts:
+        uv: docker-image://${UV_IMAGE:?Use docker/run}
+    working_dir: /app
+    environment:
+      UV_CACHE_DIR: /tmp/uv-cache
+    volumes:
+      - ./backend:/app
+      - .:/project
+
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+      target: base
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:?Use docker/run}
+    working_dir: /app
+    environment:
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+    volumes:
+      - ./frontend:/app

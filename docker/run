@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+project_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "$project_dir"
+
+usage() {
+    cat <<'HELP'
+Usage:
+  docker/run init                  Create local secrets and missing lock files in Docker
+  docker/run lock                  Refresh both lock files in Docker
+  docker/run dev <compose args>    Use development configuration
+  docker/run prod <compose args>   Use production configuration
+  docker/run check                 Check running development environment and code
+  docker/run audit [dev|prod]      Inspect metadata, processes, logs and HTTP for secret leaks
+  docker/run context-check         Check Docker ignore rules with BuildKit context exports
+
+Examples:
+  docker/run dev up --build -d --wait
+  docker/run dev logs -f
+  docker/run dev exec python pytest
+  docker/run dev exec node npm run api:generate
+  docker/run prod up --build -d --wait
+  docker/run prod down
+HELP
+}
+
+require_docker() {
+    command -v docker >/dev/null || { printf 'Docker is required.\n' >&2; exit 1; }
+    docker compose version >/dev/null
+    docker info >/dev/null
+}
+
+bootstrap() {
+    docker compose --project-directory "$project_dir" \
+        --env-file docker/versions.env -f docker-compose.bootstrap.yml "$@"
+}
+
+container_user="$(id -u):$(id -g)"
+
+secrets_ready() {
+    local secret
+    for secret in postgres_password valkey_password rustfs_access_key rustfs_secret_key; do
+        [[ -s docker/secrets/$secret ]] || return 1
+    done
+}
+
+prepare() {
+    require_docker
+    bootstrap build python node
+    bootstrap run --rm --no-deps --user "$container_user" \
+        python python /project/docker/python/prepare_env.py
+    if [[ ${1:-} == refresh || ! -f backend/uv.lock ]]; then
+        bootstrap run --rm --no-deps --user "$container_user" python uv lock
+    fi
+    if [[ ${1:-} == refresh || ! -f frontend/package-lock.json ]]; then
+        bootstrap run --rm --no-deps --user "$container_user" \
+            node npm install --package-lock-only --ignore-scripts
+    fi
+}
+
+compose() {
+    local mode=$1
+    shift
+    local files=(-f docker-compose.yml)
+    if [[ $mode == dev ]]; then
+        files+=(-f docker-compose.dev.yml)
+    fi
+    docker compose --project-directory "$project_dir" \
+        --env-file docker/versions.env --env-file .env "${files[@]}" "$@"
+}
+
+check() {
+    require_docker
+    compose dev config --quiet
+    compose dev exec -T nginx nginx -t
+    compose dev exec -T python ruff check .
+    compose dev exec -T python ruff format --check .
+    compose dev exec -T python basedpyright
+    compose dev exec -T python tach check
+    compose dev exec -T python pytest
+    compose dev exec -T python uv audit --locked
+    compose dev exec -T node npm run lint
+    compose dev exec -T node npm run format:check
+    compose dev exec -T node npm audit
+    compose dev exec -T node npm run build
+    compose dev exec -T python python - < docker/python/smoke.py
+    printf 'Checks passed.\n'
+}
+
+audit() {
+    require_docker
+    local mode=${1:-dev}
+    [[ $mode == dev || $mode == prod ]] || { usage; exit 1; }
+    local identifiers=()
+    mapfile -t identifiers < <(compose "$mode" ps --all --quiet)
+    [[ ${#identifiers[@]} -gt 0 ]] || { printf 'No project containers found.\n' >&2; exit 1; }
+    compose "$mode" config --format json | bootstrap run --rm --no-deps -T --user 0:0 \
+        --volume "$project_dir:/project:ro" \
+        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+        python python /project/docker/python/audit.py "${identifiers[@]}"
+}
+
+context_check() (
+    require_docker
+    probe_dir=$(mktemp -d)
+    probe_builder="youtube-context-$$"
+    trap 'docker buildx rm --force "$probe_builder" >/dev/null 2>&1 || :; rm -rf -- "$probe_dir"' EXIT
+    docker buildx create --name "$probe_builder" --driver docker-container >/dev/null
+    for component in python node nginx root; do
+        recipe="$probe_dir/$component.Dockerfile"
+        cat > "$recipe" <<'DOCKERFILE'
+FROM scratch AS base
+FROM base AS dev
+COPY . /
+FROM base AS prod
+COPY . /
+DOCKERFILE
+        if [[ $component == root ]]; then
+            cp .dockerignore "$recipe.dockerignore"
+        else
+            cp "docker/$component/Dockerfile.dockerignore" "$recipe.dockerignore"
+        fi
+        docker buildx build --builder "$probe_builder" --file "$recipe" --target dev --output type=tar,dest=- . \
+            | bootstrap run --rm --no-deps -T --user 0:0 \
+                --volume "$project_dir:/project:ro" \
+                python python /project/docker/python/check_context.py "$component"
+    done
+)
+
+case ${1:-help} in
+    init) prepare ;;
+    lock) prepare refresh ;;
+    check) check ;;
+    audit) shift; audit "$@" ;;
+    context-check) context_check ;;
+    dev|prod)
+        mode=$1
+        shift
+        [[ $# -gt 0 ]] || { usage; exit 1; }
+        case $1 in
+            up|build|run)
+                if [[ ! -f .env || ! -f backend/uv.lock || ! -f frontend/package-lock.json ]] \
+                    || ! secrets_ready \
+                    || ! compose "$mode" config --quiet >/dev/null 2>&1; then
+                    prepare
+                fi
+                ;;
+        esac
+        if [[ ! -f .env ]]; then
+            printf 'Run docker/run init first.\n' >&2
+            exit 1
+        fi
+        compose "$mode" "$@"
+        ;;
+    help|--help|-h) usage ;;
+    *) usage; exit 1 ;;
+esac

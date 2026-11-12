@@ -1,0 +1,195 @@
+name: ${COMPOSE_PROJECT_NAME:-youtube}
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  python:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+      target: prod
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:?Use docker/run}
+      additional_contexts:
+        uv: docker-image://${UV_IMAGE:?Use docker/run}
+    init: true
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME:-YouTube API}
+      API_ROOT_PATH: /api
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: ${POSTGRES_DB:-youtube}
+      POSTGRES_USER: ${POSTGRES_USER:-youtube}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      VALKEY_HOST: valkey
+      VALKEY_PORT: '6379'
+      VALKEY_PASSWORD_FILE: /run/secrets/valkey_password
+      RUSTFS_ENDPOINT: http://rustfs:9000
+      RUSTFS_BUCKET: videos
+      RUSTFS_ACCESS_KEY_FILE: /run/secrets/rustfs_access_key
+      RUSTFS_SECRET_KEY_FILE: /run/secrets/rustfs_secret_key
+    secrets:
+      - postgres_password
+      - valkey_password
+      - rustfs_access_key
+      - rustfs_secret_key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      rustfs:
+        condition: service_healthy
+      rustfs-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/openapi.json', timeout=3).close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging: *logging
+
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+      target: prod
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:?Use docker/run}
+    init: true
+    restart: 'no'
+    environment:
+      OPENAPI_URL: ${OPENAPI_URL:-http://python:8000/openapi.json}
+    command: [node, -e, "require('node:fs').accessSync('/app/dist/index.html')"]
+    logging: *logging
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+      target: prod
+      args:
+        NGINX_IMAGE: ${NGINX_IMAGE:?Use docker/run}
+      additional_contexts:
+        frontend: service:node
+    init: true
+    restart: unless-stopped
+    ports:
+      - '${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:8080'
+    depends_on:
+      python:
+        condition: service_healthy
+      node:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:8080/healthz]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging: *logging
+
+  postgres:
+    image: ${POSTGRES_IMAGE:?Use docker/run}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-youtube}
+      POSTGRES_USER: ${POSTGRES_USER:-youtube}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    command: [postgres, -c, timezone=UTC]
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    logging: *logging
+
+  valkey:
+    image: ${VALKEY_IMAGE:?Use docker/run}
+    user: valkey
+    restart: unless-stopped
+    environment:
+      VALKEY_PASSWORD_FILE: /run/secrets/valkey_password
+    secrets:
+      - valkey_password
+    command: [sh, /etc/valkey/start.sh]
+    volumes:
+      - ./docker/valkey/valkey.conf:/etc/valkey/valkey.conf:ro
+      - ./docker/valkey/start.sh:/etc/valkey/start.sh:ro
+    tmpfs:
+      - /data:mode=1777
+    healthcheck:
+      test: [CMD-SHELL, 'valkey-cli --raw --askpass ping < "$$VALKEY_PASSWORD_FILE" | grep -qx PONG']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    logging: *logging
+
+  rustfs:
+    image: ${RUSTFS_IMAGE:?Use docker/run}
+    restart: unless-stopped
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ACCESS_KEY_FILE: /run/secrets/rustfs_access_key
+      RUSTFS_SECRET_KEY_FILE: /run/secrets/rustfs_secret_key
+      RUSTFS_CONSOLE_ENABLE: 'false'
+      RUSTFS_OBS_LOG_DIRECTORY: /logs
+    secrets:
+      - rustfs_access_key
+      - rustfs_secret_key
+    volumes:
+      - rustfs_data:/data
+      - rustfs_logs:/logs
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, --show-error, --max-time, '3', http://127.0.0.1:9000/health/ready]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    logging: *logging
+
+  rustfs-init:
+    image: ${RUSTFS_IMAGE:?Use docker/run}
+    restart: 'no'
+    entrypoint: [sh, /etc/rustfs/init.sh]
+    command: []
+    environment:
+      RUSTFS_ACCESS_KEY_FILE: /run/secrets/rustfs_access_key
+      RUSTFS_SECRET_KEY_FILE: /run/secrets/rustfs_secret_key
+    secrets:
+      - rustfs_access_key
+      - rustfs_secret_key
+    volumes:
+      - ./docker/rustfs/init.sh:/etc/rustfs/init.sh:ro
+    tmpfs:
+      - /tmp:mode=1777
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    logging: *logging
+
+secrets:
+  postgres_password:
+    file: ./docker/secrets/postgres_password
+  valkey_password:
+    file: ./docker/secrets/valkey_password
+  rustfs_access_key:
+    file: ./docker/secrets/rustfs_access_key
+  rustfs_secret_key:
+    file: ./docker/secrets/rustfs_secret_key
+
+volumes:
+  postgres_data:
+  rustfs_data:
+  rustfs_logs:
