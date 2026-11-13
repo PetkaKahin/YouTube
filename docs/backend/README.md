@@ -2,7 +2,11 @@
 
 Статус: подготовлена техническая основа FastAPI: подключения PostgreSQL/Valkey/RustFS,
 Alembic, HTTP middleware, валидация, ошибки, Swagger и адаптер политик.
-Добавлен каркас пяти бизнес-модулей; их реализации, бизнес-таблиц и worker пока нет. Результаты и границы проверки —
+Реализованы аккаунты, регистрация с пустым каналом, вход/выход, текущий пользователь
+и CLI ролей — [B01–B05](../tasks/backend/accounts.md). В Video реализованы
+черновики и настройки владельца — [B08/B12](../tasks/backend/upload.md).
+Приём исходника B09 и worker его обслуживания подключены, тяжёлый медиаконвейер
+впереди. Результаты и границы проверки основы —
 [T02](../tasks/T02-backend-foundation.md), [жизненный цикл](request-lifecycle.md).
 
 ## Утверждённый стек
@@ -15,6 +19,7 @@ Alembic, HTTP middleware, валидация, ошибки, Swagger и адап�
 | Valkey | Потеряемые кэш, сессии и серверные данные cookie-сессий |
 | RustFS | Исходники, превью и HLS-артефакты |
 | FFmpeg / ffprobe | Фоновое исследование и обработка видео |
+| Procrastinate | Очередь PostgreSQL; установлен, проверена техническая совместимость |
 | pytest | Проверка поведения |
 | Tach | Границы импортов модулей |
 | Dishka | DI и области жизни приложения/запроса |
@@ -31,9 +36,15 @@ Ruff Security здесь означает семейство правил `S` (`
 пакеты — в [pyproject.toml](../../backend/pyproject.toml).
 Установлены SQLAlchemy ORM, Psycopg 3, Alembic, pwdlib[argon2], pydantic-settings,
 email-validator и boto3. Подключены starsessions[redis], redis-py к Valkey,
-starlette-csrf и адаптер PyCasbin (пакет casbin). Аутентификации реальных
-аккаунтов и бизнес-политик ещё нет; ограничения — [библиотеки](libraries.md).
-Очередь пока не выбрана.
+starlette-csrf и адаптер PyCasbin (пакет casbin). Аутентификация аккаунтов работает;
+в Video действуют проверки владения настройками; политики просмотра и модерации
+ещё не реализованы; ограничения — [библиотеки](libraries.md).
+Для очереди выбрана и установлена Procrastinate 3.11.0; семь технических
+интеграционных проверок прошли. Worker обслуживания загрузок подключён,
+медиаконвейер впереди — [T04](../tasks/T04-video-pipeline.md).
+Технический журнал ошибок и middleware готовы: PostgreSQL, постоянный файловый
+буфер при отказе БД, перенос без дублей и безопасные логи. Автоматическое
+обслуживание и recovery подключены — [диагностика заданий](background-jobs.md).
 
 Несекретные настройки приходят из Docker Compose через pydantic-settings;
 локальные значения — в корневом `.env`, шаблон — [.env.example](../../.env.example).
@@ -53,6 +64,8 @@ Swagger: `/docs` → `/api/docs`; прикладной префикс `/api/v1`.
 - [Выбор библиотек и готовых механизмов защиты](libraries.md)
 - [Q25: сравнение вариантов исправления гонки сессий](session-options.md)
 - [Загрузка, обработка и раздача](video-pipeline.md)
+- [Прямая multipart-загрузка исходника](uploads.md)
+- [История ошибок фоновых заданий и будущий административный повтор](background-jobs.md)
 - [User: аккаунты, роли, сессии](modules/user.md)
 - [Video: метаданные, доступ, выдача, лайки](modules/video.md)
 - [Поиск: типы, фильтры и сортировки](../project/search.md)
@@ -63,15 +76,23 @@ Swagger: `/docs` → `/api/docs`; прикладной префикс `/api/v1`.
 
 ## Проверки
 
+Обязательная матрица позитивных/негативных сценариев, безопасности и лимитов —
+[правила тестирования](../testing.md). Применять к каждой затронутой задаче;
+перечень результатов ниже не подтверждает покрытие всей матрицы.
+
 После успешного запуска dev: `./docker/run check` либо отдельные команды
 `./docker/run dev exec python ruff check .`, `ruff format --check .`,
 `basedpyright`, `tach check`, `tach check-external --exclude 'tests,src/*/tests'`,
 `uv audit --locked` с тем же Docker-префиксом.
-pytest: `./docker/run dev exec python pytest`; проверяются secret-файлы,
-HTTP-контракты, DI, сессии/CSRF и реальные подключения. Бизнес-тестов пока нет;
-они размещаются в `src/<module>/tests`, общие проверки — в `tests`.
+pytest: `make test` или `./docker/run dev exec python pytest`; проверяются secret-файлы,
+HTTP-контракты, DI, сессии/CSRF и реальные подключения. Бизнес-тесты User/Channel
+размещаются в `src/<module>/tests`, общие HTTP-проверки — в `tests`.
+Проверки аккаунтов используют отдельную временную БД PostgreSQL с реальной миграцией.
+Управляемые гонки подтверждают реальные блокировки PostgreSQL, откат и потерю
+соединения, поздние login/me и сериализацию смены ролей. Проверки SQL-инъекций
+доходят до репозитория; также проверены подмена субъекта/роли, CSRF и утечки.
 pytest также входит в `docker/run check`.
-Ruff/Formatter, Basedpyright, оба аудита Tach, 203 теста и uv audit
+Ruff/Formatter, Basedpyright, оба аудита Tach, 479 тестов и uv audit
 выполнены успешно 2026-11-13. Правило чистого `public` —
 [ADR-0024](../decisions/0024-public-dependencies.md); подключение провайдеров —
 [ADR-0027](../decisions/0027-explicit-module-providers.md), Q29 закрыт.

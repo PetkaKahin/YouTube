@@ -102,11 +102,33 @@ Bootstrap пишет файлы с UID/GID пользователя хоста. 
 | make down | Удалить контейнеры и сеть, сохранив тома |
 | make logs / make ps | Логи / состояние, включая завершённый rustfs-init |
 | make test / make check | pytest / полный набор проверок |
+| make role get EMAIL=адрес | Прочитать текущую роль существующего аккаунта |
+| make role set EMAIL=адрес ROLE=роль | Назначить роль, включая первого администратора |
 | make audit / make context-check | Утечки секретов / контексты BuildKit |
 | make lock | Обновить lock-файлы в Docker |
 | make shell / make shell-front | Shell Python / Node |
 
-Для test/check и shell требуется поднятый dev. Prod пока запускается напрямую
+Для test/check, назначения ролей и shell требуется поднятый dev.
+Роли читаются/меняются через `app.cli role get/set` и User.public.
+EMAIL обязателен для обеих команд, ROLE — для set; пустые значения отклоняются до Docker.
+Make не перечисляет названия ролей: допустимые значения проверяет бэкенд.
+У команды role ровно одна подкоманда get либо set; смешивание с другими целями
+отклоняется до выполнения, отдельные make get/set не определены.
+Значения передаются через экспортированные переменные и quoted shell arguments,
+без вставки пользовательского текста в код рецепта. Перед email используется
+`--`, чтобы начальный дефис не превращал значение в опцию CLI.
+EMAIL/ROLE сохраняются через GNU Make `value`: символ `$` и выражения Make
+не вычисляются при экспорте аргументов. Регрессионная проверка —
+[docker/python/check_make.py](../../docker/python/check_make.py): она перехватывает
+argv вместо реальных вызовов Docker и проверяет команды, отказы и инъекции.
+Повторный запуск в одноразовом контейнере (GNU Make устанавливается только в нём):
+
+```bash
+./docker/run dev run --rm --no-deps -T --user 0 --volume "$PWD:/project:ro" python sh -c \
+  'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends make >/dev/null && python /project/docker/python/check_make.py'
+```
+
+Prod пока запускается напрямую
 через `docker/run prod ...`. Перед переключением режима использовать `down`
 текущего режима: dev/prod используют один Compose-проект.
 
@@ -206,11 +228,15 @@ RustFS 1.0.5 содержит CLI rc 0.1.37 без команды Public Access 
 идемпотентно создаёт bucket и проверяет HTTP 403 для анонимного чтения.
 Ключи не передаются через argv/RC_HOST; временный конфиг удаляется после выполнения.
 
-В `python/base` есть FFmpeg и ffprobe. Worker пока не создаётся:
-библиотека очереди и параметры выполнения остаются Q02. Подключения к
-PostgreSQL/Valkey/RustFS, основа сессий/CSRF и среда Alembic подготовлены
-в [T02](../tasks/T02-backend-foundation.md). Бизнес-таблиц, сценариев загрузки
-и HLS пока нет. Nginx сейчас не раздаёт медиа напрямую.
+В `python/base` есть FFmpeg и ffprobe. Сервис `upload-maintenance` наследует
+Python-конфигурацию и запускает Procrastinate для очистки передач. В dev ему
+явно заданы target=dev и bind backend: Compose extends не переносит последующие
+переопределения python из dev-файла автоматически. Для изменения кода worker
+нужен его перезапуск. Миграция 0004 устанавливает очередь и таблицу попыток.
+Nginx `/uploads/` пропускает только подписанные PUT частей в RustFS, снимает
+cookie и фиксирует upstream Host; байты не идут через FastAPI. Error log для
+этого пути отключён, чтобы не писать URI с подписью; access log остаётся безопасным.
+Просмотр/HLS и тяжёлый FFmpeg-worker пока не подключены.
 
 HTTP — `127.0.0.1:8080`; `HTTP_BIND`/`HTTP_PORT` меняются в корневом `.env`.
 В проверенном локальном checkout `HTTP_PORT=18080`, поскольку 8080 занят другим проектом.
@@ -238,6 +264,12 @@ Dev/prod используют одно имя проекта, порт и пос
 PostgreSQL монтируется в `/var/lib/postgresql` по схеме образа 18+;
 RustFS сохраняет `/data` и `/logs`. Потеря Valkey допустима для кэша и сессий,
 задания будут храниться в PostgreSQL. Секреты не встраиваются в образы.
+Том `job_error_spool` сохраняет резервный буфер диагностики между контейнерами
+по пути `JOB_ERROR_SPOOL_PATH=/var/lib/youtube/job-errors`. Каталог принадлежит
+app (0700), файлы событий — 0600; Nginx не имеет доступа к этому тому.
+Миграция 0002 создаёт постоянный журнал в PostgreSQL. `upload-maintenance`
+переносит буфер и восстанавливает потерянные задачи —
+[правила журнала](../backend/background-jobs.md).
 
 ## Проверки
 
@@ -295,8 +327,10 @@ T11 остаётся целью: одна команда устанавлива�
 запускает миграции и приложение, проверяет доступность, сохраняет данные при повторе.
 `docker/run` предполагает уже установленный Docker и не закрывает это требование.
 Ubuntu, ресурсы, домен/TLS и права установки — [Q09](../tasks/open-questions.md).
-CLI ролей будет доступна внутри production Python после реализации T03;
-сейчас команды назначения ролей нет.
+CLI ролей реализована: команды dev описаны в
+[README для разработчиков](../../README.md#роли-пользователей).
+Для существующего аккаунта в production-окружении, например:
+`./docker/run prod exec python python -m app.cli role get -- user@example.com`.
 
 ## Python-пакеты и точка входа
 
