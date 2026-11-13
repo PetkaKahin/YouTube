@@ -86,6 +86,8 @@ def main():
     allowed_secrets = {
         'python': {'postgres_password', 'valkey_password', 'rustfs_access_key', 'rustfs_secret_key',
                    'csrf_secret'},
+        'upload-maintenance': {'postgres_password', 'valkey_password', 'rustfs_access_key',
+                               'rustfs_secret_key', 'csrf_secret'},
         'postgres': {'postgres_password'},
         'valkey': {'valkey_password'},
         'rustfs': {'rustfs_access_key', 'rustfs_secret_key'},
@@ -114,7 +116,9 @@ def main():
         mounted = {item['Destination'].removeprefix('/run/secrets/')
                    for item in container['Mounts']
                    if item['Destination'].startswith('/run/secrets/')}
-        if mounted != allowed_secrets[service]:
+        if service not in allowed_secrets:
+            findings.append({'service': service, 'surface': 'unregistered service'})
+        if mounted != allowed_secrets.get(service, set()):
             findings.append({'service': service, 'surface': 'unexpected secret grants'})
         _, logs = request('GET', f'/containers/{identifier}/logs?stdout=1&stderr=1')
         scan(service, 'container logs', demux(logs))
@@ -149,7 +153,7 @@ def main():
             if status == 200:
                 findings.append({'service': service, 'surface': 'unexpected config file',
                                  'path': filename})
-        if service in ('python', 'node', 'nginx'):
+        if service in ('python', 'upload-maintenance', 'node', 'nginx'):
             directory = '/usr/share/nginx/html' if service == 'nginx' else '/app/src'
             status, archive = request('GET', f'/containers/{identifier}/archive?path={quote(directory)}',
                                       allowed=(200, 404))

@@ -26,7 +26,9 @@ def queue_schema(isolated_account_database):
     async def setup():
         queue = make_queue()
         async with queue.open_async():
-            await queue.schema_manager.apply_schema_async()
+            assert await queue.connector.execute_query_one_async(
+                query="SELECT to_regclass('procrastinate_jobs') AS installed"
+            ) == {"installed": "procrastinate_jobs"}
 
     asyncio.run(setup())
 

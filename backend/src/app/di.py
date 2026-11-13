@@ -18,7 +18,7 @@ from app.module_providers import module_providers
 from app.resources import Resources, open_resources
 from app.settings import Settings
 from common.contracts.authorization import Authorization
-from common.contracts.storage import ObjectStorageClient
+from common.contracts.storage import ObjectBucket, ObjectStorageClient
 from common.contracts.transactions import Transactions
 from common.infrastructure.authorization import create_authorization
 from common.infrastructure.transactions import SqlTransactions
@@ -41,6 +41,10 @@ class ApplicationProvider(Provider):
     @provide(scope=Scope.APP)
     def object_storage(self, resources: Resources) -> ObjectStorageClient:
         return resources.objects
+
+    @provide(scope=Scope.APP)
+    def object_bucket(self, resources: Resources) -> ObjectBucket:
+        return ObjectBucket(resources.bucket)
 
     @provide(scope=Scope.APP)
     def authorization(self) -> Authorization:

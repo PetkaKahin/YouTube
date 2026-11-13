@@ -8,8 +8,10 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Identity,
+    Index,
     Text,
     func,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -45,4 +47,33 @@ class PublicationRow(Base):
             name="valid_processing",
         ),
         CheckConstraint("moderation IN ('visible', 'hidden')", name="valid_moderation"),
+    )
+
+
+class UploadRow(Base):
+    __tablename__ = "video_uploads"
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    video_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("video_publications.id"), index=True
+    )
+    object_key: Mapped[str] = mapped_column(Text, unique=True)
+    multipart_id: Mapped[str | None] = mapped_column(Text)
+    size: Mapped[int] = mapped_column(BigInteger)
+    status: Mapped[str] = mapped_column(Text, server_default="creating")
+    activity_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), index=True
+    )
+
+    __table_args__ = (
+        CheckConstraint("size BETWEEN 1 AND 5000000000", name="valid_size"),
+        CheckConstraint(
+            "status IN ('creating','uploading','uploaded','expired')", name="valid_status"
+        ),
+        Index(
+            "uq_video_uploads_active",
+            "video_id",
+            unique=True,
+            postgresql_where=text("status <> 'expired'"),
+        ),
     )

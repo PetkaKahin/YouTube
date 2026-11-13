@@ -5,6 +5,7 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Request
 
 from app.http.accounts import accounts_router
+from app.http.uploads import upload_router
 from app.http.videos import videos_router
 from app.resources import Resources
 from common.http.errors import problem
@@ -40,4 +41,5 @@ def api_router() -> APIRouter:
 
     router.include_router(accounts_router())
     router.include_router(videos_router())
+    router.include_router(upload_router())
     return router

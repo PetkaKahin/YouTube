@@ -13,12 +13,18 @@ from app.settings import Settings
 target_metadata = application_metadata()
 
 
+def include_object(object_, name, type_, reflected, compare_to):
+    # Procrastinate owns its installed schema and functions; our ORM must not drop it.
+    return not (type_ == "table" and name.startswith("procrastinate_"))
+
+
 def configure(connection=None):
     context.configure(
         connection=connection,
         url=database_url(Settings(), read_secret("POSTGRES_PASSWORD")),
         target_metadata=target_metadata,
         compare_type=True,
+        include_object=include_object,
     )
     with context.begin_transaction():
         context.run_migrations()

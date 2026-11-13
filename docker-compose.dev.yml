@@ -8,6 +8,12 @@ services:
       - ./backend:/app
     command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000', --reload, --reload-dir, /app/src, --proxy-headers, --no-access-log]
 
+  upload-maintenance:
+    build:
+      target: dev
+    volumes:
+      - ./backend:/app
+
   node:
     build:
       target: dev

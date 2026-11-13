@@ -1,6 +1,13 @@
 """Minimal SDK capabilities needed by application resource management."""
 
-from typing import Protocol
+from collections.abc import Mapping
+from dataclasses import dataclass
+from typing import Any, Protocol
+
+
+@dataclass(frozen=True)
+class ObjectBucket:
+    name: str
 
 
 class ObjectStorageClient(Protocol):
@@ -9,3 +16,18 @@ class ObjectStorageClient(Protocol):
         ...
 
     def close(self) -> None: ...
+
+    def create_multipart_upload(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def list_multipart_uploads(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def list_parts(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def abort_multipart_upload(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def complete_multipart_upload(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def head_object(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def delete_object(self, **kwargs: Any) -> Mapping[str, Any]: ...
+    def generate_presigned_url(
+        self,
+        ClientMethod: str,
+        Params: Mapping[str, Any] = ...,
+        ExpiresIn: int = 3600,
+        HttpMethod: str = ...,
+    ) -> str: ...
