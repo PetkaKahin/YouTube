@@ -5,12 +5,12 @@ import asyncio
 from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
 
+from app.orm import application_metadata
 from app.resources import database_url
 from app.secrets import read_secret
 from app.settings import Settings
-from common.infrastructure.database import Base
 
-target_metadata = Base.metadata
+target_metadata = application_metadata()
 
 
 def configure(connection=None):

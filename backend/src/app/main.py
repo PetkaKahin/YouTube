@@ -1,4 +1,4 @@
-"""Application composition; module use cases are added in later tasks."""
+"""Application composition and the shared HTTP/session lifecycle."""
 
 import logging
 from collections.abc import AsyncGenerator

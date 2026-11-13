@@ -1,1 +1,25 @@
-"""User public boundary; no business implementation yet."""
+"""Stable account scenarios and values; no infrastructure is exported."""
+
+from user.application.accounts import Authenticate, CreateAccount, GetAccount, GetRole, SetRole
+from user.domain.accounts import (
+    Account,
+    AccountError,
+    AccountNotFound,
+    InvalidCredentials,
+    NewAccount,
+    Role,
+)
+
+__all__ = [
+    "Account",
+    "AccountError",
+    "AccountNotFound",
+    "Authenticate",
+    "CreateAccount",
+    "GetAccount",
+    "GetRole",
+    "InvalidCredentials",
+    "NewAccount",
+    "Role",
+    "SetRole",
+]

@@ -19,10 +19,13 @@ from app.resources import Resources, open_resources
 from app.settings import Settings
 from common.contracts.authorization import Authorization
 from common.contracts.storage import ObjectStorageClient
+from common.contracts.transactions import Transactions
 from common.infrastructure.authorization import create_authorization
+from common.infrastructure.transactions import SqlTransactions
 
 
 class ApplicationProvider(Provider):
+    transactions = provide(SqlTransactions, provides=Transactions, scope=Scope.REQUEST)
     configuration = from_context(provides=Settings, scope=Scope.APP)
     cache_client = from_context(provides=Redis, scope=Scope.APP)
 

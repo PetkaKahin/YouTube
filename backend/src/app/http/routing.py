@@ -4,6 +4,7 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Request
 
+from app.http.accounts import accounts_router
 from app.resources import Resources
 from common.http.errors import problem
 from common.http.schemas import JSONModel
@@ -36,4 +37,5 @@ def api_router() -> APIRouter:
             return problem(request, 503, "dependencies_unavailable", "Service is not ready")
         return Ready(status="ready")
 
+    router.include_router(accounts_router())
     return router

@@ -2,8 +2,25 @@
 .NOTPARALLEL:
 
 DOCKER_RUN := ./docker/run
+override EMAIL := $(value EMAIL)
+override ROLE := $(value ROLE)
+export EMAIL ROLE ROLE_ACTION
 
-.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front
+.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front role
+
+ifneq ($(filter role,$(MAKECMDGOALS)),)
+ifneq ($(firstword $(MAKECMDGOALS)),role)
+$(error Используйте make role get или make role set отдельно от других целей)
+endif
+ifneq ($(words $(MAKECMDGOALS)),2)
+$(error Используйте make role get EMAIL=адрес или make role set EMAIL=адрес ROLE=роль)
+endif
+ifeq ($(filter $(word 2,$(MAKECMDGOALS)),get set),)
+$(error Неизвестная подкоманда role: допустимы get и set)
+endif
+.PHONY: get set
+get set: ; @:
+endif
 
 help: ## Показать команды dev
 	@awk 'BEGIN {FS = ":.*## "; print "Команды dev:"} /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / {printf "  %-16s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -36,8 +53,20 @@ logs: ## Смотреть последние 100 строк и новые лог
 ps: ## Показать состояние всех контейнеров dev
 	$(DOCKER_RUN) dev ps --all
 
-test: ## Запустить pytest в работающем dev
+test: ## Запустить все тесты бэкенда в работающем dev
 	$(DOCKER_RUN) dev exec -T python pytest
+
+role: override ROLE_ACTION := $(word 2,$(MAKECMDGOALS))
+role: ## Роль аккаунта: make role get EMAIL=адрес / make role set EMAIL=адрес ROLE=роль
+	@if [ -z "$$EMAIL" ]; then \
+		printf '%s\n' 'Укажите EMAIL.'; exit 2; \
+	fi
+	@if [ "$$ROLE_ACTION" = get ]; then \
+		$(DOCKER_RUN) dev exec -T python python -m app.cli role get -- "$$EMAIL"; \
+	else \
+		if [ -z "$$ROLE" ]; then printf '%s\n' 'Укажите ROLE.'; exit 2; fi; \
+		$(DOCKER_RUN) dev exec -T python python -m app.cli role set -- "$$EMAIL" "$$ROLE"; \
+	fi
 
 check: ## Выполнить проверки кода, зависимостей и HTTP
 	$(DOCKER_RUN) check

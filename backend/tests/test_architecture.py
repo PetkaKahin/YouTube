@@ -378,6 +378,8 @@ def test_registry_does_not_reexport_provider_classes_to_controllers(project):
 @pytest.mark.parametrize("module", BUSINESS_MODULES)
 def test_registered_provider_resolves_public_scenario_with_own_adapter(project, module):
     # Test-only implementations live in the isolated copy, never in real modules.
+    provider_source = (project / "src" / module / "infrastructure/di.py").read_text()
+    public_source = (project / "src" / module / "public/__init__.py").read_text()
     probe(
         project,
         f"{module}/application/probe.py",
@@ -396,18 +398,17 @@ def test_registered_provider_resolves_public_scenario_with_own_adapter(project, 
     probe(
         project,
         f"{module}/infrastructure/di.py",
-        "from dishka import Provider, Scope, provide\n"
+        provider_source + "\nfrom dishka import provide\n"
         f"from {module}.application.probe import ProbePort, ProbeScenario\n"
         f"from {module}.infrastructure.example import ProbeAdapter\n"
-        f"class {module.title()}Provider(Provider):\n"
-        "    scope = Scope.REQUEST\n"
+        f"class {module.title()}Provider({module.title()}Provider):\n"
         "    adapter = provide(ProbeAdapter, provides=ProbePort)\n"
         "    scenario = provide(ProbeScenario)",
     )
     probe(
         project,
         f"{module}/public/__init__.py",
-        f"from {module}.application.probe import ProbeScenario as ProbeScenario",
+        public_source + f"\nfrom {module}.application.probe import ProbeScenario as ProbeScenario",
     )
     result = run_tach(project)
     assert result.returncode == 0, result.stdout + result.stderr

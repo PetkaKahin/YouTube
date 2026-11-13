@@ -1,6 +1,12 @@
 """Base JSON contract: strict values, discarded unknown fields."""
 
+from typing import Annotated
+
 from pydantic import BaseModel, ConfigDict, Field
+
+Identifier = Annotated[
+    int, Field(gt=0, le=9223372036854775807, json_schema_extra={"format": "int64"})
+]
 
 
 class JSONModel(BaseModel):

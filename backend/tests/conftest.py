@@ -1,6 +1,7 @@
 """Integration fixtures run against this Compose project's real dependencies."""
 
 from collections.abc import Iterator
+from uuid import uuid4
 
 import pytest
 from fastapi import FastAPI, HTTPException, Request
@@ -11,6 +12,26 @@ from app.main import create_app
 from app.settings import Settings
 from common.http.schemas import JSONModel
 from common.http.sessions import end_session, rotate_session
+
+
+@pytest.fixture
+def account_payload():
+    token = uuid4().hex
+    return {
+        "name": "Иван Петров",
+        "email": f"{token}@example.com",
+        "tag": "t" + token[:28],
+        "password": " Пароль 123 ",
+        "password_confirmation": " Пароль 123 ",
+    }
+
+
+@pytest.fixture
+def registered_account(client, csrf, account_payload):
+    response = client.post("/v1/auth/register", json=account_payload, headers=csrf)
+    assert response.status_code == 201, response.text
+    yield account_payload, response.json()
+    client.post("/v1/auth/logout", headers=csrf)
 
 
 class Nested(JSONModel):

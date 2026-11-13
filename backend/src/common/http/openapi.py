@@ -23,10 +23,19 @@ def configure_openapi(application: FastAPI) -> None:
             "name": "X-CSRFToken",
             "description": "Copy the csrftoken cookie value before an unsafe request.",
         }
+        components["securitySchemes"]["SessionCookie"] = {
+            "type": "apiKey",
+            "in": "cookie",
+            "name": "session",
+            "description": "Opaque session cookie issued after login.",
+        }
         for path in schema.get("paths", {}).values():
             for method, operation in path.items():
                 if method in {"post", "put", "patch", "delete"}:
-                    operation.setdefault("security", []).append({"CSRFToken": []})
+                    requirements: list[dict[str, list[str]]] = operation.get("security") or [{}]
+                    for requirement in requirements:
+                        requirement["CSRFToken"] = []
+                    operation["security"] = requirements
         return schema
 
     application.openapi = openapi
