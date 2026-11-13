@@ -35,12 +35,15 @@ services:
       RUSTFS_BUCKET: videos
       RUSTFS_ACCESS_KEY_FILE: /run/secrets/rustfs_access_key
       RUSTFS_SECRET_KEY_FILE: /run/secrets/rustfs_secret_key
+      JOB_ERROR_SPOOL_PATH: /var/lib/youtube/job-errors
     secrets:
       - csrf_secret
       - postgres_password
       - valkey_password
       - rustfs_access_key
       - rustfs_secret_key
+    volumes:
+      - job_error_spool:/var/lib/youtube/job-errors
     depends_on:
       postgres:
         condition: service_healthy
@@ -195,6 +198,7 @@ secrets:
     file: ./docker/secrets/rustfs_secret_key
 
 volumes:
+  job_error_spool:
   postgres_data:
   rustfs_data:
   rustfs_logs:

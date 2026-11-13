@@ -17,3 +17,4 @@ class Settings(BaseSettings):
     valkey_port: int = Field(default=6379, ge=1, le=65535)
     rustfs_endpoint: str = "http://rustfs:9000"
     rustfs_bucket: str = "videos"
+    job_error_spool_path: str = "/var/lib/youtube/job-errors"

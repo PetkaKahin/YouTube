@@ -16,6 +16,9 @@ RUN apt-get update \
     && useradd --uid 1000 --gid app --create-home app \
     && mkdir -p /app /opt/venv \
     && chown app:app /app /opt/venv
+RUN mkdir -p /var/lib/youtube/job-errors \
+    && chown app:app /var/lib/youtube/job-errors \
+    && chmod 700 /var/lib/youtube/job-errors
 WORKDIR /app
 
 FROM base AS dev

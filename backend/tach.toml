@@ -29,6 +29,7 @@ depends_on = [
 visibility = [
     "app",
     "conftest",
+    "job_support",
     "test_*",
     "env",
     "versions",
@@ -60,6 +61,7 @@ visibility = [
     "common",
     "common.**",
     "conftest",
+    "job_support",
     "test_*",
     "env",
     "versions",
@@ -114,6 +116,7 @@ depends_on = [
 ]
 visibility = [
     "conftest",
+    "job_support",
     "test_*",
     "env",
     "versions",
@@ -566,6 +569,7 @@ paths = [
 [[modules]]
 depends_on = [
     "app",
+    "job_support",
     "common.contracts",
     "common.http",
     "common.infrastructure",
@@ -583,6 +587,11 @@ paths = [
     "conftest",
     "test_*",
 ]
+
+[[modules]]
+path = "job_support"
+depends_on = ["app", "common.contracts", "common.infrastructure"]
+visibility = ["conftest", "test_*"]
 
 [[modules]]
 path = "user.tests"
