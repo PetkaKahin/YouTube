@@ -3,11 +3,32 @@ name = "youtube-backend"
 version = "0.0.0"
 description = "YouTube educational project backend"
 requires-python = ">=3.14,<3.15"
-dependencies = ["fastapi==0.162.5", "uvicorn[standard]==0.54.0"]
+dependencies = [
+    "alembic==1.20.1",
+    "anyio==4.16.0",
+    "boto3==1.44.1",
+    "botocore==1.44.1",
+    "casbin==1.43.0",
+    "dishka==1.10.1",
+    "email-validator==2.3.0",
+    "fastapi==0.162.5",
+    "psycopg[binary]==3.3.9",
+    "pwdlib[argon2]==0.3.1",
+    "pydantic==2.14.3",
+    "pydantic-settings==2.16.2",
+    "redis==8.1.0",
+    "sqlalchemy[asyncio]==2.1.8",
+    "starlette==1.10.0",
+    "starlette-csrf==3.0.0",
+    "starsessions[redis]==2.2.1",
+    "uvicorn[standard]==0.54.0",
+]
 
 [dependency-groups]
 dev = [
     "basedpyright==1.40.2",
+    "boto3-stubs[s3]==1.44.1",
+    "httpx2==2.16.0",
     "pytest==9.2.0",
     "ruff==0.17.4",
     "tach==0.35.3",
@@ -18,7 +39,16 @@ requires = ["hatchling==1.33.0"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/youtube"]
+exclude = ["**/tests/**"]
+packages = [
+    "src/app",
+    "src/common",
+    "src/user",
+    "src/video",
+    "src/channel",
+    "src/comment",
+    "src/moderation",
+]
 
 [tool.ruff]
 target-version = "py314"
@@ -29,13 +59,15 @@ select = ["E", "F", "I", "B", "UP", "S"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101"]
+"src/*/tests/**" = ["S101"]
 
 [tool.basedpyright]
 include = ["src"]
+exclude = ["**/tests"]
 pythonVersion = "3.14"
 typeCheckingMode = "strict"
 venvPath = "/opt"
 venv = "venv"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "src"]

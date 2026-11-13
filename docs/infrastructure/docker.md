@@ -121,10 +121,11 @@ Bootstrap пишет файлы с UID/GID пользователя хоста. 
 Compose читает `docker/versions.env` и корневой `.env`; `docker/run` передаёт
 оба через `--env-file`. Значения попадают в контейнеры через явные
 [`environment`](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/):
-Python получает `APP_NAME`, адреса/названия PostgreSQL/Valkey/RustFS, `API_ROOT_PATH`
+Python получает `APP_NAME`, адреса/названия PostgreSQL/Valkey/RustFS, `UVICORN_ROOT_PATH`, `COOKIE_SECURE`
 и пути `*_FILE`; Node — `OPENAPI_URL` для Hey API.
 Значения паролей/ключей не передаются через Compose environment, build args или команды.
-FastAPI читает обычные настройки из `os.environ`, секреты — из файлов `/run/secrets/`.
+FastAPI читает обычные настройки через pydantic-settings из environment,
+секреты — из файлов `/run/secrets/`.
 Файл `.env` в контейнер приложения не копируется, dotenv не требуется.
 
 Все секреты конфигурации (пароли сервисов, API-токены, ключи) передавать через
@@ -139,6 +140,7 @@ FastAPI читает обычные настройки из `os.environ`, сек
 | postgres_password | Python, PostgreSQL |
 | valkey_password | Python, Valkey |
 | rustfs_access_key, rustfs_secret_key | Python, RustFS, rustfs-init |
+| csrf_secret | Только Python |
 
 Node и Nginx секреты не получают. PostgreSQL использует `POSTGRES_PASSWORD_FILE`,
 RustFS — [RUSTFS_ACCESS_KEY_FILE / RUSTFS_SECRET_KEY_FILE](https://docs.rustfs.com/en/operations/credentials).
@@ -148,7 +150,7 @@ Valkey читает файл через `docker/valkey/start.sh`, создаёт
 Python проверяет secret-файлы при старте; пустые/некорректные файлы и передача
 значений через обычный environment приводят к ошибке без вывода содержимого.
 
-Текущие четыре secret-файла содержат одну непустую строку UTF-8
+Текущие пять secret-файлов содержат одну непустую строку UTF-8
 с необязательным завершающим LF.
 Каталог на хосте — 0700, файлы — 0444: Compose монтирует их read-only,
 а разные UID сервисов должны иметь возможность их читать. Для file secrets
@@ -205,13 +207,20 @@ RustFS 1.0.5 содержит CLI rc 0.1.37 без команды Public Access 
 Ключи не передаются через argv/RC_HOST; временный конфиг удаляется после выполнения.
 
 В `python/base` есть FFmpeg и ffprobe. Worker пока не создаётся:
-библиотека очереди и параметры выполнения остаются Q02. Подключения к БД,
-медиа, сессии, миграции, загрузка и HLS ещё не реализованы; переменные окружения
-лишь подготовлены. Nginx сейчас не раздаёт медиа напрямую.
+библиотека очереди и параметры выполнения остаются Q02. Подключения к
+PostgreSQL/Valkey/RustFS, основа сессий/CSRF и среда Alembic подготовлены
+в [T02](../tasks/T02-backend-foundation.md). Бизнес-таблиц, сценариев загрузки
+и HLS пока нет. Nginx сейчас не раздаёт медиа напрямую.
 
 HTTP — `127.0.0.1:8080`; `HTTP_BIND`/`HTTP_PORT` меняются в корневом `.env`.
 В проверенном локальном checkout `HTTP_PORT=18080`, поскольку 8080 занят другим проектом.
-`/api/` проксируется в Python со снятием префикса, FastAPI использует `root_path=/api`.
+`/api/` проксируется в Python со снятием префикса; Compose задаёт
+`UVICORN_ROOT_PATH=/api`, Uvicorn передаёт root_path в ASGI. Swagger UI —
+`/api/docs`, внешний `/docs` перенаправляет туда; OpenAPI — `/api/openapi.json`.
+Прикладной префикс — `/api/v1`. Healthcheck Python проверяет
+`/v1/health/ready` с обращением ко всем трём хранилищам.
+`COOKIE_SECURE=true` в prod, dev переопределяет на false для локального HTTP.
+Настройки cookie и запросов — [жизненный цикл](../backend/request-lifecycle.md).
 В dev RustFS доступен на `127.0.0.1:9000`, console — `127.0.0.1:9001`.
 Порты PostgreSQL и Valkey на хост не публикуются.
 Лимит Nginx 6g оставляет место для multipart; бизнес-лимит файла 5 ГБ
@@ -243,11 +252,11 @@ RustFS сохраняет `/data` и `/logs`. Потеря Valkey допусти
 ```
 
 `check` включает Compose config, `nginx -t`, Ruff с правилами `S`, Ruff Formatter,
-Basedpyright, Tach, pytest, `uv audit --locked`, `npm audit`, ESLint, Prettier,
+Basedpyright, Tach (`check` и `check-external --exclude 'tests,src/*/tests'`), pytest, `uv audit --locked`, `npm audit`, ESLint, Prettier,
 vue-tsc/Vite build и HTTP smoke check через Nginx (SPA, API docs, OpenAPI,
 префикс `/api` и HTTP 404 для `.env`/secret-путей).
-Для аудита нужен интернет. pytest проверяет загрузку secret-файлов и защиту
-диагностик: 11 тестов проходят; бизнес-тестов ещё нет.
+Для аудита нужен интернет. pytest проверяет secret-файлы, HTTP-контракты,
+сессии/CSRF и реальные PostgreSQL/Valkey/RustFS; бизнес-тестов ещё нет.
 Hey API настроен на внутренний OpenAPI Python; при отсутствии бизнес-контракта
 генерация не создаёт рабочую интеграцию экранов.
 
@@ -262,7 +271,9 @@ base64/URL/SHA-256 представления с Compose config, container/image
 историей образов, логами, `/proc/*/environ`, `/proc/*/cmdline`, файлами приложения
 и HTTP-ответами. Проверяются также фактические mounts secrets по сервисам.
 Вывод содержит только имена секретов/поверхностей, без значений. Последний результат:
-43 поверхности dev и 40 prod, совпадений нет; непрочитанных process-файлов нет.
+в T02 — 51 поверхность dev (включая одноразовый prod Python во время проверки),
+совпадений нет; непрочитанных process-файлов нет. Отдельный полный аудит prod
+в T01 охватил 40 поверхностей.
 Скрытые/секретные HTTP-пути Nginx возвращают 404.
 
 Аудит запускается в bootstrap Python с read-only проектом и Docker socket.
@@ -286,3 +297,11 @@ T11 остаётся целью: одна команда устанавлива�
 Ubuntu, ресурсы, домен/TLS и права установки — [Q09](../tasks/open-questions.md).
 CLI ролей будет доступна внутри production Python после реализации T03;
 сейчас команды назначения ролей нет.
+
+## Python-пакеты и точка входа
+
+После ADR-0023 ASGI entry point — `app.main:app`. Wheel включает `app`, `common`
+и пять каркасов бизнес-модулей из `backend/src/`; пакет `youtube` удалён.
+Контроллеры и маршруты — в `app/http`, общие HTTP-средства — в `common/http`.
+Проверки границ выполняются обеими командами Tach в `docker/run check`;
+точные ограничения — [архитектура](../backend/architecture.md).

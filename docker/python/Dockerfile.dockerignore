@@ -4,8 +4,15 @@ backend/**
 !backend/pyproject.toml
 !backend/uv.lock
 !backend/tach.toml
+!backend/alembic.ini
+!backend/migrations/
+!backend/migrations/**
 !backend/src/
 !backend/src/**
+
+# Business tests stay in the checkout/dev mount, not in Python build images.
+backend/src/*/tests
+backend/src/*/tests/**
 !docker/
 docker/**
 !docker/python/

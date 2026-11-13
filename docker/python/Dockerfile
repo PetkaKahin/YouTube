@@ -21,16 +21,20 @@ WORKDIR /app
 FROM base AS dev
 COPY backend/pyproject.toml backend/uv.lock ./
 COPY backend/src ./src
+COPY backend/alembic.ini ./alembic.ini
+COPY backend/migrations ./migrations
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
 COPY backend/tach.toml ./tach.toml
 USER app
 EXPOSE 8000
-CMD ["uvicorn", "youtube.bootstrap.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/src", "--proxy-headers"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/src", "--proxy-headers", "--no-access-log"]
 
 FROM base AS prod
 COPY backend/pyproject.toml backend/uv.lock ./
 COPY backend/src ./src
+COPY backend/alembic.ini ./alembic.ini
+COPY backend/migrations ./migrations
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-editable
 USER app
 EXPOSE 8000
-CMD ["uvicorn", "youtube.bootstrap.app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--no-access-log"]

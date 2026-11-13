@@ -10,6 +10,7 @@ directory = Path('/project')
 destination = directory / '.env'
 secret_directory = directory / 'docker/secrets'
 secret_names = {
+    'CSRF_SECRET': 'csrf_secret',
     'POSTGRES_PASSWORD': 'postgres_password',
     'VALKEY_PASSWORD': 'valkey_password',
     'RUSTFS_ACCESS_KEY': 'rustfs_access_key',

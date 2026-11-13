@@ -84,7 +84,8 @@ def main():
     process_coverage = []
     admin_can_read_secret = False
     allowed_secrets = {
-        'python': {'postgres_password', 'valkey_password', 'rustfs_access_key', 'rustfs_secret_key'},
+        'python': {'postgres_password', 'valkey_password', 'rustfs_access_key', 'rustfs_secret_key',
+                   'csrf_secret'},
         'postgres': {'postgres_password'},
         'valkey': {'valkey_password'},
         'rustfs': {'rustfs_access_key', 'rustfs_secret_key'},

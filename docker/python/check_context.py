@@ -6,7 +6,7 @@ from pathlib import Path, PurePosixPath
 
 component = sys.argv[1]
 required = {
-    'python': {'backend/uv.lock', 'backend/pyproject.toml', 'backend/src/youtube/bootstrap/app.py'},
+    'python': {'backend/uv.lock', 'backend/pyproject.toml', 'backend/src/app/main.py'},
     'node': {'frontend/package-lock.json', 'frontend/package.json', 'frontend/src/app/main.ts'},
     'nginx': {'docker/nginx/nginx.conf', 'docker/nginx/prod.conf'},
     'root': {'backend/uv.lock', 'frontend/package-lock.json', 'docker-compose.yml'},
@@ -19,6 +19,8 @@ with tarfile.open(fileobj=sys.stdin.buffer, mode='r|*') as archive:
     for member in archive:
         path = PurePosixPath(member.name)
         present.add(str(path))
+        if component == 'python' and 'tests' in path.parts:
+            violations.add('test package in Python build context')
         if any(part == '.env' or part.startswith('.env.') for part in path.parts):
             violations.add('env file')
         if '.git' in path.parts or 'node_modules' in path.parts:

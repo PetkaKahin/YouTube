@@ -27,6 +27,7 @@ class ApplicationSecrets:
     valkey_password: str = field(repr=False)
     rustfs_access_key: str = field(repr=False)
     rustfs_secret_key: str = field(repr=False)
+    csrf_secret: str = field(repr=False)
 
     @classmethod
     def load(cls) -> Self:
@@ -35,4 +36,5 @@ class ApplicationSecrets:
             valkey_password=read_secret("VALKEY_PASSWORD"),
             rustfs_access_key=read_secret("RUSTFS_ACCESS_KEY"),
             rustfs_secret_key=read_secret("RUSTFS_SECRET_KEY"),
+            csrf_secret=read_secret("CSRF_SECRET"),
         )

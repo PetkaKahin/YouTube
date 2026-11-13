@@ -1,5 +1,908 @@
-source_roots = ["src"]
+# Explicit module boundaries; app/common have no business layer hierarchy.
+# Public imports only its own domain/application and standard library.
+# Only app.module_providers may import module provider classes directly.
+# Module tests exercise their own internals and allowed foreign publics.
+source_roots = [
+    "src",
+    "tests",
+    "migrations",
+]
+root_module = "forbid"
+ignore_type_checking_imports = false
+include_string_imports = true
+forbid_circular_dependencies = true
+respect_gitignore = true
 
 [[modules]]
-path = "youtube.bootstrap"
+path = "app"
+depends_on = [
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+    "channel.public",
+    "comment.public",
+    "moderation.public",
+    "app.module_providers",
+]
+visibility = [
+    "app",
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+]
+
+[[modules]]
+path = "common"
 depends_on = []
+visibility = [
+    "app",
+    "common.**",
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "user.tests",
+    "video.tests",
+    "channel.tests",
+    "comment.tests",
+    "moderation.tests",
+]
+
+[[modules]]
+path = "common.contracts"
+depends_on = []
+depends_on_external = []
+visibility = [
+    "app",
+    "common",
+    "common.**",
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "user.domain",
+    "user.application",
+    "user.infrastructure",
+    "video.domain",
+    "video.application",
+    "video.infrastructure",
+    "channel.domain",
+    "channel.application",
+    "channel.infrastructure",
+    "comment.domain",
+    "comment.application",
+    "comment.infrastructure",
+    "moderation.domain",
+    "moderation.application",
+    "moderation.infrastructure",
+    "user.tests",
+    "video.tests",
+    "channel.tests",
+    "comment.tests",
+    "moderation.tests",
+    "user.infrastructure.di",
+    "video.infrastructure.di",
+    "channel.infrastructure.di",
+    "comment.infrastructure.di",
+    "moderation.infrastructure.di",
+]
+
+[[modules]]
+path = "common.http"
+depends_on = ["common.contracts"]
+visibility = [
+    "app",
+    "common",
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "user.tests",
+    "video.tests",
+    "channel.tests",
+    "comment.tests",
+    "moderation.tests",
+]
+
+[[modules]]
+path = "common.infrastructure"
+depends_on = [
+    "common.contracts",
+]
+visibility = [
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "app",
+    "common",
+    "user.infrastructure",
+    "video.infrastructure",
+    "channel.infrastructure",
+    "comment.infrastructure",
+    "moderation.infrastructure",
+    "user.tests",
+    "video.tests",
+    "channel.tests",
+    "comment.tests",
+    "moderation.tests",
+    "user.infrastructure.di",
+    "video.infrastructure.di",
+    "channel.infrastructure.di",
+    "comment.infrastructure.di",
+    "moderation.infrastructure.di",
+]
+
+[[modules]]
+path = "user"
+depends_on = []
+visibility = [
+    "user.domain",
+    "user.application",
+    "user.infrastructure",
+    "user.public",
+    "user.tests",
+]
+
+[[modules]]
+path = "user.domain"
+depends_on = [
+    "common.contracts",
+]
+visibility = [
+    "user.application",
+    "user.infrastructure",
+    "user.public",
+    "user.tests",
+    "user.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "user.application"
+depends_on = [
+    "user.domain",
+    "common.contracts",
+]
+visibility = [
+    "user.infrastructure",
+    "user.public",
+    "user.tests",
+    "user.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "user.infrastructure"
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+depends_on = [
+    "user.application",
+    "user.domain",
+    "common.contracts",
+    "common.infrastructure",
+]
+visibility = [
+    "user.infrastructure",
+    "user.tests",
+    "user.infrastructure.di",
+]
+
+[[modules]]
+path = "user.public"
+depends_on = [
+    "user.domain",
+    "user.application",
+]
+visibility = [
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "app",
+    "video.infrastructure",
+    "channel.infrastructure",
+    "comment.infrastructure",
+    "moderation.infrastructure",
+    "user.tests",
+    "video.tests",
+    "channel.tests",
+    "comment.tests",
+    "moderation.tests",
+    "video.infrastructure.di",
+    "channel.infrastructure.di",
+    "comment.infrastructure.di",
+    "moderation.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "video"
+depends_on = []
+visibility = [
+    "video.domain",
+    "video.application",
+    "video.infrastructure",
+    "video.public",
+    "video.tests",
+]
+
+[[modules]]
+path = "video.domain"
+depends_on = [
+    "common.contracts",
+]
+visibility = [
+    "video.application",
+    "video.infrastructure",
+    "video.public",
+    "video.tests",
+    "video.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "video.application"
+depends_on = [
+    "video.domain",
+    "common.contracts",
+]
+visibility = [
+    "video.infrastructure",
+    "video.public",
+    "video.tests",
+    "video.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "video.infrastructure"
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+depends_on = [
+    "video.application",
+    "video.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+]
+visibility = [
+    "video.infrastructure",
+    "video.tests",
+    "video.infrastructure.di",
+]
+
+[[modules]]
+path = "video.public"
+depends_on = [
+    "video.domain",
+    "video.application",
+]
+visibility = [
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "app",
+    "channel.infrastructure",
+    "comment.infrastructure",
+    "moderation.infrastructure",
+    "video.tests",
+    "channel.tests",
+    "comment.tests",
+    "moderation.tests",
+    "channel.infrastructure.di",
+    "comment.infrastructure.di",
+    "moderation.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "channel"
+depends_on = []
+visibility = [
+    "channel.domain",
+    "channel.application",
+    "channel.infrastructure",
+    "channel.public",
+    "channel.tests",
+]
+
+[[modules]]
+path = "channel.domain"
+depends_on = [
+    "common.contracts",
+]
+visibility = [
+    "channel.application",
+    "channel.infrastructure",
+    "channel.public",
+    "channel.tests",
+    "channel.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "channel.application"
+depends_on = [
+    "channel.domain",
+    "common.contracts",
+]
+visibility = [
+    "channel.infrastructure",
+    "channel.public",
+    "channel.tests",
+    "channel.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "channel.infrastructure"
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+depends_on = [
+    "channel.application",
+    "channel.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+]
+visibility = [
+    "channel.infrastructure",
+    "channel.tests",
+    "channel.infrastructure.di",
+]
+
+[[modules]]
+path = "channel.public"
+depends_on = [
+    "channel.domain",
+    "channel.application",
+]
+visibility = [
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "app",
+    "channel.tests",
+]
+depends_on_external = []
+
+[[modules]]
+path = "comment"
+depends_on = []
+visibility = [
+    "comment.domain",
+    "comment.application",
+    "comment.infrastructure",
+    "comment.public",
+    "comment.tests",
+]
+
+[[modules]]
+path = "comment.domain"
+depends_on = [
+    "common.contracts",
+]
+visibility = [
+    "comment.application",
+    "comment.infrastructure",
+    "comment.public",
+    "comment.tests",
+    "comment.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "comment.application"
+depends_on = [
+    "comment.domain",
+    "common.contracts",
+]
+visibility = [
+    "comment.infrastructure",
+    "comment.public",
+    "comment.tests",
+    "comment.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "comment.infrastructure"
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+depends_on = [
+    "comment.application",
+    "comment.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+]
+visibility = [
+    "comment.infrastructure",
+    "comment.tests",
+    "comment.infrastructure.di",
+]
+
+[[modules]]
+path = "comment.public"
+depends_on = [
+    "comment.domain",
+    "comment.application",
+]
+visibility = [
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "app",
+    "comment.tests",
+]
+depends_on_external = []
+
+[[modules]]
+path = "moderation"
+depends_on = []
+visibility = [
+    "moderation.domain",
+    "moderation.application",
+    "moderation.infrastructure",
+    "moderation.public",
+    "moderation.tests",
+]
+
+[[modules]]
+path = "moderation.domain"
+depends_on = [
+    "common.contracts",
+]
+visibility = [
+    "moderation.application",
+    "moderation.infrastructure",
+    "moderation.public",
+    "moderation.tests",
+    "moderation.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "moderation.application"
+depends_on = [
+    "moderation.domain",
+    "common.contracts",
+]
+visibility = [
+    "moderation.infrastructure",
+    "moderation.public",
+    "moderation.tests",
+    "moderation.infrastructure.di",
+]
+depends_on_external = []
+
+[[modules]]
+path = "moderation.infrastructure"
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+depends_on = [
+    "moderation.application",
+    "moderation.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+]
+visibility = [
+    "moderation.infrastructure",
+    "moderation.tests",
+    "moderation.infrastructure.di",
+]
+
+[[modules]]
+path = "moderation.public"
+depends_on = [
+    "moderation.domain",
+    "moderation.application",
+]
+visibility = [
+    "conftest",
+    "test_*",
+    "env",
+    "versions",
+    "app",
+    "moderation.tests",
+]
+depends_on_external = []
+
+[[modules]]
+depends_on = [
+    "app",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+    "channel.public",
+    "comment.public",
+    "moderation.public",
+]
+visibility = [
+    "env",
+    "versions",
+]
+paths = [
+    "env",
+    "versions",
+]
+
+[[modules]]
+depends_on = [
+    "app",
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+    "channel.public",
+    "comment.public",
+    "moderation.public",
+]
+visibility = [
+    "conftest",
+    "test_*",
+]
+paths = [
+    "conftest",
+    "test_*",
+]
+
+[[modules]]
+path = "user.tests"
+depends_on = [
+    "user.domain",
+    "user.application",
+    "user.infrastructure",
+    "user.public",
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.infrastructure.di",
+]
+visibility = [
+    "user.tests",
+]
+
+[[modules]]
+path = "video.tests"
+depends_on = [
+    "video.domain",
+    "video.application",
+    "video.infrastructure",
+    "video.public",
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.public",
+    "video.infrastructure.di",
+]
+visibility = [
+    "video.tests",
+]
+
+[[modules]]
+path = "channel.tests"
+depends_on = [
+    "channel.domain",
+    "channel.application",
+    "channel.infrastructure",
+    "channel.public",
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+    "channel.infrastructure.di",
+]
+visibility = [
+    "channel.tests",
+]
+
+[[modules]]
+path = "comment.tests"
+depends_on = [
+    "comment.domain",
+    "comment.application",
+    "comment.infrastructure",
+    "comment.public",
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+    "comment.infrastructure.di",
+]
+visibility = [
+    "comment.tests",
+]
+
+[[modules]]
+path = "moderation.tests"
+depends_on = [
+    "moderation.domain",
+    "moderation.application",
+    "moderation.infrastructure",
+    "moderation.public",
+    "common.contracts",
+    "common.http",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+    "moderation.infrastructure.di",
+]
+visibility = [
+    "moderation.tests",
+]
+
+[[modules]]
+path = "app.module_providers"
+depends_on = [
+    "user.infrastructure.di",
+    "video.infrastructure.di",
+    "channel.infrastructure.di",
+    "comment.infrastructure.di",
+    "moderation.infrastructure.di",
+]
+depends_on_external = [
+    "dishka",
+]
+visibility = [
+    "app",
+]
+
+[[modules]]
+path = "user.infrastructure.di"
+depends_on = [
+    "user.infrastructure",
+    "user.application",
+    "user.domain",
+    "common.contracts",
+    "common.infrastructure",
+]
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+visibility = [
+    "app.module_providers",
+    "user.tests",
+]
+
+[[modules]]
+path = "video.infrastructure.di"
+depends_on = [
+    "video.infrastructure",
+    "video.application",
+    "video.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+]
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+visibility = [
+    "app.module_providers",
+    "video.tests",
+]
+
+[[modules]]
+path = "channel.infrastructure.di"
+depends_on = [
+    "channel.infrastructure",
+    "channel.application",
+    "channel.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+]
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+visibility = [
+    "app.module_providers",
+    "channel.tests",
+]
+
+[[modules]]
+path = "comment.infrastructure.di"
+depends_on = [
+    "comment.infrastructure",
+    "comment.application",
+    "comment.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+]
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+visibility = [
+    "app.module_providers",
+    "comment.tests",
+]
+
+[[modules]]
+path = "moderation.infrastructure.di"
+depends_on = [
+    "moderation.infrastructure",
+    "moderation.application",
+    "moderation.domain",
+    "common.contracts",
+    "common.infrastructure",
+    "user.public",
+    "video.public",
+]
+cannot_depend_on_external = [
+    "fastapi",
+    "starlette",
+    "starsessions",
+    "starlette_csrf",
+    "starlette-csrf",
+]
+visibility = [
+    "app.module_providers",
+    "moderation.tests",
+]
+
+[rules]
+unused_ignore_directives = "error"
+require_ignore_directive_reasons = "error"
+unused_external_dependencies = "off"
+
+[[interfaces]]
+from = [
+    "app.module_providers",
+]
+expose = [
+    "module_providers",
+]
+
+[[interfaces]]
+from = [
+    "user.infrastructure.di",
+]
+expose = [
+    "UserProvider",
+]
+
+[[interfaces]]
+from = [
+    "video.infrastructure.di",
+]
+expose = [
+    "VideoProvider",
+]
+
+[[interfaces]]
+from = [
+    "channel.infrastructure.di",
+]
+expose = [
+    "ChannelProvider",
+]
+
+[[interfaces]]
+from = [
+    "comment.infrastructure.di",
+]
+expose = [
+    "CommentProvider",
+]
+
+[[interfaces]]
+from = [
+    "moderation.infrastructure.di",
+]
+expose = [
+    "ModerationProvider",
+]
+
+[[interfaces]]
+from = [
+    "user.infrastructure.di",
+]
+expose = [
+    "*",
+]
+visibility = [
+    "user.tests",
+]
+
+[[interfaces]]
+from = [
+    "video.infrastructure.di",
+]
+expose = [
+    "*",
+]
+visibility = [
+    "video.tests",
+]
+
+[[interfaces]]
+from = [
+    "channel.infrastructure.di",
+]
+expose = [
+    "*",
+]
+visibility = [
+    "channel.tests",
+]
+
+[[interfaces]]
+from = [
+    "comment.infrastructure.di",
+]
+expose = [
+    "*",
+]
+visibility = [
+    "comment.tests",
+]
+
+[[interfaces]]
+from = [
+    "moderation.infrastructure.di",
+]
+expose = [
+    "*",
+]
+visibility = [
+    "moderation.tests",
+]

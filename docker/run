@@ -40,7 +40,7 @@ container_user="$(id -u):$(id -g)"
 
 secrets_ready() {
     local secret
-    for secret in postgres_password valkey_password rustfs_access_key rustfs_secret_key; do
+    for secret in postgres_password valkey_password rustfs_access_key rustfs_secret_key csrf_secret; do
         [[ -s docker/secrets/$secret ]] || return 1
     done
 }
@@ -78,6 +78,7 @@ check() {
     compose dev exec -T python ruff format --check .
     compose dev exec -T python basedpyright
     compose dev exec -T python tach check
+    compose dev exec -T python tach check-external --exclude 'tests,src/*/tests'
     compose dev exec -T python pytest
     compose dev exec -T python uv audit --locked
     compose dev exec -T node npm run lint

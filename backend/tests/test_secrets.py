@@ -5,9 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from youtube.bootstrap.secrets import ApplicationSecrets, read_secret
+from app.secrets import ApplicationSecrets, read_secret
 
-NAMES = ("POSTGRES_PASSWORD", "VALKEY_PASSWORD", "RUSTFS_ACCESS_KEY", "RUSTFS_SECRET_KEY")
+NAMES = (
+    "POSTGRES_PASSWORD",
+    "VALKEY_PASSWORD",
+    "RUSTFS_ACCESS_KEY",
+    "RUSTFS_SECRET_KEY",
+    "CSRF_SECRET",
+)
 
 
 @pytest.fixture

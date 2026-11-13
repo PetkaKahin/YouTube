@@ -20,7 +20,9 @@ services:
     restart: unless-stopped
     environment:
       APP_NAME: ${APP_NAME:-YouTube API}
-      API_ROOT_PATH: /api
+      UVICORN_ROOT_PATH: /api
+      COOKIE_SECURE: 'true'
+      CSRF_SECRET_FILE: /run/secrets/csrf_secret
       POSTGRES_HOST: postgres
       POSTGRES_PORT: '5432'
       POSTGRES_DB: ${POSTGRES_DB:-youtube}
@@ -34,6 +36,7 @@ services:
       RUSTFS_ACCESS_KEY_FILE: /run/secrets/rustfs_access_key
       RUSTFS_SECRET_KEY_FILE: /run/secrets/rustfs_secret_key
     secrets:
+      - csrf_secret
       - postgres_password
       - valkey_password
       - rustfs_access_key
@@ -48,7 +51,7 @@ services:
       rustfs-init:
         condition: service_completed_successfully
     healthcheck:
-      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/openapi.json', timeout=3).close()"]
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/v1/health/ready', timeout=3).close()"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -180,6 +183,8 @@ services:
     logging: *logging
 
 secrets:
+  csrf_secret:
+    file: ./docker/secrets/csrf_secret
   postgres_password:
     file: ./docker/secrets/postgres_password
   valkey_password:

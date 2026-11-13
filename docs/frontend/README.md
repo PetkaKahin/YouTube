@@ -17,6 +17,9 @@ Dev/prod, HMR через Nginx, ESLint/Prettier/vue-tsc/Vite и npm audit про
 | Prettier | Форматирование |
 
 Архитектура — FSD. Поддержка — ПК и мобильный веб, тёмная тема.
+UI и наблюдаемое поведение должны повторять YouTube 1 в 1 в рамках ТЗ;
+простота серверной реализации не упрощает интерфейс. Критерии и согласованные
+отличия — [соответствие YouTube](youtube-parity.md).
 Пакетный менеджер — npm. Версии закреплены в
 [package.json](../../frontend/package.json) и [Docker](../infrastructure/docker.md).
 Библиотека HLS-плеера и UI-подход пока не выбраны.
@@ -25,6 +28,8 @@ Dev/prod, HMR через Nginx, ESLint/Prettier/vue-tsc/Vite и npm audit про
 Node не получает; браузерные переменные появятся вместе с интеграцией API.
 
 - [FSD, состояние и контракт API](architecture.md)
+- [Бизнес-задачи F01–F33: описания, требования, приёмка](../tasks/frontend/README.md)
+- [Соответствие внешнему виду и поведению YouTube](youtube-parity.md)
 - [Экраны и состояния](screens.md)
 - [Правила бизнес-модулей](../backend/README.md)
 - [ТЗ](../project/requirements.md)

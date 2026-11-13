@@ -1,1 +1,0 @@
-"""YouTube modular monolith."""
