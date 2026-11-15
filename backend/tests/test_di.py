@@ -4,6 +4,7 @@ import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from unittest.mock import patch
 
 import pytest
 from dishka import FromDishka, Provider, Scope, make_async_container, provide
@@ -21,6 +22,47 @@ from app.secrets import read_secret
 from app.settings import Settings
 from common.contracts.authorization import Authorization
 from common.contracts.storage import ObjectStorageClient
+
+
+def test_background_resources_start_without_valkey_but_api_keeps_startup_check():
+    async def exercise():
+        for require_cache in (False, True):
+            settings = Settings()
+            container = create_container(
+                settings,
+                create_cache(settings, read_secret("VALKEY_PASSWORD")),
+                require_cache=require_cache,
+            )
+            try:
+                with patch(
+                    "redis.asyncio.Redis.execute_command",
+                    side_effect=ConnectionError("unavailable"),
+                ):
+                    if require_cache:
+                        with pytest.raises(
+                            RuntimeError, match="Application dependencies are unavailable"
+                        ):
+                            await container.get(Resources)
+                    else:
+                        await container.get(Resources)
+            finally:
+                await container.close()
+
+    asyncio.run(exercise())
+
+
+def test_media_resources_need_neither_session_nor_csrf_secret_files(monkeypatch):
+    async def exercise():
+        monkeypatch.delenv("VALKEY_PASSWORD_FILE", raising=False)
+        monkeypatch.delenv("CSRF_SECRET_FILE", raising=False)
+        settings = Settings()
+        container = create_container(settings, create_cache(settings, ""), require_cache=False)
+        try:
+            await container.get(Resources)
+        finally:
+            await container.close()
+
+    asyncio.run(exercise())
 
 
 @dataclass

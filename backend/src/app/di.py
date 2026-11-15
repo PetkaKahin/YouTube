@@ -25,13 +25,17 @@ from common.infrastructure.transactions import SqlTransactions
 
 
 class ApplicationProvider(Provider):
+    def __init__(self, *, require_cache: bool = True) -> None:
+        super().__init__()
+        self.require_cache = require_cache
+
     transactions = provide(SqlTransactions, provides=Transactions, scope=Scope.REQUEST)
     configuration = from_context(provides=Settings, scope=Scope.APP)
     cache_client = from_context(provides=Redis, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
     async def resources(self, settings: Settings, cache: Redis) -> AsyncGenerator[Resources]:
-        async with open_resources(settings, cache) as resources:
+        async with open_resources(settings, cache, require_cache=self.require_cache) as resources:
             yield resources
 
     @provide(scope=Scope.APP)
@@ -61,9 +65,11 @@ class ApplicationProvider(Provider):
             yield session
 
 
-def create_container(settings: Settings, cache: Redis, *providers: Provider) -> AsyncContainer:
+def create_container(
+    settings: Settings, cache: Redis, *providers: Provider, require_cache: bool = True
+) -> AsyncContainer:
     return make_async_container(
-        ApplicationProvider(),
+        ApplicationProvider(require_cache=require_cache),
         *module_providers(),
         *providers,
         context={Settings: settings, Redis: cache},

@@ -2,6 +2,7 @@
 
 from common.contracts.transactions import Transactions
 from video.application.ports import Publications, VideoActors
+from video.domain.delivery import PublicationError
 from video.domain.publications import (
     AuthenticationRequired,
     VideoMetadata,
@@ -76,3 +77,25 @@ class EditVideoSettings:
             if edited == current:
                 return current
             return await self.publications.update_metadata(edited)
+
+
+class PublishVideo:
+    def __init__(
+        self, actors: VideoActors, publications: Publications, transactions: Transactions
+    ) -> None:
+        self.actors, self.publications, self.transactions = actors, publications, transactions
+
+    async def __call__(self, account_id: int | None, video_id: int) -> VideoSettings:
+        actor = require_actor(account_id)
+        async with self.transactions.begin():
+            await self.actors.require(actor)
+            if not valid_identifier(video_id):
+                raise VideoNotFound
+            current = await self.publications.owned(video_id, actor, lock=True)
+            if current is None:
+                raise VideoNotFound
+            if current.upload.value != "uploaded":
+                raise PublicationError("upload_not_completed")
+            if current.publication.value == "published":
+                return current
+            return await self.publications.publish(video_id, actor)

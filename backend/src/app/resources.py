@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.secrets import ApplicationSecrets
+from app.secrets import StorageSecrets
 from app.settings import Settings
 from common.contracts.storage import ObjectStorageClient
 
@@ -50,16 +50,19 @@ class Resources:
     objects: ObjectStorageClient
     bucket: str = field(repr=False)
 
-    async def check(self) -> None:
+    async def check(self, *, require_cache: bool = True) -> None:
         async with self.engine.connect() as connection:
             await connection.execute(text("SELECT 1"))
-        await self.cache.ping()  # pyright: ignore[reportUnknownMemberType] -- redis kwargs lack types
+        if require_cache:
+            await self.cache.ping()  # pyright: ignore[reportUnknownMemberType] -- redis kwargs lack types
         await to_thread.run_sync(lambda: self.objects.head_bucket(Bucket=self.bucket))
 
 
 @asynccontextmanager
-async def open_resources(settings: Settings, cache: Redis) -> AsyncGenerator[Resources]:
-    secrets = ApplicationSecrets.load()
+async def open_resources(
+    settings: Settings, cache: Redis, *, require_cache: bool = True
+) -> AsyncGenerator[Resources]:
+    secrets = StorageSecrets.load()
     async with AsyncExitStack() as stack:
         engine = create_async_engine(
             database_url(settings, secrets.postgres_password),
@@ -92,7 +95,7 @@ async def open_resources(settings: Settings, cache: Redis) -> AsyncGenerator[Res
             bucket=settings.rustfs_bucket,
         )
         try:
-            await resources.check()
+            await resources.check(require_cache=require_cache)
         except Exception:
             raise RuntimeError("Application dependencies are unavailable") from None
         yield resources

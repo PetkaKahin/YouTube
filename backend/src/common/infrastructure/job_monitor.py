@@ -10,7 +10,7 @@ from typing import Any
 from procrastinate.job_context import JobContext
 from procrastinate.worker import Worker
 
-from common.contracts.job_errors import EXCEPTION_TYPES, JobError, TraceLocation
+from common.contracts.job_errors import ERROR_CODES, EXCEPTION_TYPES, JobError, TraceLocation
 from common.infrastructure.job_errors import DurableJobErrors
 
 
@@ -34,6 +34,9 @@ def safe_failure(job_id: int, attempt: int, stage: str, error: BaseException) ->
         (base.__name__ for base in type(error).__mro__ if base.__name__ in EXCEPTION_TYPES),
         "Exception",
     )
+    error_code = getattr(error, "job_error_code", None)
+    if type(error_code) is not str or error_code not in ERROR_CODES:
+        error_code = None
     return JobError.failure(
         job_id,
         attempt,
@@ -41,6 +44,7 @@ def safe_failure(job_id: int, attempt: int, stage: str, error: BaseException) ->
         exception_type=category,
         trace=tuple(trace),
         cancelled=isinstance(error, asyncio.CancelledError),
+        error_code=error_code,
     )
 
 

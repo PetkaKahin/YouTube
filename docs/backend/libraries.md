@@ -58,6 +58,8 @@ Casbin вызывается через порт авторизации: HTTP, CL
 входные attributes клиента не считаются доверенными. Сами бизнес-политики необходимо
 описать и проверить, библиотека исполняет их, но не определяет правила нашего проекта.
 Политики должны учитывать [защиту медиапотока](video-pipeline.md), а не только URL API.
+Подключена [статическая политика метаданных Video](private-access.md): Casbin ABAC
+по актуальному SQL-снимку, без кэша разрешений. Защищённая медиараздача ещё впереди.
 
 Пользователь выбрал Procrastinate для очереди PostgreSQL —
 [ADR-0034](../decisions/0034-sha256-and-procrastinate.md). Параметры Q02 согласованы
@@ -73,11 +75,21 @@ Casbin вызывается через порт авторизации: HTTP, CL
 и открытие приложения, SIGKILL worker и ручной recovery идемпотентного эффекта.
 Важно: max_attempts=2 в этой версии даёт три запуска всего. Схема очереди
 устанавливается миграцией 0004; worker обслуживания загрузок и recovery подключены.
+Завершённый исходник атомарно ставится в очередь media, отдельный worker выполняет
+первичный ffprobe — [частичная реализация B10/B13](source-processing.md).
 Реализованы и отдельно проверены worker middleware для постоянного журнала
 ошибок и безопасный обработчик логов — [диагностика](background-jobs.md).
 Использован публичный механизм
 [worker middleware](https://procrastinate.readthedocs.io/en/stable/howto/advanced/middleware.html),
 документация и установленный код 3.11.0 проверены 2026-11-13.
+
+Для HDR выбраны FFmpeg `libplacebo`, BT.2390 и программный Vulkan Mesa/Lavapipe
+на CPU. В `base` установлен `mesa-vulkan-drivers`, ICD выбирается явно через
+`VK_DRIVER_FILES`; FFmpeg также получает явно созданное Vulkan-устройство.
+GPU хоста не требуется. Проверки в dev/prod на Linux/amd64 прошли;
+состав пробы, реальные образцы Dolby Vision 8.4/HDR10+ и ограничения —
+[ADR-0046](../decisions/0046-cpu-hdr-conversion.md).
+Это квалификация инструментов, не работающий бизнес-конвейер.
 Подробности и оставшиеся параметры — [T04](../tasks/T04-video-pipeline.md).
 Источники: [PyPI](https://pypi.org/project/procrastinate/),
 [внешняя транзакция](https://procrastinate.readthedocs.io/en/main/howto/production/external_connection.html),

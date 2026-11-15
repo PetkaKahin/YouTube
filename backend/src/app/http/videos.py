@@ -1,5 +1,6 @@
 """HTTP settings controller; files and viewing are separate Video use cases."""
 
+from dataclasses import asdict
 from datetime import datetime
 from typing import Literal
 
@@ -15,7 +16,9 @@ from video.public import (
     AuthenticationRequired,
     CreateDraft,
     EditVideoSettings,
+    GetProcessing,
     GetVideoSettings,
+    ProcessingStatus,
     VideoError,
     VideoMetadata,
     VideoNotFound,
@@ -70,6 +73,54 @@ class VideoSettingsResponse(JSONModel):
             added_at=value.added_at,
             created_at=value.created_at,
             updated_at=value.updated_at,
+        )
+
+
+class QualityResponse(JSONModel):
+    quality: int
+    range: str
+    status: str
+    error_code: str | None
+
+
+class AuxiliaryResponse(JSONModel):
+    status: str
+    error_code: str | None
+
+
+class SubtitleResponse(QualityResponse):
+    stream_index: int
+
+
+class ProcessingResponse(JSONModel):
+    upload: str
+    processing: str
+    error_code: str | None
+    qualities: list[QualityResponse]
+    available_qualities: list[QualityResponse]
+    hd: bool
+    uhd: bool
+    hdr: bool
+    uhd_hdr: bool
+    thumbnail: AuxiliaryResponse
+    subtitles: list[SubtitleResponse]
+
+    @classmethod
+    def from_value(cls, value: ProcessingStatus) -> ProcessingResponse:
+        return cls(
+            upload=value.upload,
+            processing=value.processing.value,
+            error_code=value.error_code,
+            qualities=[QualityResponse.model_validate(asdict(item)) for item in value.qualities],
+            available_qualities=[
+                QualityResponse.model_validate(asdict(item)) for item in value.available_qualities
+            ],
+            hd=value.hd,
+            uhd=value.uhd,
+            hdr=value.hdr,
+            uhd_hdr=value.uhd_hdr,
+            thumbnail=AuxiliaryResponse.model_validate(asdict(value.thumbnail)),
+            subtitles=[SubtitleResponse.model_validate(asdict(item)) for item in value.subtitles],
         )
 
 
@@ -151,5 +202,20 @@ def videos_router() -> APIRouter:
         except (AuthenticationRequired, VideoNotFound, VideoError) as error:
             return video_problem(request, error)
         return VideoSettingsResponse.from_value(value)
+
+    @router.get("/{video_id}/processing", response_model=ProcessingResponse, openapi_extra=security)
+    async def processing(
+        video_id: Identifier,
+        request: Request,
+        response: Response,
+        scenario: FromDishka[GetProcessing],
+    ) -> ProcessingResponse | JSONResponse:
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["Vary"] = "Cookie"
+        try:
+            value = await scenario(actor_id(request), video_id)
+        except (AuthenticationRequired, VideoNotFound) as error:
+            return video_problem(request, error)
+        return ProcessingResponse.from_value(value)
 
     return router

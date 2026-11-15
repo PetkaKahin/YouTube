@@ -88,6 +88,7 @@ def main():
                    'csrf_secret'},
         'upload-maintenance': {'postgres_password', 'valkey_password', 'rustfs_access_key',
                                'rustfs_secret_key', 'csrf_secret'},
+        'media-worker': {'postgres_password', 'rustfs_access_key', 'rustfs_secret_key'},
         'postgres': {'postgres_password'},
         'valkey': {'valkey_password'},
         'rustfs': {'rustfs_access_key', 'rustfs_secret_key'},

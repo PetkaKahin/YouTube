@@ -316,3 +316,37 @@ def test_worker_loss_is_observation_without_fabricated_traceback(tmp_path):
             assert (await rows(sessions, event))[0].trace == []
 
     asyncio.run(exercise())
+
+
+def test_legacy_spool_events_without_failure_codes_can_still_be_replayed():
+    event = failure()
+    payload = json.loads(encode(event))
+    payload["version"] = 1
+    del payload["error_code"]
+    assert decode(json.dumps(payload).encode()) == event
+
+
+@pytest.mark.parametrize("code", ["synthetic-secret", [], True, {"message": "private"}])
+def test_nonallowlisted_failure_codes_never_enter_history(code):
+    payload = json.loads(encode(failure()))
+    payload["error_code"] = code
+    with pytest.raises(ValueError):
+        decode(json.dumps(payload).encode())
+
+
+def test_inspection_failure_code_is_durable_but_raw_message_is_not(tmp_path):
+    from common.infrastructure.job_monitor import safe_failure
+
+    class ResourceError(RuntimeError):
+        job_error_code = "workspace_limit"
+
+    event = safe_failure(1, 1, "execute", ResourceError("private raw message"))
+    assert event.error_code == "workspace_limit"
+    assert b"private raw message" not in encode(event)
+
+    async def exercise():
+        async with history(tmp_path) as (_, sessions, _, journal):
+            await journal.record(event)
+            assert (await rows(sessions, event))[0].error_code == "workspace_limit"
+
+    asyncio.run(exercise())

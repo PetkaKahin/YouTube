@@ -4,6 +4,8 @@ ARG NGINX_IMAGE
 FROM ${NGINX_IMAGE} AS base
 COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY docker/nginx/api.conf /etc/nginx/snippets/api.conf
+COPY docker/nginx/media-errors.conf /etc/nginx/snippets/media-errors.conf
+COPY docker/nginx/media-range-map.conf /etc/nginx/snippets/media-range-map.conf
 USER nginx
 EXPOSE 8080
 ENTRYPOINT ["nginx"]

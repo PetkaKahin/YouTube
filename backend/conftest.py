@@ -10,9 +10,37 @@ import pytest
 from psycopg import AsyncConnection, sql
 
 from app.di import create_container
+from app.media_worker import create_queue as create_media_queue
 from app.resources import Resources, create_cache, database_url
 from app.secrets import read_secret
 from app.settings import Settings
+from app.upload_worker import create_queue as create_upload_queue
+from app.upload_worker import enqueue_original_cleanup
+from app.upload_worker import recover as recover_queue
+from video.public import MEDIA_QUEUE
+
+
+@pytest.fixture(scope="module")
+def source_queue():
+    return lambda container: create_media_queue(Settings(), container)
+
+
+@pytest.fixture
+def original_cleanup_queue():
+    return lambda container: create_upload_queue(Settings(), container)
+
+
+@pytest.fixture
+def enqueue_originals():
+    return enqueue_original_cleanup
+
+
+@pytest.fixture
+def recover_media():
+    async def recover(queue, resources, journal, spool):
+        await recover_queue(queue, resources, journal, spool, queue_name=MEDIA_QUEUE)
+
+    return recover
 
 
 @pytest.fixture(scope="module")
@@ -40,7 +68,7 @@ def isolated_account_database():
         asyncio.run(manage(False))
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def backend_runtime(isolated_account_database):
     @asynccontextmanager
     async def runtime():

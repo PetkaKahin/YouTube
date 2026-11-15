@@ -50,6 +50,7 @@ class PostgresJobErrorStore:
                     reason=event.reason.value,
                     exception_type=event.exception_type,
                     trace=[frame.payload() for frame in event.trace],
+                    error_code=event.error_code,
                 )
                 .on_conflict_do_nothing(index_elements=[JobErrorRow.event_id])
             )
@@ -58,7 +59,7 @@ class PostgresJobErrorStore:
 def encode(event: JobError) -> bytes:
     return json.dumps(
         {
-            "version": 1,
+            "version": 2,
             "event_id": str(event.event_id),
             "job_id": event.job_id,
             "attempt": event.attempt,
@@ -67,6 +68,7 @@ def encode(event: JobError) -> bytes:
             "reason": event.reason.value,
             "exception_type": event.exception_type,
             "trace": [frame.payload() for frame in event.trace],
+            "error_code": event.error_code,
         },
         ensure_ascii=True,
         sort_keys=True,
@@ -78,6 +80,10 @@ def decode(data: bytes) -> JobError:
     if not isinstance(value, dict):
         raise ValueError("Invalid journal record")
     payload = cast(dict[str, object], value)
+    if payload.get("version") == 1:
+        if "error_code" in payload:
+            raise ValueError("Invalid legacy journal record")
+        payload = {**payload, "error_code": None}
     if (
         set(payload)
         != {
@@ -90,9 +96,10 @@ def decode(data: bytes) -> JobError:
             "reason",
             "exception_type",
             "trace",
+            "error_code",
         }
         or type(payload["version"]) is not int
-        or payload["version"] != 1
+        or payload["version"] not in {1, 2}
     ):
         raise ValueError("Invalid journal record")
     for field in ("event_id", "stage", "occurred_at", "reason", "exception_type"):
@@ -122,6 +129,7 @@ def decode(data: bytes) -> JobError:
         reason=FailureReason(payload["reason"]),
         exception_type=cast(str, payload["exception_type"]),
         trace=tuple(trace),
+        error_code=cast(str | None, payload["error_code"]),
     )
 
 

@@ -5,7 +5,15 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Request
 
 from app.http.accounts import accounts_router
+from app.http.channels import channels_router
+from app.http.feed import feed_router
+from app.http.media import media_router
+from app.http.playlists import playlists_router
+from app.http.search import search_router
+from app.http.thumbnails import thumbnails_router
 from app.http.uploads import upload_router
+from app.http.video_access import video_access_router
+from app.http.video_likes import video_likes_router
 from app.http.videos import videos_router
 from app.resources import Resources
 from common.http.errors import problem
@@ -40,6 +48,14 @@ def api_router() -> APIRouter:
         return Ready(status="ready")
 
     router.include_router(accounts_router())
+    router.include_router(channels_router())
+    router.include_router(feed_router())
+    router.include_router(playlists_router())
+    router.include_router(search_router())
     router.include_router(videos_router())
+    router.include_router(video_access_router())
+    router.include_router(video_likes_router())
+    router.include_router(media_router())
     router.include_router(upload_router())
+    router.include_router(thumbnails_router())
     return router

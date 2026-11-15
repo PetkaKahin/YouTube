@@ -14,6 +14,14 @@ from user.domain.accounts import (
 )
 
 
+class NormalizeEmail:
+    def __init__(self, emails: EmailNormalizer) -> None:
+        self.emails = emails
+
+    def __call__(self, email: str) -> str:
+        return self.emails.normalize(email)
+
+
 class CreateAccount:
     def __init__(self, accounts: Accounts, emails: EmailNormalizer, passwords: Passwords) -> None:
         self.accounts = accounts

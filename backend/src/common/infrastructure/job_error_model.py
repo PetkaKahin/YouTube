@@ -22,6 +22,7 @@ class JobErrorRow(Base):
     reason: Mapped[str] = mapped_column(Text)
     exception_type: Mapped[str] = mapped_column(Text)
     trace: Mapped[list[dict[str, str | int]]] = mapped_column(JSONB)
+    error_code: Mapped[str | None] = mapped_column(Text)
 
     __table_args__ = (
         CheckConstraint("job_id > 0 AND attempt > 0", name="positive_job_attempt"),

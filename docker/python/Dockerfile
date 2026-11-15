@@ -8,9 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
     UV_LINK_MODE=copy \
+    VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json \
     PATH="/opt/venv/bin:$PATH"
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y ca-certificates ffmpeg \
+    && apt-get install --no-install-recommends -y ca-certificates ffmpeg mesa-vulkan-drivers \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --gid 1000 app \
     && useradd --uid 1000 --gid app --create-home app \
@@ -19,6 +20,9 @@ RUN apt-get update \
 RUN mkdir -p /var/lib/youtube/job-errors \
     && chown app:app /var/lib/youtube/job-errors \
     && chmod 700 /var/lib/youtube/job-errors
+RUN mkdir -p /var/lib/youtube/media \
+    && chown app:app /var/lib/youtube/media \
+    && chmod 700 /var/lib/youtube/media
 WORKDIR /app
 
 FROM base AS dev

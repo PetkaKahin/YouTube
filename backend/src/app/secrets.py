@@ -38,3 +38,18 @@ class ApplicationSecrets:
             rustfs_secret_key=read_secret("RUSTFS_SECRET_KEY"),
             csrf_secret=read_secret("CSRF_SECRET"),
         )
+
+
+@dataclass(frozen=True)
+class StorageSecrets:
+    postgres_password: str = field(repr=False)
+    rustfs_access_key: str = field(repr=False)
+    rustfs_secret_key: str = field(repr=False)
+
+    @classmethod
+    def load(cls) -> Self:
+        return cls(
+            postgres_password=read_secret("POSTGRES_PASSWORD"),
+            rustfs_access_key=read_secret("RUSTFS_ACCESS_KEY"),
+            rustfs_secret_key=read_secret("RUSTFS_SECRET_KEY"),
+        )

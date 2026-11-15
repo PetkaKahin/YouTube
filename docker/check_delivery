@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Real Nginx/API/storage qualification; isolated database and no published ports.
+set -euo pipefail
+project_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "$project_dir"
+mode=${1:-dev}
+[[ $mode == dev || $mode == prod ]] || { printf 'Usage: docker/check_delivery [dev|prod]\n' >&2; exit 1; }
+temporary=$(mktemp -d)
+chmod 755 "$temporary"
+api="youtube-delivery-$$-api"
+gateway="youtube-delivery-$$-gateway"
+cleanup() {
+    docker rm -f "$gateway" "$api" >/dev/null 2>&1 || :
+    rm -rf -- "$temporary"
+}
+trap cleanup EXIT
+files=(-f docker-compose.yml)
+[[ $mode != dev ]] || files+=(-f docker-compose.dev.yml)
+cat > "$temporary/override.yml" <<YAML
+services:
+  python:
+    cpus: 2
+    mem_limit: 8g
+    memswap_limit: 8g
+    volumes:
+      - ./docker/python:/qualification:ro
+  nginx:
+    volumes:
+      - $temporary/nginx.conf:/etc/nginx/delivery-test.conf:ro
+YAML
+cat > "$temporary/nginx.conf" <<NGINX
+worker_processes 1;
+pid /tmp/nginx.pid;
+error_log /dev/stderr warn;
+events { worker_connections 1024; }
+http {
+    upstream api_backend { server $api:8000; }
+    include /etc/nginx/snippets/media-range-map.conf;
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    log_format request_summary '\$request_method \$status \$request_time';
+    access_log /dev/stdout request_summary;
+    server_tokens off;
+    client_body_temp_path /tmp/client_body;
+    proxy_temp_path /tmp/proxy;
+    fastcgi_temp_path /tmp/fastcgi;
+    uwsgi_temp_path /tmp/uwsgi;
+    scgi_temp_path /tmp/scgi;
+    server {
+        listen 8080;
+        include /etc/nginx/snippets/api.conf;
+        location / { return 404; }
+    }
+}
+NGINX
+chmod 644 "$temporary/nginx.conf"
+compose() {
+    docker compose --project-directory "$project_dir" --env-file docker/versions.env \
+        --env-file .env "${files[@]}" -f "$temporary/override.yml" "$@"
+}
+compose run --rm --no-deps -T --name "$api" python \
+    python /qualification/check_delivery.py "http://$gateway:8080" "$mode" > "$temporary/result.log" 2>&1 &
+runner=$!
+for ((attempt=0; attempt<120; attempt++)); do
+    [[ $(docker inspect -f '{{.State.Running}}' "$api" 2>/dev/null || :) != true ]] || break
+    kill -0 "$runner" 2>/dev/null || { cat "$temporary/result.log"; wait "$runner"; exit 1; }
+    sleep 0.25
+done
+# Only this temporary gateway uses the TCP fault injector; other containers
+# retain normal RustFS DNS. Signed request paths/Host stay identical.
+api_address=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$api")
+cat >> "$temporary/override.yml" <<YAML
+    extra_hosts:
+      - rustfs:$api_address
+YAML
+compose run --no-deps -d --name "$gateway" nginx \
+    -c /etc/nginx/delivery-test.conf -g 'daemon off;' >/dev/null
+result=0
+wait "$runner" || result=$?
+cat "$temporary/result.log"
+if [[ $result -ne 0 ]]; then
+    docker logs "$gateway" 2>&1 | tail -n 12
+fi
+exit "$result"

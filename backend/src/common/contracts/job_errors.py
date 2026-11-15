@@ -18,6 +18,49 @@ EXCEPTION_TYPES = frozenset(
     {"Exception", "TimeoutError", "OSError", "ValueError", "RuntimeError", "CancelledError"}
 )
 
+# Only fixed server-side diagnostics may cross into the durable journal.
+ERROR_CODES = frozenset(
+    {
+        "invalid_media",
+        "invalid_media_plan",
+        "encoding_failed",
+        "invalid_encoded_media",
+        "invalid_thumbnail",
+        "thumbnail_failed",
+        "image_pixel_limit",
+        "animated_thumbnail",
+        "unsupported_subtitle",
+        "subtitle_failed",
+        "invalid_subtitle_timeline",
+        "inspection_failed",
+        "no_video",
+        "invalid_duration",
+        "duration_limit",
+        "source_unavailable",
+        "source_size_changed",
+        "source_read_incomplete",
+        "local_io_unavailable",
+        "ffprobe_unavailable",
+        "workspace_limit",
+        "disk_reserve",
+        "progress_timeout",
+        "attempt_timeout",
+        "memory_limit",
+        "invalid_workspace",
+        "invalid_workspace_entry",
+        "workspace_unavailable",
+        "media_start_failed",
+        "cpu_budget_unavailable",
+        "invalid_media_limits",
+        "media_exit_failed",
+        "media_pipe_failed",
+        "invalid_media_executable",
+        "invalid_source_identity",
+        "source_not_uploaded",
+        "source_queue_unavailable",
+    }
+)
+
 
 @dataclass(frozen=True)
 class TraceLocation:
@@ -48,6 +91,7 @@ class JobError:
     reason: FailureReason
     exception_type: str
     trace: tuple[TraceLocation, ...] = ()
+    error_code: str | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -62,6 +106,10 @@ class JobError:
             or self.exception_type not in EXCEPTION_TYPES
             or type(self.trace) is not tuple
             or any(type(frame) is not TraceLocation for frame in self.trace)
+            or (
+                self.error_code is not None
+                and (type(self.error_code) is not str or self.error_code not in ERROR_CODES)
+            )
         ):
             raise ValueError("Invalid job error event")
 
@@ -88,6 +136,7 @@ class JobError:
         exception_type: str,
         trace: tuple[TraceLocation, ...],
         cancelled: bool = False,
+        error_code: str | None = None,
     ) -> JobError:
         return cls(
             event_id=uuid4(),
@@ -98,6 +147,7 @@ class JobError:
             reason=FailureReason.CANCELLED if cancelled else FailureReason.TASK_FAILED,
             exception_type=exception_type,
             trace=trace,
+            error_code=error_code,
         )
 
 

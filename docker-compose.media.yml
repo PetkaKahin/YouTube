@@ -1,0 +1,15 @@
+# Isolated media qualification; this does not consume the production job queue.
+name: ${COMPOSE_PROJECT_NAME:-youtube}
+
+services:
+  media-tools:
+    extends:
+      file: docker/media-runtime.yml
+      service: media-runtime
+    network_mode: none
+    restart: 'no'
+    stdin_open: true
+    command: [python, '-']
+
+volumes:
+  media_scratch:

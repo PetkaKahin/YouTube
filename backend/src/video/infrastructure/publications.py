@@ -1,5 +1,7 @@
 """Owner-filtered PostgreSQL persistence; transaction boundaries stay in use cases."""
 
+from dataclasses import replace
+
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,6 +15,7 @@ from video.domain.publications import (
     Visibility,
 )
 from video.infrastructure.models import PublicationRow
+from video.infrastructure.readiness import SqlProcessingViews
 
 
 def settings_value(row: PublicationRow) -> VideoSettings:
@@ -36,6 +39,18 @@ class SqlPublications:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
+    async def touch(self, video_id: int, owner_id: int) -> None:
+        await self.session.execute(
+            update(PublicationRow)
+            .where(PublicationRow.id == video_id, PublicationRow.owner_id == owner_id)
+            .values(updated_at=func.clock_timestamp())
+        )
+
+    async def value(self, row: PublicationRow) -> VideoSettings:
+        value = settings_value(row)
+        processing = await SqlProcessingViews(self.session).owned(row.id, row.owner_id)
+        return replace(value, processing=processing.processing) if processing is not None else value
+
     async def create(self, owner_id: int, metadata: VideoMetadata) -> VideoSettings:
         row = PublicationRow(
             owner_id=owner_id,
@@ -56,7 +71,7 @@ class SqlPublications:
         if lock:
             query = query.with_for_update()
         row = await self.session.scalar(query.execution_options(populate_existing=True))
-        return settings_value(row) if row is not None else None
+        return await self.value(row) if row is not None else None
 
     async def update_metadata(self, value: VideoSettings) -> VideoSettings:
         row = (
@@ -73,4 +88,16 @@ class SqlPublications:
                 .execution_options(populate_existing=True)
             )
         ).one()
-        return settings_value(row)
+        return await self.value(row)
+
+    async def publish(self, video_id: int, owner_id: int) -> VideoSettings:
+        row = (
+            await self.session.scalars(
+                update(PublicationRow)
+                .where(PublicationRow.id == video_id, PublicationRow.owner_id == owner_id)
+                .values(publication="published", updated_at=func.clock_timestamp())
+                .returning(PublicationRow)
+                .execution_options(populate_existing=True)
+            )
+        ).one()
+        return await self.value(row)

@@ -21,14 +21,14 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 
 
 class PolicyEngine(Protocol):
-    def enforce(self, subject: str, resource: str, action: str) -> bool: ...
+    def enforce(self, subject: object, resource: object, action: str) -> bool: ...
 
 
 class CasbinAuthorization(Authorization):
     def __init__(self, engine: PolicyEngine) -> None:
         self._engine = engine
 
-    def allows(self, subject: str, resource: str, action: str) -> bool:
+    def allows(self, subject: object, resource: object, action: str) -> bool:
         return self._engine.enforce(subject, resource, action)
 
 

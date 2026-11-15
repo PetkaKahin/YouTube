@@ -1,0 +1,24 @@
+# Shared runtime policy for the real media worker and isolated qualification.
+services:
+  media-runtime:
+    cpus: ${MEDIA_CPUS:-2}
+    mem_limit: ${MEDIA_MEMORY:-8g}
+    memswap_limit: ${MEDIA_MEMORY:-8g}
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      MEDIA_WORKSPACE_BYTES: ${MEDIA_WORKSPACE_BYTES:-34359738368}
+      MEDIA_RESERVE_BYTES: ${MEDIA_RESERVE_BYTES:-2147483648}
+      MEDIA_IDLE_SECONDS: ${MEDIA_IDLE_SECONDS:-1800}
+      MEDIA_ATTEMPT_SECONDS: ${MEDIA_ATTEMPT_SECONDS:-604800}
+    build:
+      context: ..
+      dockerfile: docker/python/Dockerfile
+      target: ${MEDIA_BUILD_TARGET:-prod}
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:?Use docker/run}
+      additional_contexts:
+        uv: docker-image://${UV_IMAGE:?Use docker/run}
+    volumes:
+      - media_scratch:/var/lib/youtube/media

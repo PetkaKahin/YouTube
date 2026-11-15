@@ -8,6 +8,7 @@ from uuid import NAMESPACE_URL, uuid5
 
 import procrastinate
 from dishka import AsyncContainer
+from procrastinate.exceptions import AlreadyEnqueued
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -17,10 +18,32 @@ from app.secrets import read_secret
 from app.settings import Settings
 from common.contracts.job_errors import JobError
 from common.infrastructure.job_errors import DurableJobErrors, ErrorSpool, PostgresJobErrorStore
+from common.infrastructure.job_manager import GenerationJobManager
 from common.infrastructure.job_monitor import configure_safe_queue_logging, error_history_middleware
-from video.public import ExpireUploads, StorageUnavailable
+from video.public import (
+    MEDIA_QUEUE,
+    CleanupOriginals,
+    ExpireUploads,
+    RepairEncoding,
+    RepairSourceProcessing,
+    RepairThumbnails,
+    StorageUnavailable,
+)
 
 QUEUE = "maintenance"
+
+
+async def enqueue_original_cleanup(queue: procrastinate.App) -> None:
+    try:
+        await queue.configure_task(
+            name="video.cleanup_originals",
+            allow_unknown=False,
+            lock="originals.cleanup",
+            queueing_lock="originals.cleanup",
+            queue=QUEUE,
+        ).defer_async()
+    except AlreadyEnqueued:
+        pass
 
 
 def create_queue(settings: Settings, container: AsyncContainer) -> procrastinate.App:
@@ -39,6 +62,22 @@ def create_queue(settings: Settings, container: AsyncContainer) -> procrastinate
         )
     )
 
+    queue.job_manager = GenerationJobManager(queue.connector)
+
+    @queue.task(
+        name="video.cleanup_originals",
+        queue=QUEUE,
+        retry=procrastinate.RetryStrategy(
+            max_attempts=2,
+            wait=30,
+            linear_wait=90,
+            retry_exceptions=(StorageUnavailable, SQLAlchemyError, OSError),
+        ),
+    )
+    async def cleanup_originals() -> None:
+        async with container() as operation:
+            await (await operation.get(CleanupOriginals))()
+
     @queue.periodic(cron="* * * * *", queueing_lock="uploads.cleanup")
     @queue.task(
         name="video.expire_uploads",
@@ -53,6 +92,10 @@ def create_queue(settings: Settings, container: AsyncContainer) -> procrastinate
     async def cleanup(timestamp: int) -> None:
         async with container() as operation:
             await (await operation.get(ExpireUploads))()
+            await (await operation.get(RepairSourceProcessing))()
+            await (await operation.get(RepairEncoding))()
+            await (await operation.get(RepairThumbnails))()
+        await enqueue_original_cleanup(queue)
 
     return queue
 
@@ -62,8 +105,12 @@ async def recover(
     resources: Resources,
     journal: DurableJobErrors,
     spool: ErrorSpool,
+    *,
+    queue_name: str = QUEUE,
 ) -> None:
-    for job in await queue.job_manager.get_stalled_jobs(queue=QUEUE, seconds_since_heartbeat=60):
+    for job in await queue.job_manager.get_stalled_jobs(
+        queue=queue_name, seconds_since_heartbeat=60
+    ):
         async with resources.sessions.begin() as session:
             row = (
                 (
@@ -78,7 +125,7 @@ async def recover(
                 .mappings()
                 .one_or_none()
             )
-            if row is None or row["worker_id"] != job.worker_id:
+            if row is None or row["worker_id"] != job.worker_id or row["attempts"] != job.attempts:
                 continue
             event_id = uuid5(NAMESPACE_URL, f"youtube:lost:{row['id']}:{row['attempts']}")
             try:
@@ -104,7 +151,9 @@ async def recover(
 async def main() -> None:
     configure_safe_queue_logging()
     settings = Settings()
-    container = create_container(settings, create_cache(settings, read_secret("VALKEY_PASSWORD")))
+    container = create_container(
+        settings, create_cache(settings, read_secret("VALKEY_PASSWORD")), require_cache=False
+    )
     try:
         resources = await container.get(Resources)
         spool = ErrorSpool(Path(settings.job_error_spool_path))
@@ -117,6 +166,12 @@ async def main() -> None:
                     try:
                         await journal.replay()
                         await recover(queue, resources, journal, spool)
+                        await recover(queue, resources, journal, spool, queue_name=MEDIA_QUEUE)
+                        async with container() as operation:
+                            await (await operation.get(RepairSourceProcessing))()
+                            await (await operation.get(RepairEncoding))()
+                            await (await operation.get(RepairThumbnails))()
+                        await enqueue_original_cleanup(queue)
                     except Exception:
                         logging.getLogger("background_jobs").error("Queue recovery is unavailable")
                     await asyncio.sleep(15)

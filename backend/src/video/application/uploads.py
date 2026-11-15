@@ -42,6 +42,10 @@ class MultipartStorage(Protocol):
     async def discard(self, transfer: Transfer) -> None: ...
 
 
+class UploadAdmission(Protocol):
+    async def admit(self, upload_id: int) -> None: ...
+
+
 class UploadOperations:
     def __init__(
         self,
@@ -50,9 +54,14 @@ class UploadOperations:
         uploads: Uploads,
         storage: MultipartStorage,
         transactions: Transactions,
+        source_jobs: UploadAdmission,
     ) -> None:
         self.actors, self.publications, self.uploads = actors, publications, uploads
         self.storage, self.transactions = storage, transactions
+        self.source_jobs = source_jobs
+
+    def validate_size(self, size: int) -> None:
+        validate_size(size)
 
     async def owner(self, account_id: int | None, video_id: int) -> int:
         actor = require_actor(account_id)
@@ -75,6 +84,8 @@ class UploadOperations:
         return transfer
 
     async def recover_completed(self, transfer: Transfer) -> bool:
+        if transfer.status == "uploaded" and transfer.original_released:
+            return True  # Accepted receipt survives intentional removal of its temporary bytes.
         result = await self.storage.head(transfer)
         if result is None:
             if transfer.status == "uploaded":
@@ -84,6 +95,7 @@ class UploadOperations:
             raise UploadError("invalid_size")
         if transfer.status != "uploaded":
             await self.uploads.complete(transfer, result)
+        await self.source_jobs.admit(transfer.id)
         return True
 
     async def plan(self, transfer: Transfer) -> UploadPlan:
@@ -127,7 +139,7 @@ class StartUpload:
         # Persist an intent before external allocation; recover uncertain creates by object key.
         async with self.ops.transactions.begin():
             await self.ops.owner(account_id, video_id)
-            validate_size(size)
+            self.ops.validate_size(size)
             transfer = await self.ops.uploads.active(video_id)
             if transfer is not None and transfer.size != size:
                 raise UploadError("upload_size_conflict")

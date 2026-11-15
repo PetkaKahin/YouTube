@@ -19,6 +19,7 @@ def transfer_value(row: UploadRow) -> Transfer:
         row.size,
         row.status,
         row.activity_at,
+        row.original_cleanup_started_at is not None,
     )
 
 

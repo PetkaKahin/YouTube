@@ -29,6 +29,7 @@ class Transfer:
     size: int
     status: str
     activity_at: datetime
+    original_released: bool = False
 
     @property
     def part_count(self) -> int:

@@ -11,6 +11,7 @@ Usage:
   docker/run lock                  Refresh both lock files in Docker
   docker/run dev <compose args>    Use development configuration
   docker/run prod <compose args>   Use production configuration
+  docker/run media <compose args>  Isolated CPU media qualification (no queue or secrets)
   docker/run check                 Check running development environment and code
   docker/run audit [dev|prod]      Inspect metadata, processes, logs and HTTP for secret leaks
   docker/run context-check         Check Docker ignore rules with BuildKit context exports
@@ -63,17 +64,25 @@ compose() {
     local mode=$1
     shift
     local files=(-f docker-compose.yml)
+    local config_env=.env
+    if [[ $mode == media ]]; then
+        files=(-f docker-compose.media.yml)
+        [[ -f $config_env ]] || config_env=.env.example
+    fi
     if [[ $mode == dev ]]; then
         files+=(-f docker-compose.dev.yml)
     fi
     docker compose --project-directory "$project_dir" \
-        --env-file docker/versions.env --env-file .env "${files[@]}" "$@"
+        --env-file docker/versions.env --env-file "$config_env" "${files[@]}" "$@"
 }
 
 check() {
     require_docker
     compose dev config --quiet
     compose dev exec -T nginx nginx -t
+    compose dev exec -T python python - < docker/python/check_media.py
+    compose dev exec -T python python - < docker/python/check_hls.py
+    compose media run --build --rm -T media-tools python - < docker/python/check_media_resources.py
     compose dev exec -T python ruff check .
     compose dev exec -T python ruff format --check .
     compose dev exec -T python basedpyright
@@ -135,6 +144,12 @@ case ${1:-help} in
     check) check ;;
     audit) shift; audit "$@" ;;
     context-check) context_check ;;
+    media)
+        shift
+        [[ $# -gt 0 ]] || { usage; exit 1; }
+        require_docker
+        compose media "$@"
+        ;;
     dev|prod)
         mode=$1
         shift
