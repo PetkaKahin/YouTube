@@ -76,6 +76,22 @@ def test_public_can_import_only_own_domain_and_application(project, module):
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+@pytest.mark.parametrize(
+    "source,allowed",
+    [
+        ("moderation/infrastructure/review_probe.py", True),
+        ("app/http/review_probe.py", False),
+        ("channel/infrastructure/review_probe.py", False),
+        ("comment/infrastructure/review_probe.py", False),
+        ("video/public/review_probe.py", False),
+    ],
+)
+def test_staff_video_primitives_cannot_bypass_report_orchestration(project, source, allowed):
+    probe(project, source, "from video.public.moderation import ReportVideoAccess")
+    result = run_tach(project)
+    assert (result.returncode == 0) is allowed, result.stdout + result.stderr
+
+
 @pytest.mark.parametrize("module", BUSINESS_MODULES)
 @pytest.mark.parametrize(
     "target,symbol",

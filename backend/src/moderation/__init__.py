@@ -1,1 +1,1 @@
-"""Moderation module boundary. Business implementation is pending."""
+"""Moderation: report revisions, decisions and accountable staff access."""

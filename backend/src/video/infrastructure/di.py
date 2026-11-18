@@ -37,6 +37,7 @@ from video.application.feed import (
     ReadFeed,
 )
 from video.application.likes import GetVideoLike, LikeActions, SetVideoLike, VideoLikes
+from video.application.moderation import ModerationViews, ReportVideoAccess, VideoStaffActors
 from video.application.originals import CleanupOriginals, OriginalDeletions, OriginalStorage
 from video.application.playlist_cards import GetPlaylistVideoCards, PlaylistCardViews, PlaylistVideoOwnership
 from video.application.ports import Publications, VideoActors
@@ -87,6 +88,7 @@ from video.infrastructure.encoder import S3MediaEncoder
 from video.infrastructure.encoding_jobs import SqlEncodingJobs
 from video.infrastructure.feed import ChannelFeedAuthors, ChannelFeedScope, SqlFeedCandidates
 from video.infrastructure.likes import SqlVideoLikes
+from video.infrastructure.moderation import AccountVideoStaff, SqlModerationViews
 from video.infrastructure.multipart import S3Multipart
 from video.infrastructure.originals import S3OriginalStorage, SqlOriginalDeletions
 from video.infrastructure.playlist_cards import SqlPlaylistCardViews
@@ -117,6 +119,9 @@ class VideoProvider(Provider):
     set_private_access = provide(SetPrivateAccess)
     get_viewable_video = provide(GetViewableVideo)
     video_access = provide(VideoAccess)
+    video_staff = provide(AccountVideoStaff, provides=VideoStaffActors)
+    moderation_views = provide(SqlModerationViews, provides=ModerationViews)
+    report_video_access = provide(ReportVideoAccess)
     discussion_publications = provide(SqlDiscussionPublications, provides=DiscussionPublications)
     require_discussion_video = provide(RequireDiscussionVideo)
     video_likes = provide(SqlVideoLikes, provides=VideoLikes)

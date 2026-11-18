@@ -9,6 +9,7 @@ from user.application.accounts import (
     SetRole,
 )
 from user.application.public_names import GetPublicNames
+from user.application.staff import GetStaffIdentity
 from user.domain.accounts import (
     Account,
     AccountError,
@@ -17,8 +18,12 @@ from user.domain.accounts import (
     NewAccount,
     Role,
 )
+from user.domain.staff import StaffForbidden, StaffIdentity
 
 __all__ = [
+    "GetStaffIdentity",
+    "StaffForbidden",
+    "StaffIdentity",
     "GetPublicNames",
     "NormalizeEmail",
     "Account",

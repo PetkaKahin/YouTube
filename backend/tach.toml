@@ -261,6 +261,7 @@ depends_on = [
 visibility = [
     "video.infrastructure",
     "video.public",
+    "video.public.moderation",
     "video.tests",
     "video.infrastructure.di",
 ]
@@ -313,6 +314,12 @@ visibility = [
     "moderation.infrastructure.di",
 ]
 depends_on_external = []
+
+[[modules]]
+path = "video.public.moderation"
+depends_on = ["video.application"]
+depends_on_external = []
+visibility = ["moderation.infrastructure", "video.tests"]
 
 [[modules]]
 path = "channel"
@@ -527,6 +534,7 @@ depends_on = [
     "common.infrastructure",
     "user.public",
     "video.public",
+    "video.public.moderation",
 ]
 visibility = [
     "moderation.infrastructure",
