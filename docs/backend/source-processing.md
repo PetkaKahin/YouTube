@@ -41,13 +41,9 @@ Procrastinate, проверка локальной копии работает �
 
 ## Код и эксплуатация
 
-Миграции: [0005](../../backend/migrations/versions/0005_source_processing.py)
-(источник/задание), [0006](../../backend/migrations/versions/0006_job_failure_codes.py)
-(безопасный код ошибки в истории),
-[0007](../../backend/migrations/versions/0007_source_attempt_fence.py) (номер попытки),
-[0008](../../backend/migrations/versions/0008_track_fingerprints.py) (общие идентичности/связи).
-План/общие кодированные дорожки добавляет
-[0009](../../backend/migrations/versions/0009_media_encoding.py).
+Начальная [схема БД](database-schema.md) определяет источник/задание,
+безопасные коды ошибок, номера попыток, общие идентичности дорожек,
+планы и готовые кодированные результаты сразу при создании таблиц.
 Порты/сценарии — [application/processing.py](../../backend/src/video/application/processing.py),
 SQL — [infrastructure/processing.py](../../backend/src/video/infrastructure/processing.py),
 SDK/ffprobe — [source_inspector.py](../../backend/src/video/infrastructure/source_inspector.py).

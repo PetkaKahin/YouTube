@@ -76,7 +76,7 @@ description, visibility; у POST описание по умолчанию пус
 [сценарии](../../../backend/src/video/application/publications.py),
 [репозиторий](../../../backend/src/video/infrastructure/publications.py),
 [контроллер](../../../backend/src/app/http/videos.py),
-[миграция 0003](../../../backend/migrations/versions/0003_video_publications.py).
+[начальная миграция video_publications](../../../backend/migrations/versions/0009_video_publications.py).
 VideoActors проверяет аккаунт через User.public.GetAccount в общей транзакции.
 CreateDraft/GetVideoSettings/EditVideoSettings экспортируются через Video.public
 и доступны через DI вне HTTP с теми же правилами. StartUpload/RefreshUpload/

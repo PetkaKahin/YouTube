@@ -90,7 +90,9 @@ elif name=="docker":
         elif "-c" in rest:
             if not (root/"image-ready").exists(): print("Image automatically built",flush=True)
             sys.exit(subprocess.call([sys.executable,"-c",rest[rest.index("-c")+1]]))
-    elif command=="port": print("127.0.0.1:8080")
+    elif command=="port":
+        port="5432" if rest[-2:]==["postgres","5432"] else "8080"
+        print("127.0.0.1:"+port)
 else: sys.exit(3)
 """
 
@@ -208,6 +210,8 @@ class DeployChecks(unittest.TestCase):
                 )
                 self.assertTrue(self.seeded())
                 self.assertIn("http://localhost:8080", result.stdout)
+                self.assertIn("PostgreSQL для IDE: 127.0.0.1:5432", result.stdout)
+                self.assertIn("пароль — docker/secrets/postgres_password", result.stdout)
                 packages = [
                     args for name, args in self.trace() if name == "apt-get" and "docker-ce" in args
                 ]
@@ -359,6 +363,73 @@ class DeployChecks(unittest.TestCase):
                 [shutil.which("bash"), "-n", str(path)], capture_output=True, text=True, check=False
             )
             self.assertEqual(result.returncode, 0, result.stderr)
+
+    def prepare_env(self):
+        source = (ROOT / "docker/python/prepare_env.py").read_text()
+        marker = 'directory = Path("/project")'
+        self.assertIn(marker, source)
+        source = source.replace(marker, "directory = Path(" + repr(str(self.project)) + ")", 1)
+        script = self.root / "prepare_env.py"
+        script.write_text(source)
+        return subprocess.run(  # noqa: S603 -- controlled copy in a temporary directory
+            [sys.executable, str(script)], capture_output=True, text=True, check=False
+        )
+
+    def test_prepare_keeps_the_existing_database_password_only_in_secret(self):
+        self.ready()
+        secret = self.project / "docker/secrets/postgres_password"
+        secret.write_text("existing-password\n")
+        result = self.prepare_env()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        content = (self.project / ".env").read_text()
+        self.assertNotIn("POSTGRES_PASSWORD=", content)
+        self.assertEqual(secret.read_text(), "existing-password\n")
+        self.assertIn("POSTGRES_PORT=5432", content)
+        self.assertNotIn("existing-password", result.stdout + result.stderr)
+        self.assertNotIn("VALKEY_PASSWORD=", content)
+        self.assertEqual((self.project / ".env").stat().st_mode & 0o777, 0o600)
+        result = self.prepare_env()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.project / ".env").read_text(), content)
+
+    def test_prepare_removes_legacy_password_copy_and_detects_conflict(self):
+        self.ready()
+        secret = self.project / "docker/secrets/postgres_password"
+        value = "quote\" dollar$ backslash\\ apostrophe' $(touch must-not-exist)"
+        secret.write_text(value + "\n")
+        local_env = self.project / ".env"
+        local_env.write_text(
+            local_env.read_text()
+            + "POSTGRES_PASSWORD="
+            + json.dumps(value).replace("$", "$$")
+            + "\n"
+        )
+        result = self.prepare_env()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn(value, result.stdout + result.stderr)
+        result = self.prepare_env()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(secret.read_text(), value + "\n")
+        self.assertFalse((self.project / "must-not-exist").exists())
+        original = local_env.read_text()
+        self.assertNotIn("POSTGRES_PASSWORD=", original)
+        self.assertNotIn(value, original)
+        conflicting = original + 'POSTGRES_PASSWORD="other"\n'
+        local_env.write_text(conflicting)
+        result = self.prepare_env()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(secret.read_text(), value + "\n")
+        self.assertEqual(local_env.read_text(), conflicting)
+
+    def test_prepare_initial_password_exists_only_in_secret(self):
+        result = self.prepare_env()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        value = (self.project / "docker/secrets/postgres_password").read_text().strip()
+        content = (self.project / ".env").read_text()
+        self.assertTrue(value)
+        self.assertNotIn("POSTGRES_PASSWORD=", content)
+        self.assertNotIn(value, content)
+        self.assertNotIn(value, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

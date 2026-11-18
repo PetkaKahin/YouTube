@@ -4,9 +4,8 @@
 Реализованы список подписанных каналов, лента их публичных видео, понравившиеся
 и история по принятому прогрессу. Собственные плейлисты используют готовый API.
 
-Миграция 0027 добавляет video_likes.created_at. Существующим лайкам назначается
-время миграции; при равной дате порядок определяет video_id DESC. Историческая
-дата не восстанавливается. Новые пары получают серверное время;
+В начальной схеме video_likes содержит created_at; при равной дате порядок
+определяет video_id DESC. Новые пары получают серверное время;
 повтор true сохраняет дату, снятие и новый лайк меняют её. По R21 одна пара
 хранит like/dislike; выдача liked фильтрует только like до LIMIT, а возврат
 с dislike к like задаёт новую дату — [контракт реакций](video-dislikes.md).
@@ -38,14 +37,14 @@ Video.public экспортирует GetLibraryVideos и InvalidLibraryCursor:
 [SQL](../../backend/src/video/infrastructure/library.py),
 [HTTP видео](../../backend/src/app/http/library.py),
 [HTTP каналов](../../backend/src/app/http/channels.py).
-[Миграция 0027](../../backend/migrations/versions/0027_library_order.py) применена в dev.
+Начальная [схема БД](database-schema.md) содержит даты и индексы личных списков.
 
-В Docker прошли **37 профильных проверок**: 23 проверки границ/cursor и
+При первичной реализации в Docker прошли **37 профильных проверок**: 23 проверки границ/cursor и
 14 проверок HTTP/БД/миграции. Код:
 [cursor видео](../../backend/src/video/tests/test_library.py),
 [cursor каналов](../../backend/src/channel/tests/test_subscription_lists.py),
 [HTTP](../../backend/tests/test_library_http.py),
-[старые лайки и миграция](../../backend/tests/test_library_migration.py).
+[начальная схема и даты лайков](../../backend/tests/test_initial_migrations.py).
 
 Проверены 401 и пустые ответы, OpenAPI, scope аккаунта/назначения, int64 > 2^53,
 точные даты и равные границы, страницы 20/20/1, 43 недоступных записи перед

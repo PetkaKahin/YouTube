@@ -27,7 +27,7 @@ HTTP-сессию. По умолчанию `publication=published`; `draft` во
 ## Реализация и проверка
 
 Добавлен индекс `(owner_id, publication, created_at DESC, id DESC)` в
-[миграции 0025](../../backend/migrations/versions/0025_owner_video_lists.py),
+[начальная миграция video_publications](../../backend/migrations/versions/0009_video_publications.py),
 применённой в dev. Сценарий Video.public.GetMyVideos проверяет аккаунт перед
 фильтром/курсором. Репозиторий ограничивает выборку 21 строкой до чтения готовности
 и получает метаданные/обработку одним SELECT; сценарий возвращает до 20 записей.

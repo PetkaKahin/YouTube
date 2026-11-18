@@ -69,7 +69,7 @@ recovery не может сменить поколение между прове
 
 Код: [инспектор](../../backend/src/video/infrastructure/track_inspector.py),
 [SQL и fencing](../../backend/src/video/infrastructure/processing.py),
-[миграция](../../backend/migrations/versions/0008_track_fingerprints.py),
+[начальная миграция video_media_tracks](../../backend/migrations/versions/0005_video_media_tracks.py),
 [проверки](../../backend/src/video/tests/test_track_fingerprints.py).
 FFprobe получает только унаследованный FD локального исходника; протоколы
 file/http/tcp не разрешены. XML создаёт фиксированный writer FFprobe с экранированием,

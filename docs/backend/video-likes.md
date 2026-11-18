@@ -69,7 +69,7 @@ GET видео и лайками внутри транзакции сценар�
 Код: [сценарии](../../backend/src/video/application/likes.py),
 [PostgreSQL](../../backend/src/video/infrastructure/likes.py),
 [HTTP](../../backend/src/app/http/video_likes.py),
-[миграция 0021](../../backend/migrations/versions/0021_video_likes.py).
+[начальная миграция video_likes](../../backend/migrations/versions/0014_video_likes.py).
 Проверки: [сценарии и БД](../../backend/src/video/tests/test_likes.py),
 [HTTP](../../backend/tests/test_video_likes_http.py).
 

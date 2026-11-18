@@ -89,7 +89,7 @@ R20: сохранение доступных видео любых авторо�
 [HTTP](../../backend/src/app/http/playlists.py),
 [пакетные права Video](../../backend/src/video/application/playlist_cards.py),
 [снимок карточек](../../backend/src/video/infrastructure/playlist_cards.py),
-[миграция](../../backend/migrations/versions/0017_playlists.py).
+[начальная миграция channel_playlists](../../backend/migrations/versions/0010_channel_playlists.py).
 
 В Docker прошла **41 профильная проверка**. Реальные PostgreSQL/транзакции,
 случаи public/unlisted/private и private/hidden/draft видео, отдельное email-разрешение

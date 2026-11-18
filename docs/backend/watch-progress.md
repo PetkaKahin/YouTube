@@ -3,7 +3,7 @@
 Статус: `done`. [Правила и HTTP-контракт](../frontend/watch-progress-backend-request.md)
 согласованы пользователем для R18; фронтенд подключается отдельно.
 
-Реализованы миграция 0026 и одна строка PostgreSQL на пару аккаунт/видео.
+В начальной схеме PostgreSQL хранится одна строка на пару аккаунт/видео.
 Хранятся фактическая позиция, доверенная длительность и время принятой записи.
 Ноль и перемотка назад заменяют предыдущую позицию. Истории и счётчиков нет.
 
@@ -27,7 +27,7 @@ null; чтения, предпросмотр и служебное воспро�
 [пакетное чтение](../../backend/src/video/application/watch_progress.py),
 [PostgreSQL](../../backend/src/video/infrastructure/watch_progress.py),
 [HTTP](../../backend/src/app/http/watch_progress.py),
-[миграция 0026](../../backend/migrations/versions/0026_watch_progress.py).
+[начальная миграция video_watch_progress](../../backend/migrations/versions/0017_video_watch_progress.py).
 В Video.public экспортированы SetWatchProgress, WatchProgress и InvalidWatchProgress.
 
 В Docker прошла 21 профильная проверка домена, HTTP, БД и OpenAPI. Код:

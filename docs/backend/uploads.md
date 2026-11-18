@@ -54,7 +54,7 @@ Complete после потери commit, конкуренция/очистка, 
 [S3-адаптер](../../backend/src/video/infrastructure/multipart.py),
 [репозиторий](../../backend/src/video/infrastructure/uploads.py),
 [HTTP](../../backend/src/app/http/uploads.py),
-[миграция 0004](../../backend/migrations/versions/0004_uploads.py).
+[начальная миграция video_uploads](../../backend/migrations/versions/0016_video_uploads.py).
 Миграция также устанавливает закреплённую схему Procrastinate 3.11.0;
 ею владеет библиотека, Alembic не пытается удалить её таблицы по ORM metadata.
 Downgrade сохраняет служебную схему/историю очереди.

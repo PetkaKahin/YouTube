@@ -104,9 +104,9 @@ Ruff/Formatter, Basedpyright и оба Tach прошли. Полный `docker/r
 
 ## Реализация очереди
 
-[Миграция 0013](../../backend/migrations/versions/0013_subtitle_jobs.py) добавляет
+Начальная [схема БД](database-schema.md) содержит
 `video_subtitle_links`: ссылка публикации/дорожки/видеошкалы на общий результат,
-язык и disposition. Общее `video_encoded_tracks` получает состояние empty.
+язык и disposition. Общее `video_encoded_tracks` допускает состояние empty.
 Постановка идёт в транзакции готовности видео или плана; старые планы подхватывает
 RepairEncoding. Короткий advisory lock в отдельном пространстве PostgreSQL
 сериализует назначение общих профилей, без FFmpeg/S3 внутри транзакции.

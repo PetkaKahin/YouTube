@@ -47,7 +47,7 @@ cursor, сбои БД/канала и отсутствие кэша/измене
 [сценарий](../../backend/src/video/application/feed.py),
 [SQL и адаптер автора](../../backend/src/video/infrastructure/feed.py),
 [HTTP](../../backend/src/app/http/feed.py),
-[индекс 0016](../../backend/migrations/versions/0016_public_feed_index.py).
+[начальная миграция video_publications](../../backend/migrations/versions/0009_video_publications.py).
 
 59 новых проверок прошли в Docker. Границы: 0/1/19/20/21/40/41 видео,
 точные микросекунды и одинаковые даты, все страницы без дубликатов,

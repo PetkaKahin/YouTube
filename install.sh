@@ -142,6 +142,9 @@ http_port=${binding##*:}
 curl --fail --silent --show-error --max-time 15 --retry 3 --retry-connrefused \
     "http://localhost:$http_port/api/v1/health/ready" >/dev/null
 printf '\nПриложение готово: http://localhost:%s\n' "$http_port"
+database_binding=$(as_owner bash ./docker/run dev port postgres 5432)
+database_binding=${database_binding%%$'\n'*}
+printf 'PostgreSQL для IDE: %s; имя БД и пользователь — в .env, пароль — docker/secrets/postgres_password.\n' "$database_binding"
 if [[ $use_seed == yes ]]; then
     printf 'Демоаккаунты и пароль: README.md, раздел «Тестовые и демонстрационные данные».\n'
 fi

@@ -78,7 +78,7 @@ bigint ID записи, UUID события для идемпотентного 
 Код: [контракты](../../backend/src/common/contracts/job_errors.py),
 [PostgreSQL и файловый буфер](../../backend/src/common/infrastructure/job_errors.py),
 [middleware и безопасные логи](../../backend/src/common/infrastructure/job_monitor.py),
-[миграция 0002](../../backend/migrations/versions/0002_job_errors.py).
+[начальная миграция background_job_errors](../../backend/migrations/versions/0002_background_job_errors.py).
 Журнал использует собственную транзакцию, независимую от отката задачи.
 `record()` подтверждает запись в БД (`True`) или только в постоянный буфер (`False`);
 ошибка самого буфера передаётся вызывающему коду. `replay()` возвращает число

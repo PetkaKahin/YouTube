@@ -34,9 +34,9 @@ FFmpeg получает `max_pixels=40000000` ещё до открытия св�
 
 ## Данные, очередь и очистка
 
-[Миграция 0011](../../backend/migrations/versions/0011_thumbnails.py) добавляет
+Начальная [схема БД](database-schema.md) содержит
 `video_thumbnail_uploads`, `video_thumbnail_choices`, `video_thumbnail_preparations`.
-[0012](../../backend/migrations/versions/0012_thumbnail_intents.py) сохраняет
+Эти таблицы сохраняют
 поколение намерения и подтверждение выбора, разрешая отдельные параллельные
 передачи своих изображений без общего перезаписываемого входного ключа.
 У общего `video_encoded_tracks` ровно один источник: видео или подготовленное
