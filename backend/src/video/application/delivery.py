@@ -7,12 +7,32 @@ from video.application.access import VideoViews, ViewerIdentities, ViewingPolicy
 from video.application.publications import require_actor
 from video.application.thumbnails import ThumbnailActions
 from video.domain.access import Viewer
-from video.domain.delivery import ObjectDelivery, PlaylistDelivery, StoredMedia
+from video.domain.delivery import MediaDelivery, ObjectDelivery, PlaylistDelivery, StoredMedia
 from video.domain.publications import VideoNotFound, valid_identifier
 
 
 class MediaRedirects(Protocol):
     async def sign(self, media: StoredMedia, method: str) -> str: ...
+
+
+def resolve_delivery(
+    delivery: MediaDelivery, track: str | None, filename: str
+) -> PlaylistDelivery | StoredMedia:
+    if track is None:
+        if filename == "master.m3u8":
+            return PlaylistDelivery(delivery.master)
+        if filename != "preview.webp" or delivery.preview is None:
+            raise VideoNotFound
+        return delivery.preview
+    package = delivery.tracks.get(track)
+    if package is None:
+        raise VideoNotFound
+    if filename == "index.m3u8":
+        return PlaylistDelivery(package.playlist)
+    media = package.files.get(filename)
+    if media is None:
+        raise VideoNotFound
+    return media
 
 
 class GetMedia:
@@ -56,22 +76,9 @@ class GetMedia:
                 or snapshot.delivery is None
             ):
                 raise VideoNotFound
-            delivery = snapshot.delivery
-            if track is None:
-                if filename == "master.m3u8":
-                    return PlaylistDelivery(delivery.master)
-                if filename != "preview.webp" or delivery.preview is None:
-                    raise VideoNotFound
-                media = delivery.preview
-            else:
-                package = delivery.tracks.get(track)
-                if package is None:
-                    raise VideoNotFound
-                if filename == "index.m3u8":
-                    return PlaylistDelivery(package.playlist)
-                media = package.files.get(filename)
-                if media is None:
-                    raise VideoNotFound
+            media = resolve_delivery(snapshot.delivery, track, filename)
+            if isinstance(media, PlaylistDelivery):
+                return media
         return ObjectDelivery(await self.redirects.sign(media, method), media.media_type)
 
 

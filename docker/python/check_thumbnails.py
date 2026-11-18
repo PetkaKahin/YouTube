@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 from contextlib import nullcontext
+from datetime import UTC, datetime
 from hashlib import sha256
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -38,10 +39,12 @@ from app.upload_worker import create_queue as create_cleanup_queue, enqueue_orig
 from app.resources import Resources, create_cache, database_url
 from app.secrets import read_secret
 from app.settings import Settings
+from app.job_administration import JobAdministration
+from common.infrastructure.job_error_model import JobErrorRow
 from common.contracts.storage import ObjectBucket
 from common.infrastructure.job_errors import DurableJobErrors, ErrorSpool, PostgresJobErrorStore
 from common.infrastructure.job_monitor import configure_safe_queue_logging, error_history_middleware
-from user.public import GetAccount
+from user.public import GetAccount, SetRole
 from video.infrastructure.encoder import S3MediaEncoder
 from video.infrastructure.readiness import SqlProcessingViews
 from video.infrastructure.models import (
@@ -139,6 +142,7 @@ async def qualify(check=None, *, production=True):
                     )
 
                 video = directory / "source.mp4"
+                unrotated = directory / "unrotated.mp4"
                 captions = directory / "captions.srt"
                 captions.write_text("1\n00:00:00,100 --> 00:00:00,300\nПривет\n", encoding="utf-8")
                 media_input = (
@@ -167,7 +171,11 @@ async def qualify(check=None, *, production=True):
                     "mov_text",
                     "-output_ts_offset",
                     "5",
-                    video,
+                    unrotated,
+                )
+                ffmpeg(
+                    "-copyts", "-display_rotation:0", "45", "-i", unrotated,
+                    "-map", "0", "-c", "copy", video,
                 )
                 for extension in ("png", "bmp"):
                     ffmpeg(
@@ -259,6 +267,11 @@ async def qualify(check=None, *, production=True):
                     assert uploads[0].encoded_id == uploads[1].encoded_id
                     outputs = (await session.scalars(select(EncodedTrackRow))).all()
                 assert all(output.status == "ready" for output in outputs)
+                assert all(
+                    "orientation" in output.spec
+                    for output in outputs
+                    if output.spec["kind"] in {"video", "thumbnail_set"}
+                )
                 async with resources.sessions() as session:
                     references = (await session.scalars(select(SubtitleLinkRow))).all()
                     links = [
@@ -483,6 +496,25 @@ async def qualify(check=None, *, production=True):
                 if check is not None:
                     await check(container, resources, settings, pairs)
                 else:
+                    # Exercise durable retry admission with every Redis command failing,
+                    # after original deletion and while both publications remain hidden.
+                    administrator = await invoke(GetAccount, first[0])
+                    await invoke(SetRole, administrator.email, "admin")
+                    target = next(output for output in outputs if output.spec["kind"] == "video")
+                    async with resources.sessions.begin() as session:
+                        await session.execute(text("UPDATE procrastinate_jobs SET status='failed' WHERE id=:id"), {"id": target.job_id})
+                        session.add(JobErrorRow(event_id=uuid4(), job_id=target.job_id, attempt=1,
+                            stage="execute", occurred_at=datetime.now(UTC), reason="task_failed",
+                            exception_type="RuntimeError", trace=[], error_code="encoding_failed"))
+                    async with container() as operation:
+                        await (await operation.get(JobAdministration)).request(first[0], (target.job_id,))
+                    async with container() as operation:
+                        assert await (await operation.get(JobAdministration)).dispatch(settings.job_retry_batch_size) == 1
+                    await process()
+                    async with resources.sessions() as session:
+                        row = await session.get(EncodedTrackRow, target.id)
+                        assert row.job_id != target.job_id and row.artifact == target.artifact
+                    print("Job retry passed with forced Valkey outage and retained ready media after original deletion.")
                     listing = await invoke(
                         CreatePlaylist, first[0], PlaylistMetadata("public list", "", "public")
                     )

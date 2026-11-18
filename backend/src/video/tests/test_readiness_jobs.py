@@ -10,9 +10,9 @@ from sqlalchemy.exc import DBAPIError
 
 from video.domain.processing import SourceInspectionError
 from video.infrastructure.encoder import S3MediaEncoder
-from video.infrastructure.models import EncodedTrackRow, MediaPlanRow, PublicationRow
+from video.infrastructure.models import EncodedTrackRow, MediaPlanRow, PublicationRow, UploadRow
 from video.infrastructure.readiness import SqlProcessingViews
-from video.public import CompleteUpload, GetProcessing, GetVideoSettings
+from video.public import CleanupOriginals, CompleteUpload, GetProcessing, GetVideoSettings
 from video.tests import test_source_processing as support
 from video.tests.test_publications import account, invoke
 from video.tests.test_source_processing import process, source_environment
@@ -121,19 +121,26 @@ def test_readiness_query_failure_is_not_false_success(backend_runtime):
     asyncio.run(exercise())
 
 
+@pytest.mark.parametrize(
+    "size,qualities,tone",
+    [
+        ("1280x720", [360, 480, 720], 440),
+        ("3840x2160", [360, 480, 720, 1080, 1440, 2160], 880),
+    ],
+)
 def test_real_partial_failure_keeps_low_video_and_waits_for_required_sound(
-    backend_runtime, tmp_path, source_queue
+    backend_runtime, tmp_path, source_queue, size, qualities, tone
 ):
     source = tmp_path / "ladder.mp4"
     ffmpeg(
         "-f",
         "lavfi",
         "-i",
-        "testsrc2=size=1280x720:rate=1:duration=1",
+        f"testsrc2=size={size}:rate=1:duration=1",
         "-f",
         "lavfi",
         "-i",
-        "sine=sample_rate=48000:duration=1",
+        f"sine=frequency={tone}:sample_rate=48000:duration=1",
         "-c:v",
         "mpeg4",
         "-c:a",
@@ -160,7 +167,7 @@ def test_real_partial_failure_keeps_low_video_and_waits_for_required_sound(
             async def encode(encoder, claim):
                 current = await invoke(container, GetProcessing, owner.id, draft.id)
                 observations.append((claim.spec["kind"], claim.spec.get("quality"), current))
-                if claim.spec["kind"] == "video" and claim.spec["quality"] == 720:
+                if claim.spec["kind"] == "video" and claim.spec["quality"] >= 720:
                     assert current.processing.value == "processing"
                     assert [item.quality for item in current.available_qualities] == [360, 480]
                     raise SourceInspectionError("encoding_failed")
@@ -171,9 +178,7 @@ def test_real_partial_failure_keeps_low_video_and_waits_for_required_sound(
             result = await invoke(container, GetProcessing, owner.id, draft.id)
             assert result.processing.value == "partial"
             assert [(item.quality, item.status) for item in result.qualities] == [
-                (360, "ready"),
-                (480, "ready"),
-                (720, "failed"),
+                (quality, "ready" if quality < 720 else "failed") for quality in qualities
             ]
             assert result.qualities[-1].error_code == "encoding_failed" and not result.hd
             assert any(
@@ -189,5 +194,19 @@ def test_real_partial_failure_keeps_low_video_and_waits_for_required_sound(
             assert f"tracks/{failed_id}/" not in prepared.master
             assert "mp4a.40.2" in prepared.master
             assert prepared.master.count("#EXT-X-STREAM-INF:") == 2
+            # Even terminal failures leave the source available for a later retry.
+            await invoke(container, CleanupOriginals)
+            async with resources.sessions() as session:
+                receipt = await session.get(UploadRow, upload.id)
+            assert receipt.original_deleted_at is None
+            original_object = await asyncio.to_thread(
+                resources.objects.head_object,
+                Bucket=resources.bucket,
+                Key=receipt.object_key,
+            )
+            assert original_object["ContentLength"] == len(source.read_bytes())
+            assert [
+                quality for kind, quality, _ in observations if kind == "video" and quality < 720
+            ] == [360, 480]
 
     asyncio.run(exercise())

@@ -26,6 +26,7 @@ from video.infrastructure.hls import (
     VideoRendition,
     render_master,
 )
+from video.infrastructure.prepared_bundle import prepared_prefix
 
 
 def object_value(value: object) -> dict[str, object]:
@@ -57,13 +58,19 @@ def error_code(value: object, fallback: str) -> str:
     return value if isinstance(value, str) and value in ERROR_CODES else fallback
 
 
+def valid_artifact_prefix(output: dict[str, object]) -> bool:
+    artifact = object_value(output["artifact"])
+    prefix = str(artifact["prefix"])
+    if re.fullmatch(rf"encoded/{number(output['id'])}/[0-9a-f]{{32}}/", prefix):
+        return True
+    profile = output.get("profile_key")
+    return isinstance(profile, str) and prefix == prepared_prefix(profile, artifact)
+
+
 def media_track(output: dict[str, object], kind: str) -> MediaTrack:
     artifact = object_value(output["artifact"])
     encoded_id = number(output["id"])
-    if (
-        artifact["kind"] != kind
-        or re.fullmatch(rf"encoded/{encoded_id}/[0-9a-f]{{32}}/", str(artifact["prefix"])) is None
-    ):
+    if artifact["kind"] != kind or not valid_artifact_prefix(output):
         raise ValueError("Invalid stored media identity")
     durations = [fraction(item) for item in sequence(artifact["segments"])]
     extension = "vtt" if kind == "subtitle" else "m4s"
@@ -284,7 +291,7 @@ MEDIA_SNAPSHOT = """jsonb_build_object(
  'source', jsonb_build_object('status',s.status,'error_code',s.error_code),
  'plan', jsonb_build_object('status',m.status,'config',m.config,'error_code',m.error_code),
  'outputs', (SELECT jsonb_agg(jsonb_build_object(
-   'id',e.id,'status',e.status,'spec',e.spec,'artifact',e.artifact,'error_code',e.error_code))
+   'id',e.id,'profile_key',e.profile_key,'status',e.status,'spec',e.spec,'artifact',e.artifact,'error_code',e.error_code))
  FROM video_encoded_tracks e WHERE
    EXISTS (SELECT 1 FROM video_plan_tracks r WHERE r.upload_id=u.id AND r.encoded_id=e.id)
    OR e.id=(m.config->>'thumbnail')::bigint

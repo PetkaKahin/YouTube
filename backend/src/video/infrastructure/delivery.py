@@ -8,7 +8,13 @@ from common.contracts.storage import ObjectBucket, ObjectStorageClient
 from video.domain.delivery import MediaDelivery, MediaPackage, StoredMedia
 from video.domain.uploads import URL_SECONDS, StorageUnavailable
 from video.infrastructure.multipart import sdk
-from video.infrastructure.readiness import media_track, number, object_value, sequence
+from video.infrastructure.readiness import (
+    media_track,
+    number,
+    object_value,
+    sequence,
+    valid_artifact_prefix,
+)
 
 
 def package(output: dict[str, object]) -> MediaPackage:
@@ -69,7 +75,7 @@ def selected_preview(
             return None
         artifact = object_value(output["artifact"])
         prefix = str(artifact["prefix"])
-        if re.fullmatch(rf"encoded/{number(output['id'])}/[0-9a-f]{{32}}/", prefix) is None:
+        if not valid_artifact_prefix(output):
             return None
         entry = next(
             object_value(item)

@@ -9,6 +9,7 @@ from math import ceil
 from typing import cast
 from uuid import UUID
 
+from video.domain.orientation import display_geometry
 from video.domain.processing import SourceInspectionError
 
 PLAN_TASK = "video.plan_media"
@@ -140,10 +141,9 @@ def _make_plan(payload: dict[str, object]) -> EncodingPlan:
         sar = Fraction(1)
     side = side_fields(properties.get("side_data", []))
     rotation = rational(side.get("rotation", properties.get("rotate", [0, 1])))
-    if rotation.denominator != 1 or rotation.numerator % 90:
-        raise ValueError
-    if rotation.numerator % 180:
-        width, height, sar = height, width, 1 / sar
+    source_w, source_h = width * sar, Fraction(height)
+    geometry = display_geometry(width, height, sar, rotation, side.get("displaymatrix"))
+    width, height, sar = geometry.width, geometry.height, geometry.sar
     frame_rate = (
         Fraction(0)
         if properties.get("avg_frame_rate") == "0/0"
@@ -173,10 +173,14 @@ def _make_plan(payload: dict[str, object]) -> EncodingPlan:
         (1440, 2560, 1440),
         (2160, 3840, 2160),
     ):
+        source_bound_w, source_bound_h = bound_w, bound_h
+        if source_h > source_w:
+            source_bound_w, source_bound_h = source_bound_h, source_bound_w
+        eligible = min(source_bound_w / source_w, source_bound_h / source_h) <= 1
         if displayed_h > displayed_w:
             bound_w, bound_h = bound_h, bound_w
         scale = min(Fraction(bound_w) / displayed_w, Fraction(bound_h) / displayed_h)
-        if scale <= 1:
+        if scale <= 1 and (geometry.orientation is None or eligible):
             w, h = int(width * scale) // 2 * 2, int(height * scale) // 2 * 2
             if min(w, h) >= 2:
                 geometries.append((quality, w, h))
@@ -258,6 +262,8 @@ def _make_plan(payload: dict[str, object]) -> EncodingPlan:
                 else 28,
                 "duration": pair(duration),
             }
+            if geometry.orientation is not None:
+                spec["orientation"] = geometry.orientation.spec
             output = PlannedTrack(
                 cast(int, video["stream_index"]), str(video["fingerprint"]), spec, -rank * 2 - 1
             )

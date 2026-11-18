@@ -5,6 +5,8 @@ import json
 import re
 import sys
 import traceback
+from datetime import UTC, datetime
+from uuid import uuid4
 from http.cookiejar import CookieJar
 from http.client import IncompleteRead
 from pathlib import Path
@@ -19,9 +21,12 @@ from sqlalchemy import text
 
 from app.main import create_app
 from app.settings import Settings
+from app.job_administration import JobAdministration
+from app.media_worker import create_queue as create_media_queue
+from common.infrastructure.job_error_model import JobErrorRow
 from check_thumbnails import qualify
 from channel.public import GetPublicChannels
-from user.public import GetAccount
+from user.public import GetAccount, SetRole
 from video.public import GetMedia
 from video.infrastructure.delivery import S3MediaRedirects
 
@@ -185,6 +190,10 @@ async def gateway_check(container, resources, settings, pairs):
             assert json.loads(safe(owner.request(base + "/like"))) == {"liked": False, "like_count": 0, "can_like": True}
             safe(guest.request(base + "/like"), 404)
             safe(recipient.request(base + "/like"), 404)
+            discussion = base + "/comments"
+            for browser in (owner, recipient, guest):
+                safe(browser.request(discussion), 404)
+            safe(owner.request(discussion, method="POST", data={"text": "private"}), 404)
             playlist_urls = []
             for visibility in ("public", "unlisted", "private"):
                 created = owner.request(
@@ -371,6 +380,9 @@ async def gateway_check(container, resources, settings, pairs):
                 assert json.loads(safe(recipient.request(base + "/like", method="PUT", data={"liked": target}))) == {"liked": target, "like_count": int(target), "can_like": True}
             assert json.loads(safe(recipient.request(second_base + "/like")))["like_count"] == 0
             assert json.loads(safe(owner.request(base + "/settings"))) == before_like
+            # Email permission permits private playback, but never opens its discussion.
+            safe(recipient.request(discussion), 404)
+            safe(recipient.request(discussion, method="POST", data={"text": "private"}), 404)
             assert json.loads(safe(recipient.request(subscription_path, method="PUT", data={"subscribed": False}))) == {"subscribed": False, "can_subscribe": True}
             for uri in checked:
                 safe(recipient.request(uri))
@@ -416,6 +428,39 @@ async def gateway_check(container, resources, settings, pairs):
             assert feed["items"][0]["duration_seconds"] == 1
             assert json.loads(safe(guest.request(base + "/like"))) == {"liked": False, "like_count": 1, "can_like": False}
             assert json.loads(safe(recipient.request(base + "/like", method="PUT", data={"liked": False}))) == {"liked": False, "like_count": 0, "can_like": True}
+            before_comments = json.loads(safe(owner.request(base + "/settings")))
+            content = "<script>plain text</script>\n" + "я" * 1972
+            assert len(content) == 2000
+            created = json.loads(safe(owner.request(discussion, method="POST", data={
+                "text": content, "author_id": second[0], "like_count": 999,
+            }), 201))
+            assert created["text"] == content and created["author_name"] == "Author"
+            comment_like = discussion + f"/{created['id']}/like"
+            for target in (True, True, False, False, True):
+                assert json.loads(safe(recipient.request(comment_like, method="PUT", data={
+                    "liked": target,
+                }))) == {"liked": target, "like_count": int(target), "can_like": True}
+            safe(owner.request(discussion, method="POST", data={"text": "я" * 2001}), 422)
+            safe(owner.request(discussion, method="POST", data={"text": " \t\n"}), 422)
+            safe(guest.request(discussion, method="POST", data={"text": "guest"}), 401)
+            safe(guest.request(comment_like, method="PUT", data={"liked": True}), 401)
+            for index in range(20):
+                safe(owner.request(discussion, method="POST", data={"text": str(index)}), 201)
+            comment_page = json.loads(safe(guest.request(discussion)))
+            assert len(comment_page["items"]) == 20 and not comment_page["can_comment"]
+            comment_tail = json.loads(safe(guest.request(
+                discussion + "?cursor=" + comment_page["next_cursor"]
+            )))
+            assert [item["id"] for item in comment_tail["items"]] == [created["id"]]
+            assert comment_tail["next_cursor"] is None
+            popular = json.loads(safe(guest.request(discussion + "?sort=popular")))
+            assert popular["items"][0]["id"] == created["id"]
+            assert popular["items"][0]["like_count"] == 1
+            assert not popular["items"][0]["liked"]
+            assert not any(marker in json.dumps(popular) for marker in (
+                "@example.com", "author_id", "owner_id", "role", "encoded/",
+            ))
+            assert json.loads(safe(owner.request(base + "/settings"))) == before_comments
             assert json.loads(safe(guest.request(channel_path + "/videos"))) == feed
             search = json.loads(
                 safe(
@@ -451,6 +496,9 @@ async def gateway_check(container, resources, settings, pairs):
                 )
             )
             assert owner.request(base + "/settings", method="PUT", data=metadata)[0] == 200
+            for browser in (owner, recipient, guest):
+                safe(browser.request(discussion), 404)
+                safe(browser.request(comment_like), 404)
             assert json.loads(safe(guest.request("/api/v1/videos/feed"))) == {
                 "items": [],
                 "next_cursor": None,
@@ -471,6 +519,8 @@ async def gateway_check(container, resources, settings, pairs):
                     )
 
             complete(hide())
+            safe(owner.request(discussion), 404)
+            safe(owner.request(comment_like, method="PUT", data={"liked": False}), 404)
             for uri in checked:
                 safe(owner.request(uri), 404)
             assert owner.request(base + "/settings")[0] == 200
@@ -554,8 +604,10 @@ async def gateway_check(container, resources, settings, pairs):
             safe(recipient.request(logical))
             after = json.loads(recipient.request(second_base + "/settings")[2])
             assert after == unchanged and after["processing"] == "ready"
+            check_moderation(owner, recipient, guest, second_base, accounts, complete, invoke, resources)
+            check_job_administration(owner, recipient, guest, second_base, complete, container, resources, settings)
             print(
-                "Gateway qualification passed: decoded AV1/AAC/WebVTT/WebP, GET/HEAD/Range/If-Range/multipart, live grants/revocation/private/hidden, shared storage isolation, safe storage errors and interrupted response; API performed no object reads."
+                "Gateway qualification passed: decoded AV1/AAC/WebVTT/WebP, GET/HEAD/Range/If-Range/multipart, live grants/revocation/private/hidden, comments and comment likes, report decisions and staff media, shared storage isolation, safe storage errors and interrupted response; API performed no object reads."
             )
 
         # These are the clients actually injected into HTTP handlers. Nginx has
@@ -576,6 +628,179 @@ async def gateway_check(container, resources, settings, pairs):
         await serving
         proxy.close()
         await proxy.wait_closed()
+
+
+def check_moderation(staff, reporter, guest, base, accounts, complete, invoke, resources):
+    """Actual staff cookies, private/hidden media, revision conflicts and live demotion."""
+    import subprocess
+
+    queue = "/api/v1/moderation/reports"
+    safe(guest.request(queue), 401)
+    safe(staff.request(queue), 403)
+    for reason in ("spam", "copyright"):
+        assert json.loads(safe(reporter.request(base + "/reports", method="POST", data={
+            "reason": reason, "reporter_id": accounts[0].id, "role": "admin",
+        }), 202)) == {"accepted": True}
+    complete(invoke(SetRole, accounts[0].email, "moderator"))
+    page = json.loads(safe(staff.request(queue)))
+    assert len(page["items"]) == 1 and page["next_cursor"] is None
+    report = page["items"][0]
+    assert report["revision"] == 2 and report["reason"] == "copyright"
+    assert report["reporter_id"] == accounts[1].id
+    path = queue + "/" + str(report["id"])
+    safe(staff.request(base), 404)
+    material = json.loads(safe(staff.request(path + "/video")))
+    assert material["hls_url"] == path + "/hls/master.m3u8"
+    assert not any(marker in json.dumps(material) for marker in (
+        "@example.com", "reporter_id", "owner_id", "X-Amz", "encoded/",
+    ))
+    safe(staff.request(queue + "/4611686018427387904/video"), 404)
+    master_url = material["hls_url"]
+    master = safe(staff.request(master_url)).decode()
+    assert "/videos/" not in master and "TYPE=SUBTITLES" in master
+    tracks = re.findall(r'URI="([^"]+)"', master)
+    tracks += [line for line in master.splitlines() if line and not line.startswith("#")]
+    downloaded = {master_url: master.encode()}
+    service_paths = [master_url, path + "/video", path + "/preview.webp"]
+    types = set()
+    for relative in tracks:
+        uri = urljoin(master_url, relative)
+        data = safe(staff.request(uri))
+        downloaded[uri] = data
+        service_paths.append(uri)
+        files = re.findall(r'URI="([^"]+)"', data.decode())
+        files += [line for line in data.decode().splitlines() if line and not line.startswith("#")]
+        for filename in files:
+            file_url = urljoin(uri, filename)
+            response = staff.request(file_url)
+            body = safe(response)
+            downloaded[file_url] = body
+            service_paths.append(file_url)
+            types.add(response[1]["content-type"].split(";")[0])
+            assert safe(staff.request(file_url, method="HEAD")) == b""
+            assert safe(staff.request(file_url, headers={"Range": "bytes=0-15"}), 206) == body[:16]
+    assert types == {"video/mp4", "audio/mp4", "text/vtt"}
+    assert safe(staff.request(path + "/preview.webp"))[8:12] == b"WEBP"
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        for uri, body in downloaded.items():
+            file = root / uri.lstrip("/")
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.write_bytes(body)
+        subprocess.run([
+            "ffmpeg", "-v", "error", "-nostdin", "-protocol_whitelist", "file",
+            "-allowed_extensions", "ALL", "-i", str(root / master_url.lstrip("/")),
+            "-map", "0:v", "-map", "0:a", "-f", "null", "-",
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    async def evidence():
+        async with resources.sessions() as session:
+            return (await session.execute(text(
+                "SELECT actor_id,revision,reason,resource FROM moderation_accesses WHERE report_id=:id"
+            ), {"id": report["id"]})).mappings().all()
+    audit = complete(evidence())
+    assert audit and all(row["actor_id"] == accounts[0].id and row["revision"] == 2
+                         and row["reason"] == "copyright" for row in audit)
+    decision = {"revision": 2, "action": "dismiss"}
+    resolved = json.loads(safe(staff.request(path + "/decision", method="PUT", data=decision)))
+    assert json.loads(safe(staff.request(path + "/decision", method="PUT", data=decision))) == resolved
+    for uri in service_paths:
+        safe(staff.request(uri), 404)
+    safe(reporter.request(base))
+    safe(reporter.request(base + "/reports", method="POST", data={"reason": "other"}), 202)
+    renewed = json.loads(safe(staff.request(path)))
+    assert renewed["revision"] == 3 and renewed["decision"] is None
+    safe(staff.request(path + "/decision", method="PUT", data={
+        "revision": 2, "action": "hide", "reason": "other",
+    }), 409)
+    # A second pending complaint remains a valid, independently audited basis after hiding.
+    safe(reporter.request(base + "/permissions", method="PUT", data={
+        "email": accounts[0].email, "allowed": True,
+    }))
+    safe(staff.request(base + "/reports", method="POST", data={"reason": "other"}), 202)
+    safe(reporter.request(base + "/permissions", method="PUT", data={
+        "email": accounts[0].email, "allowed": False,
+    }))
+    other = next(item for item in json.loads(safe(staff.request(queue)))["items"]
+                 if item["id"] != report["id"])
+    other_path = queue + "/" + str(other["id"])
+    safe(staff.request(path + "/decision", method="PUT", data={
+        "revision": 3, "action": "hide", "reason": "violence",
+    }))
+    for uri in (base, base + "/preview.webp", base + "/hls/master.m3u8",
+                base + "/hls/tracks/v1/init.mp4", base + "/hls/tracks/v1/segment_000000.m4s"):
+        safe(reporter.request(uri), 404)
+        safe(staff.request(uri), 404)
+    for uri in service_paths:
+        safe(staff.request(uri), 404)
+    safe(staff.request(other_path + "/video"))
+    safe(staff.request(other_path + "/hls/master.m3u8"))
+    for assigned_role, expected in (("user", 403), ("admin", 200)):
+        complete(invoke(SetRole, accounts[0].email, assigned_role))
+        for suffix in ("/video", "/preview.webp", "/hls/master.m3u8", "/hls/tracks/v1/init.mp4"):
+            safe(staff.request(other_path + suffix), expected)
+        safe(staff.request(base), 404)
+    safe(staff.request(other_path + "/decision", method="PUT", data={"revision": 1, "action": "dismiss"}))
+    safe(staff.request(other_path + "/video"), 404)
+    safe(reporter.request(base), 404)
+
+
+def check_job_administration(admin, owner, guest, base, complete, container, resources, settings):
+    safe(guest.request("/api/v1/admin/job-errors"), 401)
+    safe(owner.request("/api/v1/admin/job-errors"), 403)
+    try:
+        with admin.http.open(Request(urljoin(admin.gateway, "/api/v1/admin/job-retries"),
+            data=b'{"mode":"all"}', headers={"Content-Type": "application/json"}, method="POST"), timeout=30):
+            raise AssertionError("Administrator retry accepted without CSRF")
+    except HTTPError as error:
+        assert error.code == 403
+    before = json.loads(safe(owner.request(base + "/settings")))
+
+    async def failure():
+        async with resources.sessions.begin() as session:
+            target = (await session.execute(text(
+                "SELECT e.id,e.job_id,e.artifact,j.priority FROM video_encoded_tracks e "
+                "JOIN procrastinate_jobs j ON j.id=e.job_id "
+                "WHERE e.spec->>'kind'='video' AND e.status='ready' ORDER BY e.id LIMIT 1"
+            ))).one()
+            await session.execute(text("UPDATE procrastinate_jobs SET status='failed' WHERE id=:id"), {"id": target.job_id})
+            session.add(JobErrorRow(event_id=uuid4(), job_id=target.job_id, attempt=1,
+                stage="execute", occurred_at=datetime.now(UTC), reason="task_failed",
+                exception_type="RuntimeError", trace=[], error_code="encoding_failed"))
+            return target.id, target.job_id, target.artifact, target.priority
+    encoded_id, job_id, artifact, priority = complete(failure())
+    history = json.loads(safe(admin.request("/api/v1/admin/job-errors")))
+    assert history["items"][0]["job_id"] == job_id
+    selected = json.loads(safe(admin.request("/api/v1/admin/job-retries", method="POST",
+        data={"mode": "selected", "job_ids": [job_id, job_id]}), 202))
+    all_jobs = json.loads(safe(admin.request("/api/v1/admin/job-retries", method="POST",
+        data={"mode": "all"}), 202))
+
+    async def execute():
+        for _ in range(4):
+            async with container() as operation:
+                await (await operation.get(JobAdministration)).dispatch(settings.job_retry_batch_size)
+        queue = create_media_queue(settings, container)
+        async with queue.open_async():
+            await queue.run_worker_async(queues=["media"], concurrency=1, wait=False,
+                listen_notify=False, install_signal_handlers=False)
+        async with resources.sessions() as session:
+            current = (await session.execute(text(
+                "SELECT e.job_id,e.artifact,j.status,j.attempts,j.priority FROM video_encoded_tracks e "
+                "JOIN procrastinate_jobs j ON j.id=e.job_id WHERE e.id=:id"
+            ), {"id": encoded_id})).one()
+            assert current.job_id != job_id and current.artifact == artifact
+            assert current.status == "succeeded" and current.attempts == 1
+            assert current.priority == priority
+    complete(execute())
+    first = json.loads(safe(admin.request("/api/v1/admin/job-retries/" + str(selected["id"]))))
+    second = json.loads(safe(admin.request("/api/v1/admin/job-retries/" + str(all_jobs["id"]))))
+    assert first["queued"] == 1 and second["skipped"] == 1 and second["queued"] == 0
+    assert first["status"] == second["status"] == "submitted"
+    assert json.loads(safe(owner.request(base + "/settings"))) == before
+    safe(owner.request(base), 404)
+    assert json.loads(safe(admin.request("/api/v1/admin/job-errors")))["items"][0]["job_id"] == job_id
+    print("Job administration passed: live admin/CSRF HTTP, durable selected/all overlap, fresh native cycle, retained shared package after original deletion, preserved hidden state and history.")
 
 
 if __name__ == "__main__":

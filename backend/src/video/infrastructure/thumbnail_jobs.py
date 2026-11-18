@@ -363,7 +363,12 @@ class SqlThumbnailJobs:
     async def image_media(self, video_id: int, slot: int | None) -> StoredMedia:
         key = await self.image_key(video_id, slot)
         try:
-            encoded = await self.session.get(EncodedTrackRow, int(key.split("/")[1]))
+            choice = await self.choice(video_id)
+            encoded = (
+                await self.session.get(EncodedTrackRow, choice.custom_encoded_id)
+                if slot is None and choice.custom_encoded_id is not None
+                else await self.generated(video_id)
+            )
             if encoded is None or encoded.artifact is None:
                 raise VideoNotFound
             artifact = object_value(encoded.artifact)

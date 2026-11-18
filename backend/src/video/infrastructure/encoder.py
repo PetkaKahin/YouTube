@@ -23,6 +23,7 @@ from video.infrastructure.hls import AacAudio, Av1Video, HlsMetadataError, Media
 from video.infrastructure.media_process import check_workspace, run_media_process
 from video.infrastructure.media_resources import CpuBudget, MediaLimits, MediaResourceError
 from video.infrastructure.multipart import sdk
+from video.infrastructure.orientation import input_orientation, orientation_filter
 
 
 def configuration(value: object) -> bytes:
@@ -133,7 +134,7 @@ class S3MediaEncoder:
             raise SourceInspectionError(error.code) from None
         except OSError:
             raise TemporarySourceError("local_io_unavailable") from None
-        except ValueError, KeyError, TypeError, ZeroDivisionError, HlsMetadataError:
+        except ValueError, KeyError, TypeError, ZeroDivisionError, OverflowError, HlsMetadataError:
             raise SourceInspectionError("invalid_encoded_media") from None
 
     async def download(
@@ -237,6 +238,7 @@ class S3MediaEncoder:
                     str(budget.pool_size),
                     "-err_detect",
                     "explode",
+                    *input_orientation(spec.get("orientation"), claim.stream_index),
                     "-protocol_whitelist",
                     "fd",
                     "-fd",
@@ -280,6 +282,7 @@ class S3MediaEncoder:
                     )
                     filter_graph = (
                         f"setpts=PTS-STARTPTS,fps={rational(spec['fps'])},"
+                        f"{orientation_filter(spec.get('orientation'))}"
                         f"libplacebo=w={width}:h={height}:format={pix_fmt}:"
                         f"normalize_sar=false:color_primaries={primaries}:color_trc={trc}:"
                         f"colorspace={matrix}:range=tv:tonemapping=bt.2390:"

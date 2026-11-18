@@ -14,7 +14,9 @@ from typing import cast
 from botocore.response import StreamingBody
 
 from common.contracts.storage import ObjectBucket, ObjectStorageClient
+from video.domain.delivery import MEDIA_OBJECT_KEY
 from video.domain.encoding import EncodingClaim, mapping, rational
+from video.domain.orientation import display_geometry
 from video.domain.processing import SourceInspectionError, TemporarySourceError
 from video.domain.thumbnails import (
     MAX_IMAGE_BYTES,
@@ -27,6 +29,7 @@ from video.domain.uploads import StorageUnavailable
 from video.infrastructure.media_process import check_workspace, run_media_process
 from video.infrastructure.media_resources import CpuBudget, MediaLimits, MediaResourceError
 from video.infrastructure.multipart import sdk
+from video.infrastructure.orientation import input_orientation, orientation_filter
 
 
 def digest_file(path: Path) -> str:
@@ -80,7 +83,7 @@ async def probe(
                 "fd:",
                 "-show_entries",
                 "stream=index,codec_type,width,height,sample_aspect_ratio,color_transfer,start_time:"
-                "stream_side_data=rotation:stream_disposition=default,attached_pic",
+                "stream_side_data=rotation,displaymatrix:stream_disposition=default,attached_pic",
                 "-of",
                 "json",
                 "-o",
@@ -120,6 +123,7 @@ async def pixels(
     frames: int,
     position: Fraction | None = None,
     strict: bool = False,
+    orientation: object = None,
 ) -> None:
     budget = str(CpuBudget.detect().pool_size)
     args = ["-v", "error", "-nostdin", "-xerror", "-filter_threads", budget, "-threads", budget]
@@ -130,6 +134,7 @@ async def pixels(
     with source.open("rb") as stream:
         args += [
             *(["-err_detect", "explode"] if strict else ["-max_pixels", str(MAX_IMAGE_PIXELS)]),
+            *input_orientation(orientation, index),
             "-protocol_whitelist",
             "fd",
             "-fd",
@@ -145,7 +150,7 @@ async def pixels(
             "-map_chapters",
             "-1",
             "-vf",
-            image_filter(width, height, hdr),
+            orientation_filter(orientation) + image_filter(width, height, hdr),
             "-frames:v",
             str(frames),
             "-fps_mode",
@@ -271,6 +276,7 @@ async def encode_thumbnails(
                 frames=1,
                 position=start + rational(value),
                 strict=True,
+                orientation=claim.spec.get("orientation"),
             )
             if raw.stat().st_size == 0:
                 raw.unlink()
@@ -286,6 +292,7 @@ async def encode_thumbnails(
                     frames=1,
                     position=start,
                     strict=True,
+                    orientation=claim.spec.get("orientation"),
                 )
             if raw.stat().st_size != width * height * 4:
                 raise SourceInspectionError("invalid_thumbnail")
@@ -304,6 +311,7 @@ async def encode_thumbnails(
                     frames=1,
                     position=start + duration * Fraction(2 * slot + 1, 6),
                     strict=True,
+                    orientation=claim.spec.get("orientation"),
                 )
                 if alternate.stat().st_size == width * height * 4 and not await asyncio.to_thread(
                     black_frame, alternate
@@ -358,10 +366,7 @@ class S3ThumbnailProcessor:
         await sdk(lambda: self.objects.delete_object(Bucket=self.bucket, Key=key + "pixels.rgba"))
 
     async def read(self, key: str) -> bytes:
-        if (
-            re.fullmatch(r"encoded/[1-9][0-9]*/[0-9a-f]{32}/(?:candidate_[0-2]|image)\.webp", key)
-            is None
-        ):
+        if not key.endswith(".webp") or re.fullmatch(MEDIA_OBJECT_KEY, key) is None:
             raise SourceInspectionError("invalid_thumbnail")
         response = await sdk(lambda: self.objects.get_object(Bucket=self.bucket, Key=key))
         body = cast(StreamingBody, response["Body"])
@@ -392,7 +397,7 @@ class S3ThumbnailProcessor:
             raise SourceInspectionError(
                 "invalid_thumbnail" if error.code == "media_exit_failed" else error.code
             ) from None
-        except ValueError, KeyError, TypeError, StopIteration:
+        except ValueError, KeyError, TypeError, StopIteration, ZeroDivisionError, OverflowError:
             raise SourceInspectionError("invalid_thumbnail") from None
 
     async def _prepare(self, claim: ThumbnailClaim, limits: MediaLimits) -> PreparedThumbnail:
@@ -440,14 +445,15 @@ class S3ThumbnailProcessor:
             if sar <= 0:
                 sar = Fraction(1)
             side = cast(list[dict[str, object]], stream.get("side_data_list", []))
-            for item in side:
-                if "rotation" in item:
-                    rotation = Fraction(str(item["rotation"]))
-                    if rotation % 90:
-                        raise SourceInspectionError("invalid_thumbnail")
-                    if rotation % 180:
-                        width, height, sar = height, width, 1 / sar
-            width, height = image_geometry(width, height, sar)
+            fields = {key: value for item in side for key, value in item.items()}
+            geometry = display_geometry(
+                width,
+                height,
+                sar,
+                Fraction(str(fields.get("rotation", "0"))),
+                fields.get("displaymatrix"),
+            )
+            width, height = image_geometry(geometry.width, geometry.height, geometry.sar)
             raw = directory / "pixels.rgba"
             await pixels(
                 source,
@@ -459,6 +465,7 @@ class S3ThumbnailProcessor:
                 height=height,
                 hdr=stream.get("color_transfer") in {"smpte2084", "arib-std-b67"},
                 frames=2,
+                orientation=geometry.orientation.spec if geometry.orientation is not None else None,
             )
             if raw.stat().st_size != width * height * 4:
                 raise SourceInspectionError("animated_thumbnail")

@@ -15,6 +15,7 @@ from video.domain.encoding import (
     rational,
     side_fields,
 )
+from video.domain.orientation import display_geometry
 from video.domain.processing import SourceInspectionError
 
 PREPARE_THUMBNAIL_TASK = "video.prepare_thumbnail"
@@ -47,13 +48,12 @@ def thumbnail_plan(payload: dict[str, object]) -> PlannedTrack:
         width, height = integer(properties["width"]), integer(properties["height"])
         value = properties.get("sample_aspect_ratio", [1, 1])
         sar = Fraction(1) if value in ("N/A", "0:1") else rational(value)
+        if sar <= 0:
+            sar = Fraction(1)
         side = side_fields(properties.get("side_data", []))
         rotation = rational(side.get("rotation", properties.get("rotate", [0, 1])))
-        if rotation.denominator != 1 or rotation % 90:
-            raise ValueError
-        if rotation % 180:
-            width, height, sar = height, width, 1 / sar
-        width, height = image_geometry(width, height, sar)
+        geometry = display_geometry(width, height, sar, rotation, side.get("displaymatrix"))
+        width, height = image_geometry(geometry.width, geometry.height, geometry.sar)
         duration = rational(video["presentation_duration"])
         if not 0 < duration <= 3600:
             raise ValueError
@@ -78,8 +78,10 @@ def thumbnail_plan(payload: dict[str, object]) -> PlannedTrack:
             "input_hdr": properties.get("color_transfer") in {"smpte2084", "arib-std-b67"}
             or "dv_profile" in side,
         }
+        if geometry.orientation is not None:
+            spec["orientation"] = geometry.orientation.spec
         return PlannedTrack(cast(int, video["stream_index"]), fingerprint, spec, -1)
-    except KeyError, ValueError, TypeError, ZeroDivisionError:
+    except KeyError, ValueError, TypeError, ZeroDivisionError, OverflowError:
         raise SourceInspectionError("invalid_media_plan") from None
 
 

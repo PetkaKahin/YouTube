@@ -33,7 +33,12 @@ def problem(
         status_code=status,
         content=payload.model_dump(),
         media_type="application/problem+json",
-        headers={**(headers or {}), "X-Request-ID": request_id},
+        headers={
+            "Cache-Control": "no-store",
+            "Vary": "Cookie",
+            **(headers or {}),
+            "X-Request-ID": request_id,
+        },
     )
 
 

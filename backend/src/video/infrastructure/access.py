@@ -5,6 +5,7 @@ from typing import cast
 
 from sqlalchemy import delete, func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.engine import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from user.public import AccountError, AccountNotFound, GetAccount, NormalizeEmail
@@ -101,14 +102,54 @@ LEFT JOIN video_encoded_tracks new_cover ON new_cover.id=ci.encoded_id
 LEFT JOIN video_encoded_tracks old_cover ON old_cover.id=c.custom_encoded_id
   AND old_cover.status='ready' AND old_cover.spec->>'kind'='thumbnail_image'
 """
-VIEW_SNAPSHOT = text(f"""
+VIEW_SELECT = f"""
 SELECT p.id,p.owner_id,p.title,p.description,p.visibility,p.publication,p.moderation,
        p.added_at,p.updated_at, {MEDIA_SNAPSHOT} AS media, {PERMITTED} AS permitted,
        coalesce(to_jsonb(new_cover),to_jsonb(old_cover)) AS cover, c.slot AS cover_slot
 FROM video_publications p {MEDIA_JOINS} {PREVIEW_JOINS}
+"""  # noqa: S608 -- module constants only; every input is bound
+VIEW_SNAPSHOT = text(
+    VIEW_SELECT
+    + f"""
 WHERE p.id=:video_id AND p.publication='published' AND p.moderation='visible'
   AND (p.visibility='public' OR p.owner_id=:account_id OR {PERMITTED})
-""")  # noqa: S608 -- constant SQL fragments; every input is bound
+"""
+)  # noqa: S608 -- constant SQL fragments; every input is bound
+
+
+def viewing_snapshot(result: RowMapping, *, delivery: bool = False) -> ViewingSnapshot:
+    media = object_value(result["media"])
+    prepared = prepare(media)
+    processing = prepared.status
+    qualities = tuple(
+        ReadyQuality(item.quality, item.range) for item in processing.available_qualities
+    )
+    return ViewingSnapshot(
+        ViewConditions(
+            cast(int, result["owner_id"]),
+            result["publication"] == "published",
+            result["moderation"] == "visible",
+            bool(qualities),
+            result["visibility"] == "public",
+            bool(result["permitted"]),
+        ),
+        VideoView(
+            cast(int, result["id"]),
+            str(result["title"]),
+            str(result["description"]),
+            str(result["visibility"]),
+            cast(datetime | None, result["added_at"]),
+            cast(datetime, result["updated_at"]),
+            qualities,
+            processing.hd,
+            processing.uhd,
+            processing.hdr,
+            processing.uhd_hdr,
+        ),
+        delivery_manifest(media, prepared.master, result["cover"], result["cover_slot"])
+        if delivery
+        else None,
+    )
 
 
 class SqlVideoViews:
@@ -130,35 +171,4 @@ class SqlVideoViews:
         )
         if result is None:
             return None
-        media = object_value(result["media"])
-        prepared = prepare(media)
-        processing = prepared.status
-        qualities = tuple(
-            ReadyQuality(item.quality, item.range) for item in processing.available_qualities
-        )
-        return ViewingSnapshot(
-            ViewConditions(
-                cast(int, result["owner_id"]),
-                result["publication"] == "published",
-                result["moderation"] == "visible",
-                bool(qualities),
-                result["visibility"] == "public",
-                bool(result["permitted"]),
-            ),
-            VideoView(
-                cast(int, result["id"]),
-                str(result["title"]),
-                str(result["description"]),
-                str(result["visibility"]),
-                cast(datetime | None, result["added_at"]),
-                cast(datetime, result["updated_at"]),
-                qualities,
-                processing.hd,
-                processing.uhd,
-                processing.hdr,
-                processing.uhd_hdr,
-            ),
-            delivery_manifest(media, prepared.master, result["cover"], result["cover_slot"])
-            if delivery
-            else None,
-        )
+        return viewing_snapshot(result, delivery=delivery)
