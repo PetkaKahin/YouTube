@@ -6,6 +6,7 @@ import App from './App.vue';
 import { HomePage } from '../pages/home';
 import { LoginPage } from '../pages/login';
 import { RegisterPage } from '../pages/register';
+import { SearchPage } from '../pages/search';
 import { NotFoundPage } from '../pages/not-found';
 import { useSession } from '../entities/session';
 import { configureApi } from '../shared/api';
@@ -15,6 +16,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: HomePage },
+    { path: '/results', component: SearchPage },
+    { path: '/playlist', component: () => import('../pages/playlist-link').then((m) => m.PlaylistLinkPage) },
+    { path: '/@:tag/:tab(videos|playlists)?', component: () => import('../pages/channel').then((m) => m.ChannelPage) },
     { path: '/login', component: LoginPage, meta: { standalone: true } },
     { path: '/register', component: RegisterPage, meta: { standalone: true } },
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
