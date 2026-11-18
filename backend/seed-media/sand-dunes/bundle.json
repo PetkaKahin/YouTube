@@ -1,0 +1,2726 @@
+{
+  "outputs": [
+    {
+      "artifact": {
+        "average_bandwidth": 4054,
+        "bandwidth": 5658,
+        "codec": "mp4a.40.2",
+        "configuration": "119056e500",
+        "files": [
+          {
+            "name": "init.mp4",
+            "sha256": "c169ec8c60571e2558c68f4dee4193380403d3b48de0b6f7cd8baaa4899a4f24",
+            "size": 764
+          },
+          {
+            "name": "segment_000000.m4s",
+            "sha256": "84f2b82758e25d2395a1550641d1a50f57ccef051fce700fa4912ad48813abc1",
+            "size": 3038
+          },
+          {
+            "name": "segment_000001.m4s",
+            "sha256": "e56d1e8e794a306263db8fe36cc2ef396a5e4b393cb6642c99ccb8e897f3324e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000002.m4s",
+            "sha256": "aaca96c95893e508bdbffaa39180f0e60196d683f32eec4e4206aa8e414f9aac",
+            "size": 3011
+          },
+          {
+            "name": "segment_000003.m4s",
+            "sha256": "28fb517b36576bff5b5a1888a9957b4e3cc2dc388bb65937f4c115daa40be2d2",
+            "size": 3011
+          },
+          {
+            "name": "segment_000004.m4s",
+            "sha256": "1cf4e8e8051dc82f80c54590ea62e860c026f12a50456f902896db0de33bc0d1",
+            "size": 3021
+          },
+          {
+            "name": "segment_000005.m4s",
+            "sha256": "a0204553e3fba875a0e3ee25aadff43c658e8f42ef1d413ed7c0ceb79292f08f",
+            "size": 3011
+          },
+          {
+            "name": "segment_000006.m4s",
+            "sha256": "0969d6167f751ca7f77ad5d79bcb8057a85f4c28aa9c705834cad6573ee0fbb9",
+            "size": 3011
+          },
+          {
+            "name": "segment_000007.m4s",
+            "sha256": "cc2850950ba97bba7aa4d6d0ce417d2afc11fdb9f95ceff8939850d765986c6a",
+            "size": 3011
+          },
+          {
+            "name": "segment_000008.m4s",
+            "sha256": "8a805294d8cb2420d6623f97c4f7a0cbb2b855b294b6dda97f37106dedc2ee60",
+            "size": 3021
+          },
+          {
+            "name": "segment_000009.m4s",
+            "sha256": "e5683e41e06f4a951ddec85df1f6f68acd0480bbbf017dfecb4dcf5cf2d7ac99",
+            "size": 3011
+          },
+          {
+            "name": "segment_000010.m4s",
+            "sha256": "8c5b55337fd62347cfb6170682e4fd18fc7d0ad1480fb03a67c99cc75848694c",
+            "size": 3028
+          },
+          {
+            "name": "segment_000011.m4s",
+            "sha256": "0b4c081e2549b0df176a39e00c88f4c387806d6bd2d107666629afdf83975768",
+            "size": 3011
+          },
+          {
+            "name": "segment_000012.m4s",
+            "sha256": "d11f1a91406f229e818f0652a51d7e3e9bff90e1bd77cade739ee1cedf3065d5",
+            "size": 3021
+          },
+          {
+            "name": "segment_000013.m4s",
+            "sha256": "d7b311c6257f6c7641502ae842b7310aba48b9ba8fde73d4d819bc629fa38f3b",
+            "size": 3011
+          },
+          {
+            "name": "segment_000014.m4s",
+            "sha256": "eb4007c687bcf80f2d8ea27a1ac14c67315e56478def5fb3b80ec782ac54f815",
+            "size": 3011
+          },
+          {
+            "name": "segment_000015.m4s",
+            "sha256": "5b2fe421205fe9e3c99cb5281aea6a313fa589627b7a7c2227e8072ff624f794",
+            "size": 3011
+          },
+          {
+            "name": "segment_000016.m4s",
+            "sha256": "956a957f36501fee8e86a81519955c23163cf8f34f5dd4746b77f85e3080ae50",
+            "size": 3021
+          },
+          {
+            "name": "segment_000017.m4s",
+            "sha256": "ad8dbff38176e18d0f57f0f97c519ee22dc9774c2c1cf5bcaee68859f148160e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000018.m4s",
+            "sha256": "6f470e90063fbbf3f4b9b80fc0862c6344105c16db905ec2ce86263dc90faa38",
+            "size": 3011
+          },
+          {
+            "name": "segment_000019.m4s",
+            "sha256": "b1fdce2de6b754b1456d5e46241714b1e2cb9c1483124a5b1e946a3da457b575",
+            "size": 3011
+          },
+          {
+            "name": "segment_000020.m4s",
+            "sha256": "2e45e3d59bb14cf4e19332bada52eeac5d8682330ee765a9de12ec8972e607df",
+            "size": 3038
+          },
+          {
+            "name": "segment_000021.m4s",
+            "sha256": "110948f26329c80e997f883caba47e81e51659d19c4e975f9be7060b3acc752b",
+            "size": 3011
+          },
+          {
+            "name": "segment_000022.m4s",
+            "sha256": "758a916cb237bf37afe10ccbb521865236cd58cbd5112158e8f3bb79c773f590",
+            "size": 3011
+          },
+          {
+            "name": "segment_000023.m4s",
+            "sha256": "8af213e83b4c4b8bc8ecafb3aa7ddda2c01855e47fa3769c8ee8bed7e6508cc5",
+            "size": 3011
+          },
+          {
+            "name": "segment_000024.m4s",
+            "sha256": "7d699326b41a74292d0dfed1fc86d0aaadf4841d42c8923ea636115bd8d2a58d",
+            "size": 3021
+          },
+          {
+            "name": "segment_000025.m4s",
+            "sha256": "eaaac34336512e0b3377a3eb26ae324ed11d0bea2209652b8cfde6e55cd86a2c",
+            "size": 3011
+          },
+          {
+            "name": "segment_000026.m4s",
+            "sha256": "7ca374c7815780d487e3a738c52dc7a4ea24814842e244a6c2722fbab2e93331",
+            "size": 3011
+          },
+          {
+            "name": "segment_000027.m4s",
+            "sha256": "1262d5dd424b3ef35c93042f2c7d570f863d97f02f7ddc584bd018e0705efd5a",
+            "size": 3011
+          },
+          {
+            "name": "segment_000028.m4s",
+            "sha256": "d01aed7ff78408a3b4d479795f42e9a6c342b01895b716832dcdd02ff6bf52ff",
+            "size": 3021
+          },
+          {
+            "name": "segment_000029.m4s",
+            "sha256": "611860e8b2b8284b66db1fa4488aa2ff7a2243459f8d4befa028a998cbf43630",
+            "size": 3011
+          },
+          {
+            "name": "segment_000030.m4s",
+            "sha256": "52695b9bc8effc50588f856d5960d2cd19cd7ca91242bf421e9979eabea8f100",
+            "size": 3028
+          },
+          {
+            "name": "segment_000031.m4s",
+            "sha256": "0dfdecfb7616d9d63f3d5270e9c7ba27ad0e481427463095ccb21d7b5dcd3c3e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000032.m4s",
+            "sha256": "db55d89d29a7551f85c636c23c27d7bfe50cc8f1baa98580f500d45555f748a7",
+            "size": 3021
+          },
+          {
+            "name": "segment_000033.m4s",
+            "sha256": "6e670bdb6d07f8341d762cc62f530e56f08dc8aa714b6215251ddc485202e39d",
+            "size": 2903
+          },
+          {
+            "name": "index.m3u8",
+            "sha256": "7fd75cdddcc72db1c723fb9f2985babc55252b8f6327d30b9d73499c9a81d328",
+            "size": 1397
+          }
+        ],
+        "kind": "audio",
+        "metadata": {
+          "avg_frame_rate": "0/0",
+          "channels": 2,
+          "codec_name": "aac",
+          "nb_read_frames": "9475",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "sample_rate": "48000",
+          "start_pts": 0,
+          "time_base": "1/48000"
+        },
+        "prefix": "prepared/857b1e78245dbfa61c5dd23d33a8a54f079a2aac36b6500f2cf245664fad4e20/4b476e9738d0a48b65ffa3a9094a0ef25a11ca428924e62bf980d3dd79a44409/",
+        "segments": [
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            4105333,
+            1000000
+          ]
+        ],
+        "target_duration": 6
+      },
+      "profile_key": "857b1e78245dbfa61c5dd23d33a8a54f079a2aac36b6500f2cf245664fad4e20",
+      "spec": {
+        "bitrate": 64000,
+        "channels": 2,
+        "duration": [
+          2021,
+          10
+        ],
+        "kind": "audio",
+        "offset": [
+          0,
+          1
+        ],
+        "profile": "av1-aac-v1",
+        "sample_rate": 48000,
+        "segment_duration": [
+          6,
+          1
+        ]
+      },
+      "status": "ready",
+      "stream_index": 1,
+      "track_fingerprint": "128cf0159e5be76a69ade7b2ab32b04542ed23e9ac8426b340111fe2c689416b"
+    },
+    {
+      "artifact": {
+        "average_bandwidth": 165535,
+        "bandwidth": 401678,
+        "codec": "av01.0.01M.08.0.111.01.01.01.0",
+        "configuration": "81010d000a0e0000000cc4ff6700be0404040490",
+        "files": [
+          {
+            "name": "init.mp4",
+            "sha256": "a8c92a7c9864694fa7cb4f3c9897b6da73e6dfed91b1dc12556ee3bfc297f9bb",
+            "size": 833
+          },
+          {
+            "name": "segment_000000.m4s",
+            "sha256": "d22c86e4b79b8cc35b7bc51e44499e45640d5ee9e669dfc4165c917e423cdd44",
+            "size": 171423
+          },
+          {
+            "name": "segment_000001.m4s",
+            "sha256": "481f41da187e62295dde85734e279acfede92ed2896bb16e166536217ee9c6f2",
+            "size": 111822
+          },
+          {
+            "name": "segment_000002.m4s",
+            "sha256": "d125e539646ae878615f6f4f6830a6dbce70f67d33f6520e59bb808df71773d0",
+            "size": 175067
+          },
+          {
+            "name": "segment_000003.m4s",
+            "sha256": "9bc8d2d3d6b875040442cd2501ad883b1d4a141861e13aa4a87d11bee090ac92",
+            "size": 211944
+          },
+          {
+            "name": "segment_000004.m4s",
+            "sha256": "1f01fd4fbf362dabf671cdeb66eb5c2ba07244f1200cbfc810aa03a378002f71",
+            "size": 139229
+          },
+          {
+            "name": "segment_000005.m4s",
+            "sha256": "b0c291ca44f3e349ef8a3463aff2c862a4da32abbadbbad7d4cf3f89d11ed547",
+            "size": 133096
+          },
+          {
+            "name": "segment_000006.m4s",
+            "sha256": "7025168196f0d253854f9daa3ac1355550090f390e4d5df4927409f1a5bd63cb",
+            "size": 226316
+          },
+          {
+            "name": "segment_000007.m4s",
+            "sha256": "90423287dbaf79f1879787a46df4fb96c618d0d0ae7d6e19b3656b5b0471b359",
+            "size": 301258
+          },
+          {
+            "name": "segment_000008.m4s",
+            "sha256": "8856cb1f9d34d9ee1f77e60df0e2d03f681960e8d428cb0200ec69ad58aade52",
+            "size": 248682
+          },
+          {
+            "name": "segment_000009.m4s",
+            "sha256": "945ec5b6d17bbeaa1ce5fd63b3e278fd6b96b9745006f85e4d6d4884d112f7b7",
+            "size": 171184
+          },
+          {
+            "name": "segment_000010.m4s",
+            "sha256": "d7f4fdff2d6cc6bbb7abe647ac79256b8dff1df46ff39aaa2823f4be27bcc3b3",
+            "size": 94570
+          },
+          {
+            "name": "segment_000011.m4s",
+            "sha256": "745cfaa9b964e9e00f39fe884652075ac03bef86851bb60f798961c9a197dc9a",
+            "size": 67714
+          },
+          {
+            "name": "segment_000012.m4s",
+            "sha256": "42273ef8abef8728f905fcf665bae54d597bf0b23a216948944a045a20d022bd",
+            "size": 74168
+          },
+          {
+            "name": "segment_000013.m4s",
+            "sha256": "676873d31a6f3618d1746293209ca3ea59bf45e517d505bb2735accea1ba4471",
+            "size": 77795
+          },
+          {
+            "name": "segment_000014.m4s",
+            "sha256": "18e83a1f179e314781eba2e9166ad986c5c7c5d1eb8eb5b885c323afdee668e6",
+            "size": 78641
+          },
+          {
+            "name": "segment_000015.m4s",
+            "sha256": "bdfa1ffe08c4e40f1944a93629bc1157d6165ee0809f1689771183bb77caf4c7",
+            "size": 77180
+          },
+          {
+            "name": "segment_000016.m4s",
+            "sha256": "799d0b7eac18f806d7b2e365a090747922beadb7d98cdd362e62f7a3d7223cda",
+            "size": 101474
+          },
+          {
+            "name": "segment_000017.m4s",
+            "sha256": "d59dd36e6e587847569fab15372456d6cd47f93cbb9f2926cb621b634d9a9b91",
+            "size": 98756
+          },
+          {
+            "name": "segment_000018.m4s",
+            "sha256": "635001392bb7e6354278ae94ccc190aa04436c592c0ac4eab2422f6c14d61467",
+            "size": 141741
+          },
+          {
+            "name": "segment_000019.m4s",
+            "sha256": "c43c0df1ab450d86e0499d7aec141d3839b264924ce0aff2a48ac15430966227",
+            "size": 121400
+          },
+          {
+            "name": "segment_000020.m4s",
+            "sha256": "6d9e667df720a5e6ea5263fa991628bc48b8e82b5ec672e040f2112090e29d5b",
+            "size": 149805
+          },
+          {
+            "name": "segment_000021.m4s",
+            "sha256": "409fa09f048d6a584de21b5a8bbea1b8fbe6bc5fbe0f8fd7464dbbd725fa451d",
+            "size": 123913
+          },
+          {
+            "name": "segment_000022.m4s",
+            "sha256": "f16520c46293823fcf75eb36e27925e24b2f47351ab7ad041488a3adbc702fcd",
+            "size": 89783
+          },
+          {
+            "name": "segment_000023.m4s",
+            "sha256": "d4f2a73fe1b55d7ee292aa727a543d610087dbe206f003f9b0a3a6017bd0367b",
+            "size": 96321
+          },
+          {
+            "name": "segment_000024.m4s",
+            "sha256": "74d17de4584c4ff4e80821fb122b1aec3422df780a38ecbb366ca59bdedeb67b",
+            "size": 112748
+          },
+          {
+            "name": "segment_000025.m4s",
+            "sha256": "e7a4520bd2909ac310d5c6f46044cc91ed270846c3925d131f128411dda100bd",
+            "size": 105753
+          },
+          {
+            "name": "segment_000026.m4s",
+            "sha256": "f831e535e94b58b4312edb30d0ccb7e43408ea33cbf2307bb66af419f6bcc96a",
+            "size": 115806
+          },
+          {
+            "name": "segment_000027.m4s",
+            "sha256": "cfe5622d6b99b8fd7f36d20919b900698ce71ffcb772c0b9008bb97b915355f2",
+            "size": 143960
+          },
+          {
+            "name": "segment_000028.m4s",
+            "sha256": "4f0d03133238b1a87d7d3890b3642fa5d15933a2fccf318e62c2ea4977661a9a",
+            "size": 130624
+          },
+          {
+            "name": "segment_000029.m4s",
+            "sha256": "f719e479a041e85e0b4b150c610d16e889ddd748b2bec5175ac430f18c4b8f3c",
+            "size": 51125
+          },
+          {
+            "name": "segment_000030.m4s",
+            "sha256": "20f1b7b4e96d7486474b713130af00919a1e79ab7564c99e739eb3a057077312",
+            "size": 50096
+          },
+          {
+            "name": "segment_000031.m4s",
+            "sha256": "7c5fed02b0a2d0ba76cde9132f12e4bbe4180560e36c35cc16bbda5192e66f71",
+            "size": 53066
+          },
+          {
+            "name": "segment_000032.m4s",
+            "sha256": "b01d4dff3ad7f7e4ce1ce62f7ecac88d27f753477602ad764a433b51876268ba",
+            "size": 85862
+          },
+          {
+            "name": "segment_000033.m4s",
+            "sha256": "47148e8cfa081a63ee7fa355fff0ae3b69d9e1a89c2801c5c9cc436a937187ea",
+            "size": 49505
+          },
+          {
+            "name": "index.m3u8",
+            "sha256": "a379d9627171597ff5df69fd5650ee9b06c836d1f1e4088e86ca9fada7966b56",
+            "size": 1425
+          }
+        ],
+        "kind": "video",
+        "metadata": {
+          "avg_frame_rate": "30/1",
+          "codec_name": "av1",
+          "color_primaries": "bt709",
+          "color_range": "tv",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "height": 360,
+          "nb_read_frames": "6063",
+          "pix_fmt": "yuv420p",
+          "profile": "Main",
+          "r_frame_rate": "30/1",
+          "start_pts": 0,
+          "time_base": "1/15360",
+          "verified_frame_rate": "30",
+          "width": 640
+        },
+        "prefix": "prepared/9c160236c95c89b1ce44ff734a90666386b573b85cf3dc2e35833b71ed7ab939/ea6a78d211fc07c64142ab9403f1917dc7ef4f715a6601ac5ac831a5e68246cb/",
+        "presentation_origin": [
+          0,
+          1
+        ],
+        "segments": [
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            41,
+            10
+          ]
+        ],
+        "target_duration": 6
+      },
+      "profile_key": "9c160236c95c89b1ce44ff734a90666386b573b85cf3dc2e35833b71ed7ab939",
+      "spec": {
+        "crf": 34,
+        "duration": [
+          2021,
+          10
+        ],
+        "encoder": "libsvtav1",
+        "fps": [
+          30,
+          1
+        ],
+        "fps_cap": 30,
+        "gop": 180,
+        "height": 360,
+        "input_hdr": false,
+        "kind": "video",
+        "pix_fmt": "yuv420p",
+        "profile": "av1-aac-v1",
+        "quality": 360,
+        "range": "sdr",
+        "sar": [
+          1,
+          1
+        ],
+        "segment_duration": [
+          6,
+          1
+        ],
+        "width": 640
+      },
+      "status": "ready",
+      "stream_index": 0,
+      "track_fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa"
+    },
+    {
+      "artifact": {
+        "average_bandwidth": 784144,
+        "bandwidth": 2268655,
+        "codec": "av01.0.05M.08.0.111.01.01.01.0",
+        "configuration": "81050d000a0e0000002d4cffb3c02f8101010124",
+        "files": [
+          {
+            "name": "init.mp4",
+            "sha256": "ddcb2362831abd50a4e8d550cb86cc675dd1cae1133b3f788516f9d6cd21c8fe",
+            "size": 833
+          },
+          {
+            "name": "segment_000000.m4s",
+            "sha256": "04f67a959e58906df94104b9c77cc95b7b6cb855b5f46b8211a920c8650db832",
+            "size": 910451
+          },
+          {
+            "name": "segment_000001.m4s",
+            "sha256": "8b14f8a92a797d325cbb0e7b8b3f9c7e000f6b20862b4cdca83e363ac8db01ff",
+            "size": 466139
+          },
+          {
+            "name": "segment_000002.m4s",
+            "sha256": "67ad260f9ce077e417da7915388d367f7a1955c8e04f763e169475774e616d93",
+            "size": 670109
+          },
+          {
+            "name": "segment_000003.m4s",
+            "sha256": "3d80abede2d4213642e5f57ca3a3e6c4d00cfee4aebd2e45ad6552da863621e7",
+            "size": 823790
+          },
+          {
+            "name": "segment_000004.m4s",
+            "sha256": "b38d7942a4f636413b1e1853d8835ce0ad412b145efdd9f368c447dff35458c4",
+            "size": 668510
+          },
+          {
+            "name": "segment_000005.m4s",
+            "sha256": "3929a1bd2887bcc7b4476a00850c0a7a7ea0e634c5b21055858a3008fb11d470",
+            "size": 711462
+          },
+          {
+            "name": "segment_000006.m4s",
+            "sha256": "3ca9d174bb56b2d5443369d5e9cc6b1bd9c1fd473906286144c58038e4b5fb83",
+            "size": 1286595
+          },
+          {
+            "name": "segment_000007.m4s",
+            "sha256": "894e3312d403611551406d9f189727a4ad4a17c0e61aafba6045227a7591c480",
+            "size": 1685545
+          },
+          {
+            "name": "segment_000008.m4s",
+            "sha256": "48b6485d574af1a4d65f827aa73c6e2761322ee5e582a9a541ae9549e254bece",
+            "size": 1701491
+          },
+          {
+            "name": "segment_000009.m4s",
+            "sha256": "0ceaae0a092478a16c5697bb1242879c76f5d913deed6cd02d8f31de403fc5bc",
+            "size": 941078
+          },
+          {
+            "name": "segment_000010.m4s",
+            "sha256": "db06a0684bd0a2468a40c006ae43c312a41a9a51dd888e603aeee4054e3b2e54",
+            "size": 552329
+          },
+          {
+            "name": "segment_000011.m4s",
+            "sha256": "5f6bf2b32cb515a4758c5c750c7027d71376d1a58e91dc3941fd431eec1ed3dc",
+            "size": 362733
+          },
+          {
+            "name": "segment_000012.m4s",
+            "sha256": "35f6f240c7299cf192f0cbda3dbb9c6dbcbfc6da7f93356caa0f2ec34e6ccb9f",
+            "size": 417936
+          },
+          {
+            "name": "segment_000013.m4s",
+            "sha256": "fff7a6246f78439db976691ef5c6eb0399990b173daa9e4a7cf9ddb42862ce79",
+            "size": 435551
+          },
+          {
+            "name": "segment_000014.m4s",
+            "sha256": "43ade7cef45530ec4da0b9e25abab183f5688af0239c487b8c577b3fc30b7616",
+            "size": 429352
+          },
+          {
+            "name": "segment_000015.m4s",
+            "sha256": "2ca002e770a0dc109c4eab30187c0a7b716944157fc38774c2f05eb470df1a1f",
+            "size": 424971
+          },
+          {
+            "name": "segment_000016.m4s",
+            "sha256": "d59432dd23613d41f8ae41ff3f94f7a85dd6f4a15cb9f5156f21bfa5629780a0",
+            "size": 449372
+          },
+          {
+            "name": "segment_000017.m4s",
+            "sha256": "5bf87b777cc57d4827ff32b88594966890b03a0170b584624da236d6d323d116",
+            "size": 451502
+          },
+          {
+            "name": "segment_000018.m4s",
+            "sha256": "a4b250caeb724934e07c0bb6620f85f8a8783666e18fde92d0f3b1b69654f34a",
+            "size": 519039
+          },
+          {
+            "name": "segment_000019.m4s",
+            "sha256": "d04c3e32d20552b4c1f8ca8b2f24c48e87ae9d040e6c9dad208e3645b9477645",
+            "size": 488119
+          },
+          {
+            "name": "segment_000020.m4s",
+            "sha256": "f64f11d74924f40da9e25e0d3b990235d6e3804fd5a7fd32ddb2a8d5a1b2654e",
+            "size": 553879
+          },
+          {
+            "name": "segment_000021.m4s",
+            "sha256": "05b34779b1aa8de27283a5efbc9d9fc6d96f8e1c59592b44c441d5725677a699",
+            "size": 428711
+          },
+          {
+            "name": "segment_000022.m4s",
+            "sha256": "7421f6002a06b2d22d223f6b05dc12b18b0aa0981d328b807d70ec8b92ab3955",
+            "size": 346915
+          },
+          {
+            "name": "segment_000023.m4s",
+            "sha256": "860b90b2934ff3a70a2f73f0ffd7f349de4be462f6d384acdb66a1748c61a65e",
+            "size": 363729
+          },
+          {
+            "name": "segment_000024.m4s",
+            "sha256": "a367da60ae070eb4d3c2a418334cdd5405462b7ade886e8bb732dd9416916b2e",
+            "size": 391304
+          },
+          {
+            "name": "segment_000025.m4s",
+            "sha256": "25ca941ec3fcc456cac3d43f56421e121fb207b9e57e847e68511151914fce00",
+            "size": 445411
+          },
+          {
+            "name": "segment_000026.m4s",
+            "sha256": "7c57e9e3e2c5d767f71cbc781a7f968f061a660117154c88d6920b6b5834e815",
+            "size": 463106
+          },
+          {
+            "name": "segment_000027.m4s",
+            "sha256": "ba8510993c2ca78ae251a68b9553cb835b80e8f9ccef6292be0d775bd8cb0c71",
+            "size": 517645
+          },
+          {
+            "name": "segment_000028.m4s",
+            "sha256": "044f7523644530940116f855bbcf3d8a82df481208bfc4baa14655aa6f19e5dd",
+            "size": 439046
+          },
+          {
+            "name": "segment_000029.m4s",
+            "sha256": "4dd4376ae171dd1b5b9c3197381a258f0a5d72bb2d75791750dc51b80d115611",
+            "size": 258062
+          },
+          {
+            "name": "segment_000030.m4s",
+            "sha256": "3dd176920656bf518587377b1ee9d5f72c10b81b712c74d8da5a734ac7b73a9c",
+            "size": 201449
+          },
+          {
+            "name": "segment_000031.m4s",
+            "sha256": "a3fb6baab7222d1ef32e5a83ebf675de0c6c967c39f0c9359087cf4bb965d880",
+            "size": 312497
+          },
+          {
+            "name": "segment_000032.m4s",
+            "sha256": "378287a7996465e24720f8c9efb031b7a98653a7f7e36c3e214b5f3e0b84fc6d",
+            "size": 402109
+          },
+          {
+            "name": "segment_000033.m4s",
+            "sha256": "5a131728c8a5115051a2e52c318836377883ecfe64f770912bcd5ce4ef6e9e20",
+            "size": 289495
+          },
+          {
+            "name": "index.m3u8",
+            "sha256": "a379d9627171597ff5df69fd5650ee9b06c836d1f1e4088e86ca9fada7966b56",
+            "size": 1425
+          }
+        ],
+        "kind": "video",
+        "metadata": {
+          "avg_frame_rate": "30/1",
+          "codec_name": "av1",
+          "color_primaries": "bt709",
+          "color_range": "tv",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "height": 720,
+          "nb_read_frames": "6063",
+          "pix_fmt": "yuv420p",
+          "profile": "Main",
+          "r_frame_rate": "30/1",
+          "start_pts": 0,
+          "time_base": "1/15360",
+          "verified_frame_rate": "30",
+          "width": 1280
+        },
+        "prefix": "prepared/9f0f1ba1d77981c1c3082c0105ef97af205083f1d008534f576c9b28e82d1bc9/8175d5f2e0fe5b4e94feaae0cf94fae8204431241a84fad19c1ea66c3567bb91/",
+        "presentation_origin": [
+          0,
+          1
+        ],
+        "segments": [
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            41,
+            10
+          ]
+        ],
+        "target_duration": 6
+      },
+      "profile_key": "9f0f1ba1d77981c1c3082c0105ef97af205083f1d008534f576c9b28e82d1bc9",
+      "spec": {
+        "crf": 30,
+        "duration": [
+          2021,
+          10
+        ],
+        "encoder": "libsvtav1",
+        "fps": [
+          30,
+          1
+        ],
+        "fps_cap": 60,
+        "gop": 180,
+        "height": 720,
+        "input_hdr": false,
+        "kind": "video",
+        "pix_fmt": "yuv420p",
+        "profile": "av1-aac-v1",
+        "quality": 720,
+        "range": "sdr",
+        "sar": [
+          1,
+          1
+        ],
+        "segment_duration": [
+          6,
+          1
+        ],
+        "width": 1280
+      },
+      "status": "ready",
+      "stream_index": 0,
+      "track_fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa"
+    },
+    {
+      "artifact": {
+        "average_bandwidth": 304534,
+        "bandwidth": 807990,
+        "codec": "av01.0.04M.08.0.111.01.01.01.0",
+        "configuration": "81040d000a0e00000024c6a7df00be0404040490",
+        "files": [
+          {
+            "name": "init.mp4",
+            "sha256": "b8b507ac5e4d656ca4cf7df9918ac0e1b1b004089139e4fc1d0e94d2b987c14f",
+            "size": 833
+          },
+          {
+            "name": "segment_000000.m4s",
+            "sha256": "1e222d166b82e093efaa1aa821dfec689510d0c25a6bb978c90f93dc76f6a23d",
+            "size": 339071
+          },
+          {
+            "name": "segment_000001.m4s",
+            "sha256": "ceb96e01262a0048476a37d0326e279ab083def9971c23e52f665cb953f1c058",
+            "size": 192378
+          },
+          {
+            "name": "segment_000002.m4s",
+            "sha256": "d2fa2eb0a5fea8964d3b06621ba664bb212df03da86fee178be6f270bf2a3d7a",
+            "size": 303724
+          },
+          {
+            "name": "segment_000003.m4s",
+            "sha256": "fbdd26bd7d4ee661150940c0d5a2c1e1f73c6666f20cced43525529e1bf91995",
+            "size": 379849
+          },
+          {
+            "name": "segment_000004.m4s",
+            "sha256": "f7825eb75ae441ae33e2105b499da296b7c585d1de4d06ba4f230938bc0ef1db",
+            "size": 257102
+          },
+          {
+            "name": "segment_000005.m4s",
+            "sha256": "f70de94c07cc9cb97c42dd6d7e5d1f7e5cd5a016074e067c382e0f672bdb7e11",
+            "size": 251901
+          },
+          {
+            "name": "segment_000006.m4s",
+            "sha256": "1401ab85bf05aee67fd5fb965c1921ebc16e1159032e9d916906ccdd0a3e1268",
+            "size": 458230
+          },
+          {
+            "name": "segment_000007.m4s",
+            "sha256": "713079bdb57ee8e08bfdfd604db119beaec55b8101c1f30e9c8e6d186355f9a5",
+            "size": 605992
+          },
+          {
+            "name": "segment_000008.m4s",
+            "sha256": "baf025758afd77ce74281eb3340dd0005897808d15cd0c894846b1059fa6c8c4",
+            "size": 483367
+          },
+          {
+            "name": "segment_000009.m4s",
+            "sha256": "a99ba47493266b63d0b2f1a65baacd0a87335d0a7e00faed80eac060208f4846",
+            "size": 334220
+          },
+          {
+            "name": "segment_000010.m4s",
+            "sha256": "cbeffd5da137ff237b52859c3769c813121595d2b1bc14ceff123849789f2542",
+            "size": 179640
+          },
+          {
+            "name": "segment_000011.m4s",
+            "sha256": "2a1962a260b208e2b8d42c6e90517e84c1d326d08a22d3e84eb6eb4bdd13068d",
+            "size": 124997
+          },
+          {
+            "name": "segment_000012.m4s",
+            "sha256": "fa064d50488f98c9acdace9a115c63ffc0c916a58ae681b226937c7b5cd9b77e",
+            "size": 144736
+          },
+          {
+            "name": "segment_000013.m4s",
+            "sha256": "42648a63444f9d50db06ab56e20dd46d758724bcc89da0641b1e6c48425eade2",
+            "size": 156600
+          },
+          {
+            "name": "segment_000014.m4s",
+            "sha256": "9a7117c1f263c08f6fd5709cd1915f88a40dda809b610268dd5189faaa6c86c7",
+            "size": 157194
+          },
+          {
+            "name": "segment_000015.m4s",
+            "sha256": "4b8996c11ccc262e031341c494d383681ed84d85ad7a94704c979d360d5c5b34",
+            "size": 152050
+          },
+          {
+            "name": "segment_000016.m4s",
+            "sha256": "9e1555b269447f13a90761fd1acefd0999d921a5f688905933100093bb673b27",
+            "size": 181699
+          },
+          {
+            "name": "segment_000017.m4s",
+            "sha256": "fa0c4e2e34505ee473d8b1415e4b03d3bbe4130b4f2c46418493586a4bab69cd",
+            "size": 180157
+          },
+          {
+            "name": "segment_000018.m4s",
+            "sha256": "66be25b6596444b5f2b77fa2dce2837f62545c902e3f5e10db55bddd8f7bf93d",
+            "size": 241338
+          },
+          {
+            "name": "segment_000019.m4s",
+            "sha256": "3c5f43de5fb0acb8d341092c724e298395b1f6e7863bd4bccd1e15bc1ea71850",
+            "size": 213220
+          },
+          {
+            "name": "segment_000020.m4s",
+            "sha256": "1e4f56801ceb914b120c718c5ce7ab0051ec26fa6cc511c225fdf24a25b26177",
+            "size": 257942
+          },
+          {
+            "name": "segment_000021.m4s",
+            "sha256": "8b167798a0adedef00bb3da5b95de1ce652be9a452cab90f02329960c7d95b56",
+            "size": 207725
+          },
+          {
+            "name": "segment_000022.m4s",
+            "sha256": "823e099bef9e621e832dd1b4f5826b29fae191d3774b134b086dfd8180b5e2b2",
+            "size": 151852
+          },
+          {
+            "name": "segment_000023.m4s",
+            "sha256": "66fcce1b446c0a57bf9f8da6090f41a83840447581971202d6c46c0ebbe450f1",
+            "size": 163203
+          },
+          {
+            "name": "segment_000024.m4s",
+            "sha256": "e84155190471a4c7145117678bfb9dfcc946c937a95b3cc9ed3a8c49cae01ce1",
+            "size": 183422
+          },
+          {
+            "name": "segment_000025.m4s",
+            "sha256": "2e6197e9b557f50092a7e3cc6a360c7076367954bcdefeccb83d5736dca05927",
+            "size": 188871
+          },
+          {
+            "name": "segment_000026.m4s",
+            "sha256": "15e7e26af4e2bf538927e4c177142475168c5c4eca47ee3cd0523438bf96bf68",
+            "size": 207628
+          },
+          {
+            "name": "segment_000027.m4s",
+            "sha256": "1458ee55da2fc6949851bc081967e90773ae8dd79ba261a1f933b783c61bf6ab",
+            "size": 252740
+          },
+          {
+            "name": "segment_000028.m4s",
+            "sha256": "c326985309925b2da88b5dbd3dbad768ab416cb09dad32ef2705f02bc1991562",
+            "size": 218273
+          },
+          {
+            "name": "segment_000029.m4s",
+            "sha256": "9403599af7c5c86ee08a1ee438006476314555fc404a03fd546fe69db28616c3",
+            "size": 94551
+          },
+          {
+            "name": "segment_000030.m4s",
+            "sha256": "3103fdb07f2e244a5f177a6cfcac1d96859c45b1a9fab4ea26504604f7245b2d",
+            "size": 85898
+          },
+          {
+            "name": "segment_000031.m4s",
+            "sha256": "e8a0e42fa16721b533e63ba419cc90b52a3f23be75b37d56dd2e58e59a54ea01",
+            "size": 96996
+          },
+          {
+            "name": "segment_000032.m4s",
+            "sha256": "9a2d932ef07f1c2d3ddc397b7817dccbb68463fe291511c6d2cd64840d9b8ceb",
+            "size": 151634
+          },
+          {
+            "name": "segment_000033.m4s",
+            "sha256": "32bb644565206859b519170f30046b2caad77addbc924a261d3b4fd6bca3bdcd",
+            "size": 95067
+          },
+          {
+            "name": "index.m3u8",
+            "sha256": "a379d9627171597ff5df69fd5650ee9b06c836d1f1e4088e86ca9fada7966b56",
+            "size": 1425
+          }
+        ],
+        "kind": "video",
+        "metadata": {
+          "avg_frame_rate": "30/1",
+          "codec_name": "av1",
+          "color_primaries": "bt709",
+          "color_range": "tv",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "height": 480,
+          "nb_read_frames": "6063",
+          "pix_fmt": "yuv420p",
+          "profile": "Main",
+          "r_frame_rate": "30/1",
+          "start_pts": 0,
+          "time_base": "1/15360",
+          "verified_frame_rate": "30",
+          "width": 852
+        },
+        "prefix": "prepared/2de71551e3cd6223f2728a898e54017f34cdbb21ee13602a5877be5f46f53db6/146345329b7298da6b447e288d57bad4af5f1de82ac29be9e477a4f7cacfe304/",
+        "presentation_origin": [
+          0,
+          1
+        ],
+        "segments": [
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            41,
+            10
+          ]
+        ],
+        "target_duration": 6
+      },
+      "profile_key": "2de71551e3cd6223f2728a898e54017f34cdbb21ee13602a5877be5f46f53db6",
+      "spec": {
+        "crf": 32,
+        "duration": [
+          2021,
+          10
+        ],
+        "encoder": "libsvtav1",
+        "fps": [
+          30,
+          1
+        ],
+        "fps_cap": 30,
+        "gop": 180,
+        "height": 480,
+        "input_hdr": false,
+        "kind": "video",
+        "pix_fmt": "yuv420p",
+        "profile": "av1-aac-v1",
+        "quality": 480,
+        "range": "sdr",
+        "sar": [
+          640,
+          639
+        ],
+        "segment_duration": [
+          6,
+          1
+        ],
+        "width": 852
+      },
+      "status": "ready",
+      "stream_index": 0,
+      "track_fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa"
+    },
+    {
+      "artifact": {
+        "average_bandwidth": 4054,
+        "bandwidth": 5658,
+        "codec": "mp4a.40.2",
+        "configuration": "119056e500",
+        "files": [
+          {
+            "name": "init.mp4",
+            "sha256": "397d521fd9b1e66cddc13862c59d37499d3b2a587114f7c69a6f2b4591f495bf",
+            "size": 764
+          },
+          {
+            "name": "segment_000000.m4s",
+            "sha256": "84f2b82758e25d2395a1550641d1a50f57ccef051fce700fa4912ad48813abc1",
+            "size": 3038
+          },
+          {
+            "name": "segment_000001.m4s",
+            "sha256": "e56d1e8e794a306263db8fe36cc2ef396a5e4b393cb6642c99ccb8e897f3324e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000002.m4s",
+            "sha256": "aaca96c95893e508bdbffaa39180f0e60196d683f32eec4e4206aa8e414f9aac",
+            "size": 3011
+          },
+          {
+            "name": "segment_000003.m4s",
+            "sha256": "28fb517b36576bff5b5a1888a9957b4e3cc2dc388bb65937f4c115daa40be2d2",
+            "size": 3011
+          },
+          {
+            "name": "segment_000004.m4s",
+            "sha256": "1cf4e8e8051dc82f80c54590ea62e860c026f12a50456f902896db0de33bc0d1",
+            "size": 3021
+          },
+          {
+            "name": "segment_000005.m4s",
+            "sha256": "a0204553e3fba875a0e3ee25aadff43c658e8f42ef1d413ed7c0ceb79292f08f",
+            "size": 3011
+          },
+          {
+            "name": "segment_000006.m4s",
+            "sha256": "0969d6167f751ca7f77ad5d79bcb8057a85f4c28aa9c705834cad6573ee0fbb9",
+            "size": 3011
+          },
+          {
+            "name": "segment_000007.m4s",
+            "sha256": "cc2850950ba97bba7aa4d6d0ce417d2afc11fdb9f95ceff8939850d765986c6a",
+            "size": 3011
+          },
+          {
+            "name": "segment_000008.m4s",
+            "sha256": "8a805294d8cb2420d6623f97c4f7a0cbb2b855b294b6dda97f37106dedc2ee60",
+            "size": 3021
+          },
+          {
+            "name": "segment_000009.m4s",
+            "sha256": "e5683e41e06f4a951ddec85df1f6f68acd0480bbbf017dfecb4dcf5cf2d7ac99",
+            "size": 3011
+          },
+          {
+            "name": "segment_000010.m4s",
+            "sha256": "8c5b55337fd62347cfb6170682e4fd18fc7d0ad1480fb03a67c99cc75848694c",
+            "size": 3028
+          },
+          {
+            "name": "segment_000011.m4s",
+            "sha256": "0b4c081e2549b0df176a39e00c88f4c387806d6bd2d107666629afdf83975768",
+            "size": 3011
+          },
+          {
+            "name": "segment_000012.m4s",
+            "sha256": "d11f1a91406f229e818f0652a51d7e3e9bff90e1bd77cade739ee1cedf3065d5",
+            "size": 3021
+          },
+          {
+            "name": "segment_000013.m4s",
+            "sha256": "d7b311c6257f6c7641502ae842b7310aba48b9ba8fde73d4d819bc629fa38f3b",
+            "size": 3011
+          },
+          {
+            "name": "segment_000014.m4s",
+            "sha256": "eb4007c687bcf80f2d8ea27a1ac14c67315e56478def5fb3b80ec782ac54f815",
+            "size": 3011
+          },
+          {
+            "name": "segment_000015.m4s",
+            "sha256": "5b2fe421205fe9e3c99cb5281aea6a313fa589627b7a7c2227e8072ff624f794",
+            "size": 3011
+          },
+          {
+            "name": "segment_000016.m4s",
+            "sha256": "956a957f36501fee8e86a81519955c23163cf8f34f5dd4746b77f85e3080ae50",
+            "size": 3021
+          },
+          {
+            "name": "segment_000017.m4s",
+            "sha256": "ad8dbff38176e18d0f57f0f97c519ee22dc9774c2c1cf5bcaee68859f148160e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000018.m4s",
+            "sha256": "6f470e90063fbbf3f4b9b80fc0862c6344105c16db905ec2ce86263dc90faa38",
+            "size": 3011
+          },
+          {
+            "name": "segment_000019.m4s",
+            "sha256": "b1fdce2de6b754b1456d5e46241714b1e2cb9c1483124a5b1e946a3da457b575",
+            "size": 3011
+          },
+          {
+            "name": "segment_000020.m4s",
+            "sha256": "2e45e3d59bb14cf4e19332bada52eeac5d8682330ee765a9de12ec8972e607df",
+            "size": 3038
+          },
+          {
+            "name": "segment_000021.m4s",
+            "sha256": "110948f26329c80e997f883caba47e81e51659d19c4e975f9be7060b3acc752b",
+            "size": 3011
+          },
+          {
+            "name": "segment_000022.m4s",
+            "sha256": "758a916cb237bf37afe10ccbb521865236cd58cbd5112158e8f3bb79c773f590",
+            "size": 3011
+          },
+          {
+            "name": "segment_000023.m4s",
+            "sha256": "8af213e83b4c4b8bc8ecafb3aa7ddda2c01855e47fa3769c8ee8bed7e6508cc5",
+            "size": 3011
+          },
+          {
+            "name": "segment_000024.m4s",
+            "sha256": "7d699326b41a74292d0dfed1fc86d0aaadf4841d42c8923ea636115bd8d2a58d",
+            "size": 3021
+          },
+          {
+            "name": "segment_000025.m4s",
+            "sha256": "eaaac34336512e0b3377a3eb26ae324ed11d0bea2209652b8cfde6e55cd86a2c",
+            "size": 3011
+          },
+          {
+            "name": "segment_000026.m4s",
+            "sha256": "7ca374c7815780d487e3a738c52dc7a4ea24814842e244a6c2722fbab2e93331",
+            "size": 3011
+          },
+          {
+            "name": "segment_000027.m4s",
+            "sha256": "1262d5dd424b3ef35c93042f2c7d570f863d97f02f7ddc584bd018e0705efd5a",
+            "size": 3011
+          },
+          {
+            "name": "segment_000028.m4s",
+            "sha256": "d01aed7ff78408a3b4d479795f42e9a6c342b01895b716832dcdd02ff6bf52ff",
+            "size": 3021
+          },
+          {
+            "name": "segment_000029.m4s",
+            "sha256": "611860e8b2b8284b66db1fa4488aa2ff7a2243459f8d4befa028a998cbf43630",
+            "size": 3011
+          },
+          {
+            "name": "segment_000030.m4s",
+            "sha256": "52695b9bc8effc50588f856d5960d2cd19cd7ca91242bf421e9979eabea8f100",
+            "size": 3028
+          },
+          {
+            "name": "segment_000031.m4s",
+            "sha256": "0dfdecfb7616d9d63f3d5270e9c7ba27ad0e481427463095ccb21d7b5dcd3c3e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000032.m4s",
+            "sha256": "db55d89d29a7551f85c636c23c27d7bfe50cc8f1baa98580f500d45555f748a7",
+            "size": 3021
+          },
+          {
+            "name": "segment_000033.m4s",
+            "sha256": "6e670bdb6d07f8341d762cc62f530e56f08dc8aa714b6215251ddc485202e39d",
+            "size": 2903
+          },
+          {
+            "name": "index.m3u8",
+            "sha256": "7fd75cdddcc72db1c723fb9f2985babc55252b8f6327d30b9d73499c9a81d328",
+            "size": 1397
+          }
+        ],
+        "kind": "audio",
+        "metadata": {
+          "avg_frame_rate": "0/0",
+          "channels": 2,
+          "codec_name": "aac",
+          "nb_read_frames": "9475",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "sample_rate": "48000",
+          "start_pts": 0,
+          "time_base": "1/48000"
+        },
+        "prefix": "prepared/b52912321b9fb90a9871417f7dc423e23c55c7ccf59e975498348777624b9647/c77f5f3630fc66c577b099071e525f34989a11effb19fd92c9eb87f75c6665c5/",
+        "segments": [
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            4105333,
+            1000000
+          ]
+        ],
+        "target_duration": 6
+      },
+      "profile_key": "b52912321b9fb90a9871417f7dc423e23c55c7ccf59e975498348777624b9647",
+      "spec": {
+        "bitrate": 160000,
+        "channels": 2,
+        "duration": [
+          2021,
+          10
+        ],
+        "kind": "audio",
+        "offset": [
+          0,
+          1
+        ],
+        "profile": "av1-aac-v1",
+        "sample_rate": 48000,
+        "segment_duration": [
+          6,
+          1
+        ]
+      },
+      "status": "ready",
+      "stream_index": 1,
+      "track_fingerprint": "128cf0159e5be76a69ade7b2ab32b04542ed23e9ac8426b340111fe2c689416b"
+    },
+    {
+      "artifact": {
+        "average_bandwidth": 4054,
+        "bandwidth": 5658,
+        "codec": "mp4a.40.2",
+        "configuration": "119056e500",
+        "files": [
+          {
+            "name": "init.mp4",
+            "sha256": "1a5d14aa507168b08274904c2862a0f0dd46e45cbf2d0e7ea57ac7758c6d3144",
+            "size": 764
+          },
+          {
+            "name": "segment_000000.m4s",
+            "sha256": "84f2b82758e25d2395a1550641d1a50f57ccef051fce700fa4912ad48813abc1",
+            "size": 3038
+          },
+          {
+            "name": "segment_000001.m4s",
+            "sha256": "e56d1e8e794a306263db8fe36cc2ef396a5e4b393cb6642c99ccb8e897f3324e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000002.m4s",
+            "sha256": "aaca96c95893e508bdbffaa39180f0e60196d683f32eec4e4206aa8e414f9aac",
+            "size": 3011
+          },
+          {
+            "name": "segment_000003.m4s",
+            "sha256": "28fb517b36576bff5b5a1888a9957b4e3cc2dc388bb65937f4c115daa40be2d2",
+            "size": 3011
+          },
+          {
+            "name": "segment_000004.m4s",
+            "sha256": "1cf4e8e8051dc82f80c54590ea62e860c026f12a50456f902896db0de33bc0d1",
+            "size": 3021
+          },
+          {
+            "name": "segment_000005.m4s",
+            "sha256": "a0204553e3fba875a0e3ee25aadff43c658e8f42ef1d413ed7c0ceb79292f08f",
+            "size": 3011
+          },
+          {
+            "name": "segment_000006.m4s",
+            "sha256": "0969d6167f751ca7f77ad5d79bcb8057a85f4c28aa9c705834cad6573ee0fbb9",
+            "size": 3011
+          },
+          {
+            "name": "segment_000007.m4s",
+            "sha256": "cc2850950ba97bba7aa4d6d0ce417d2afc11fdb9f95ceff8939850d765986c6a",
+            "size": 3011
+          },
+          {
+            "name": "segment_000008.m4s",
+            "sha256": "8a805294d8cb2420d6623f97c4f7a0cbb2b855b294b6dda97f37106dedc2ee60",
+            "size": 3021
+          },
+          {
+            "name": "segment_000009.m4s",
+            "sha256": "e5683e41e06f4a951ddec85df1f6f68acd0480bbbf017dfecb4dcf5cf2d7ac99",
+            "size": 3011
+          },
+          {
+            "name": "segment_000010.m4s",
+            "sha256": "8c5b55337fd62347cfb6170682e4fd18fc7d0ad1480fb03a67c99cc75848694c",
+            "size": 3028
+          },
+          {
+            "name": "segment_000011.m4s",
+            "sha256": "0b4c081e2549b0df176a39e00c88f4c387806d6bd2d107666629afdf83975768",
+            "size": 3011
+          },
+          {
+            "name": "segment_000012.m4s",
+            "sha256": "d11f1a91406f229e818f0652a51d7e3e9bff90e1bd77cade739ee1cedf3065d5",
+            "size": 3021
+          },
+          {
+            "name": "segment_000013.m4s",
+            "sha256": "d7b311c6257f6c7641502ae842b7310aba48b9ba8fde73d4d819bc629fa38f3b",
+            "size": 3011
+          },
+          {
+            "name": "segment_000014.m4s",
+            "sha256": "eb4007c687bcf80f2d8ea27a1ac14c67315e56478def5fb3b80ec782ac54f815",
+            "size": 3011
+          },
+          {
+            "name": "segment_000015.m4s",
+            "sha256": "5b2fe421205fe9e3c99cb5281aea6a313fa589627b7a7c2227e8072ff624f794",
+            "size": 3011
+          },
+          {
+            "name": "segment_000016.m4s",
+            "sha256": "956a957f36501fee8e86a81519955c23163cf8f34f5dd4746b77f85e3080ae50",
+            "size": 3021
+          },
+          {
+            "name": "segment_000017.m4s",
+            "sha256": "ad8dbff38176e18d0f57f0f97c519ee22dc9774c2c1cf5bcaee68859f148160e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000018.m4s",
+            "sha256": "6f470e90063fbbf3f4b9b80fc0862c6344105c16db905ec2ce86263dc90faa38",
+            "size": 3011
+          },
+          {
+            "name": "segment_000019.m4s",
+            "sha256": "b1fdce2de6b754b1456d5e46241714b1e2cb9c1483124a5b1e946a3da457b575",
+            "size": 3011
+          },
+          {
+            "name": "segment_000020.m4s",
+            "sha256": "2e45e3d59bb14cf4e19332bada52eeac5d8682330ee765a9de12ec8972e607df",
+            "size": 3038
+          },
+          {
+            "name": "segment_000021.m4s",
+            "sha256": "110948f26329c80e997f883caba47e81e51659d19c4e975f9be7060b3acc752b",
+            "size": 3011
+          },
+          {
+            "name": "segment_000022.m4s",
+            "sha256": "758a916cb237bf37afe10ccbb521865236cd58cbd5112158e8f3bb79c773f590",
+            "size": 3011
+          },
+          {
+            "name": "segment_000023.m4s",
+            "sha256": "8af213e83b4c4b8bc8ecafb3aa7ddda2c01855e47fa3769c8ee8bed7e6508cc5",
+            "size": 3011
+          },
+          {
+            "name": "segment_000024.m4s",
+            "sha256": "7d699326b41a74292d0dfed1fc86d0aaadf4841d42c8923ea636115bd8d2a58d",
+            "size": 3021
+          },
+          {
+            "name": "segment_000025.m4s",
+            "sha256": "eaaac34336512e0b3377a3eb26ae324ed11d0bea2209652b8cfde6e55cd86a2c",
+            "size": 3011
+          },
+          {
+            "name": "segment_000026.m4s",
+            "sha256": "7ca374c7815780d487e3a738c52dc7a4ea24814842e244a6c2722fbab2e93331",
+            "size": 3011
+          },
+          {
+            "name": "segment_000027.m4s",
+            "sha256": "1262d5dd424b3ef35c93042f2c7d570f863d97f02f7ddc584bd018e0705efd5a",
+            "size": 3011
+          },
+          {
+            "name": "segment_000028.m4s",
+            "sha256": "d01aed7ff78408a3b4d479795f42e9a6c342b01895b716832dcdd02ff6bf52ff",
+            "size": 3021
+          },
+          {
+            "name": "segment_000029.m4s",
+            "sha256": "611860e8b2b8284b66db1fa4488aa2ff7a2243459f8d4befa028a998cbf43630",
+            "size": 3011
+          },
+          {
+            "name": "segment_000030.m4s",
+            "sha256": "52695b9bc8effc50588f856d5960d2cd19cd7ca91242bf421e9979eabea8f100",
+            "size": 3028
+          },
+          {
+            "name": "segment_000031.m4s",
+            "sha256": "0dfdecfb7616d9d63f3d5270e9c7ba27ad0e481427463095ccb21d7b5dcd3c3e",
+            "size": 3011
+          },
+          {
+            "name": "segment_000032.m4s",
+            "sha256": "db55d89d29a7551f85c636c23c27d7bfe50cc8f1baa98580f500d45555f748a7",
+            "size": 3021
+          },
+          {
+            "name": "segment_000033.m4s",
+            "sha256": "6e670bdb6d07f8341d762cc62f530e56f08dc8aa714b6215251ddc485202e39d",
+            "size": 2903
+          },
+          {
+            "name": "index.m3u8",
+            "sha256": "7fd75cdddcc72db1c723fb9f2985babc55252b8f6327d30b9d73499c9a81d328",
+            "size": 1397
+          }
+        ],
+        "kind": "audio",
+        "metadata": {
+          "avg_frame_rate": "0/0",
+          "channels": 2,
+          "codec_name": "aac",
+          "nb_read_frames": "9475",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "sample_rate": "48000",
+          "start_pts": 0,
+          "time_base": "1/48000"
+        },
+        "prefix": "prepared/ff7318d4311336d9b3d575d5f18cc1333fecafb734785b38ba8746f4dc3d6a57/7adbc3ff52c9f2756ec3cfb654a24bc673480054d9efb6e0f65ad308f63e5003/",
+        "segments": [
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            5994667,
+            1000000
+          ],
+          [
+            752,
+            125
+          ],
+          [
+            4105333,
+            1000000
+          ]
+        ],
+        "target_duration": 6
+      },
+      "profile_key": "ff7318d4311336d9b3d575d5f18cc1333fecafb734785b38ba8746f4dc3d6a57",
+      "spec": {
+        "bitrate": 96000,
+        "channels": 2,
+        "duration": [
+          2021,
+          10
+        ],
+        "kind": "audio",
+        "offset": [
+          0,
+          1
+        ],
+        "profile": "av1-aac-v1",
+        "sample_rate": 48000,
+        "segment_duration": [
+          6,
+          1
+        ]
+      },
+      "status": "ready",
+      "stream_index": 1,
+      "track_fingerprint": "128cf0159e5be76a69ade7b2ab32b04542ed23e9ac8426b340111fe2c689416b"
+    },
+    {
+      "artifact": {
+        "candidates": [
+          "candidate_0.webp",
+          "candidate_1.webp",
+          "candidate_2.webp"
+        ],
+        "content_type": "image/webp",
+        "files": [
+          {
+            "name": "candidate_0.webp",
+            "sha256": "8456632c264e44787d2386fd4f16da832d407c6f57136f5fd6edcf27bc1188bf",
+            "size": 171668
+          },
+          {
+            "name": "candidate_1.webp",
+            "sha256": "e836a087f519ece3636afd44a9ab062e319072fcdd338882e3cd5e068359b34b",
+            "size": 30784
+          },
+          {
+            "name": "candidate_2.webp",
+            "sha256": "7fadc2d6ef175eadfcd0a73bb4526ac986160f403f2cea42d1f0637c6ffff5d1",
+            "size": 27608
+          }
+        ],
+        "height": 720,
+        "kind": "thumbnail_set",
+        "prefix": "prepared/e98a9edb8e90b32b12e6fba24faaca112c94eeb541e8943a1117153d7601619c/26420f677113494ccace4b2be1e1d7c1da331ab8ad2995dcd4246065deb46880/",
+        "width": 1280
+      },
+      "profile_key": "e98a9edb8e90b32b12e6fba24faaca112c94eeb541e8943a1117153d7601619c",
+      "spec": {
+        "duration": [
+          2021,
+          10
+        ],
+        "height": 720,
+        "input_hdr": false,
+        "kind": "thumbnail_set",
+        "positions": [
+          [
+            123281,
+            2400
+          ],
+          [
+            1198453,
+            10000
+          ],
+          [
+            2706119,
+            18750
+          ]
+        ],
+        "profile": "thumbnail-webp-80-v1",
+        "width": 1280
+      },
+      "status": "ready",
+      "stream_index": 0,
+      "track_fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa"
+    }
+  ],
+  "plan": {
+    "audio_index": 1,
+    "subtitles_inventoried": true,
+    "thumbnail": "e98a9edb8e90b32b12e6fba24faaca112c94eeb541e8943a1117153d7601619c",
+    "variants": [
+      {
+        "audio": "857b1e78245dbfa61c5dd23d33a8a54f079a2aac36b6500f2cf245664fad4e20",
+        "quality": 360,
+        "range": "sdr",
+        "video": "9c160236c95c89b1ce44ff734a90666386b573b85cf3dc2e35833b71ed7ab939"
+      },
+      {
+        "audio": "ff7318d4311336d9b3d575d5f18cc1333fecafb734785b38ba8746f4dc3d6a57",
+        "quality": 480,
+        "range": "sdr",
+        "video": "2de71551e3cd6223f2728a898e54017f34cdbb21ee13602a5877be5f46f53db6"
+      },
+      {
+        "audio": "b52912321b9fb90a9871417f7dc423e23c55c7ccf59e975498348777624b9647",
+        "quality": 720,
+        "range": "sdr",
+        "video": "9f0f1ba1d77981c1c3082c0105ef97af205083f1d008534f576c9b28e82d1bc9"
+      }
+    ],
+    "version": "av1-aac-v1",
+    "video_index": 0
+  },
+  "slot": 0,
+  "source": {
+    "fingerprint": "7ee64a13acce3e069f09cc22e619165757051d76d72194936dfe287ad5fbf313",
+    "inspection": {
+      "codec": "h264",
+      "duration_den": 11025,
+      "duration_num": 2228992,
+      "fingerprint": "7ee64a13acce3e069f09cc22e619165757051d76d72194936dfe287ad5fbf313",
+      "height": 720,
+      "tracks": [
+        {
+          "disposition": {
+            "attached_pic": "0",
+            "captions": "0",
+            "clean_effects": "0",
+            "comment": "0",
+            "default": "1",
+            "dependent": "0",
+            "descriptions": "0",
+            "dub": "0",
+            "forced": "0",
+            "hearing_impaired": "0",
+            "karaoke": "0",
+            "lyrics": "0",
+            "metadata": "0",
+            "multilayer": "0",
+            "non_diegetic": "0",
+            "original": "0",
+            "still_image": "0",
+            "timed_thumbnails": "0",
+            "visual_impaired": "0"
+          },
+          "fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa",
+          "language": "und",
+          "offset": [
+            0,
+            1
+          ],
+          "packet_count": 6063,
+          "presentation_duration": [
+            2021,
+            10
+          ],
+          "presentation_offset": [
+            0,
+            1
+          ],
+          "properties": {
+            "avg_frame_rate": [
+              30,
+              1
+            ],
+            "bits_per_raw_sample": [
+              8,
+              1
+            ],
+            "chroma_location": "left",
+            "codec_name": "h264",
+            "codec_type": "video",
+            "coded_height": [
+              720,
+              1
+            ],
+            "coded_width": [
+              1280,
+              1
+            ],
+            "color_primaries": "bt709",
+            "color_range": "tv",
+            "color_space": "bt709",
+            "color_transfer": "bt709",
+            "declared_duration": [
+              2021,
+              10
+            ],
+            "display_aspect_ratio": [
+              16,
+              9
+            ],
+            "extradata_hash": "SHA256:b58f17e7fce48cc31c51ab2049da5b6ed57870cc7b845c73e4c17a3a086d0331",
+            "extradata_size": [
+              42,
+              1
+            ],
+            "field_order": "progressive",
+            "has_b_frames": [
+              0,
+              1
+            ],
+            "height": [
+              720,
+              1
+            ],
+            "is_avc": "true",
+            "level": [
+              31,
+              1
+            ],
+            "nal_length_size": [
+              4,
+              1
+            ],
+            "pix_fmt": "yuv420p",
+            "profile": "Constrained Baseline",
+            "r_frame_rate": [
+              30,
+              1
+            ],
+            "refs": [
+              1,
+              1
+            ],
+            "sample_aspect_ratio": [
+              1,
+              1
+            ],
+            "version": "compressed-v1",
+            "width": [
+              1280,
+              1
+            ]
+          },
+          "stream_index": 0
+        },
+        {
+          "disposition": {
+            "attached_pic": "0",
+            "captions": "0",
+            "clean_effects": "0",
+            "comment": "0",
+            "default": "1",
+            "dependent": "0",
+            "descriptions": "0",
+            "dub": "0",
+            "forced": "0",
+            "hearing_impaired": "0",
+            "karaoke": "0",
+            "lyrics": "0",
+            "metadata": "0",
+            "multilayer": "0",
+            "non_diegetic": "0",
+            "original": "0",
+            "still_image": "0",
+            "timed_thumbnails": "0",
+            "visual_impaired": "0"
+          },
+          "fingerprint": "128cf0159e5be76a69ade7b2ab32b04542ed23e9ac8426b340111fe2c689416b",
+          "language": "und",
+          "offset": [
+            0,
+            1
+          ],
+          "packet_count": 8707,
+          "presentation_duration": [
+            2228992,
+            11025
+          ],
+          "presentation_offset": [
+            0,
+            1
+          ],
+          "properties": {
+            "avg_frame_rate": "0/0",
+            "bits_per_sample": [
+              0,
+              1
+            ],
+            "channel_layout": "stereo",
+            "channels": [
+              2,
+              1
+            ],
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "declared_duration": [
+              2228992,
+              11025
+            ],
+            "extradata_hash": "SHA256:03823224971f2d9dbb76d83a08f766351447f08b3739cd2fc36182f306ae3e02",
+            "extradata_size": [
+              5,
+              1
+            ],
+            "profile": "LC",
+            "r_frame_rate": "0/0",
+            "sample_fmt": "fltp",
+            "sample_rate": [
+              44100,
+              1
+            ],
+            "version": "compressed-v1"
+          },
+          "stream_index": 1
+        }
+      ],
+      "version": 3,
+      "width": 1280
+    },
+    "manifest": {
+      "tracks": [
+        {
+          "disposition": {
+            "attached_pic": "0",
+            "captions": "0",
+            "clean_effects": "0",
+            "comment": "0",
+            "default": "1",
+            "dependent": "0",
+            "descriptions": "0",
+            "dub": "0",
+            "forced": "0",
+            "hearing_impaired": "0",
+            "karaoke": "0",
+            "lyrics": "0",
+            "metadata": "0",
+            "multilayer": "0",
+            "non_diegetic": "0",
+            "original": "0",
+            "still_image": "0",
+            "timed_thumbnails": "0",
+            "visual_impaired": "0"
+          },
+          "fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa",
+          "language": "und",
+          "offset": [
+            0,
+            1
+          ]
+        },
+        {
+          "disposition": {
+            "attached_pic": "0",
+            "captions": "0",
+            "clean_effects": "0",
+            "comment": "0",
+            "default": "1",
+            "dependent": "0",
+            "descriptions": "0",
+            "dub": "0",
+            "forced": "0",
+            "hearing_impaired": "0",
+            "karaoke": "0",
+            "lyrics": "0",
+            "metadata": "0",
+            "multilayer": "0",
+            "non_diegetic": "0",
+            "original": "0",
+            "still_image": "0",
+            "timed_thumbnails": "0",
+            "visual_impaired": "0"
+          },
+          "fingerprint": "128cf0159e5be76a69ade7b2ab32b04542ed23e9ac8426b340111fe2c689416b",
+          "language": "und",
+          "offset": [
+            0,
+            1
+          ]
+        }
+      ],
+      "version": "compressed-v1"
+    },
+    "size": 47421525,
+    "tracks": [
+      {
+        "fingerprint": "128cf0159e5be76a69ade7b2ab32b04542ed23e9ac8426b340111fe2c689416b",
+        "packet_count": 8707,
+        "properties": {
+          "avg_frame_rate": "0/0",
+          "bits_per_sample": [
+            0,
+            1
+          ],
+          "channel_layout": "stereo",
+          "channels": [
+            2,
+            1
+          ],
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "declared_duration": [
+            2228992,
+            11025
+          ],
+          "extradata_hash": "SHA256:03823224971f2d9dbb76d83a08f766351447f08b3739cd2fc36182f306ae3e02",
+          "extradata_size": [
+            5,
+            1
+          ],
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "sample_fmt": "fltp",
+          "sample_rate": [
+            44100,
+            1
+          ],
+          "version": "compressed-v1"
+        },
+        "stream_index": 1
+      },
+      {
+        "fingerprint": "ac3ab81e93153c17c9c985d652dd623f8532a38f5fcb604cb51ca513e5df7afa",
+        "packet_count": 6063,
+        "properties": {
+          "avg_frame_rate": [
+            30,
+            1
+          ],
+          "bits_per_raw_sample": [
+            8,
+            1
+          ],
+          "chroma_location": "left",
+          "codec_name": "h264",
+          "codec_type": "video",
+          "coded_height": [
+            720,
+            1
+          ],
+          "coded_width": [
+            1280,
+            1
+          ],
+          "color_primaries": "bt709",
+          "color_range": "tv",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "declared_duration": [
+            2021,
+            10
+          ],
+          "display_aspect_ratio": [
+            16,
+            9
+          ],
+          "extradata_hash": "SHA256:b58f17e7fce48cc31c51ab2049da5b6ed57870cc7b845c73e4c17a3a086d0331",
+          "extradata_size": [
+            42,
+            1
+          ],
+          "field_order": "progressive",
+          "has_b_frames": [
+            0,
+            1
+          ],
+          "height": [
+            720,
+            1
+          ],
+          "is_avc": "true",
+          "level": [
+            31,
+            1
+          ],
+          "nal_length_size": [
+            4,
+            1
+          ],
+          "pix_fmt": "yuv420p",
+          "profile": "Constrained Baseline",
+          "r_frame_rate": [
+            30,
+            1
+          ],
+          "refs": [
+            1,
+            1
+          ],
+          "sample_aspect_ratio": [
+            1,
+            1
+          ],
+          "version": "compressed-v1",
+          "width": [
+            1280,
+            1
+          ]
+        },
+        "stream_index": 0
+      }
+    ]
+  },
+  "version": 1
+}

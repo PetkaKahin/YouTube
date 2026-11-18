@@ -1,0 +1,150 @@
+{
+  "version": 2,
+  "clips": {
+    "fern-canyon-1": {
+      "title": "Каньон папоротников — прогулка по лесу",
+      "sha256": "82d8bd326c899ae7f3872df4664b5a4f368ee633ee0ef0d99d7e9c8e649102f5",
+      "duration": 142.408933,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/audiovideo/7804c14a-c2d8-41dd-8afa-b350b529f5d2720p.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "280f0ac4959524e2494f105cbec54fe4a0d652a99a040b1ec9b6f261e8b3a4c8",
+      "bundle": "fern-canyon-1/bundle.json"
+    },
+    "fern-canyon-2": {
+      "title": "Зелёные стены каньона Ферн",
+      "sha256": "8a6d00306b9fd73a381eeb08568c0dd0ff259f13c8046570e0eab3bef8e1c683",
+      "duration": 93.9939,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/audiovideo/2a09fa7d-6ea9-42cd-bd08-9fdec585dfc7720p.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "9fffbe431a2d39fa004029030d0d0bf11b33a4ab139661d2844ce43bb5de69ed",
+      "bundle": "fern-canyon-2/bundle.json"
+    },
+    "forest-trail": {
+      "title": "Тропа среди гигантских секвой",
+      "sha256": "334712113bda2156d5314ca404c75515942a383ca7e2fed88f985dcf6ea8d974",
+      "duration": 121.706667,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/8A8BE4F4-0DFF-5FEB-327FECD42315846C/redw-LostManCreektrailRedwoodsandsnag_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "7a1b5a0316eacc9ed39f5bf8c46c3d149434e1f373cef49e6212df0efa15471a",
+      "bundle": "forest-trail/bundle.json"
+    },
+    "lost-man-creek": {
+      "title": "Лесной ручей Лост Мэн",
+      "sha256": "5fd4feef8dccfc7d608bcab25da33a761fce20a27a9e056ca76a55912cdd3b58",
+      "duration": 90.09,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/8AF3D83E-F14F-CA00-D55B626EDE6D3F45/redw-LostManCreek_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "changes": "H.264/AAC transcode, first 90 seconds, original 1280x720 resolution",
+      "bundle_sha256": "696bb2e3059da919ff024d4d4a8ed00dabcd0e923d299e202f6af5e7f1399c39",
+      "bundle": "lost-man-creek/bundle.json"
+    },
+    "sun-in-canopy": {
+      "title": "Солнечные лучи в кронах секвой",
+      "sha256": "12c1e011cdff123ac96f3c629811aca0a063ce93a9d69c9b48d1e838bbf34386",
+      "duration": 67.648,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/8C7A8FCB-A1F3-787A-8521EC1B84BBA0FA/redw-SuninredwoodsLostmanCreek_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "d6b98e9ffab06229ab64c0e4c9b61389917675c33daf486642c5fe0bb99cf303",
+      "bundle": "sun-in-canopy/bundle.json"
+    },
+    "wood-in-creek": {
+      "title": "Вода и поваленные деревья",
+      "sha256": "d5dbd940b1a1ac97f4e91d891ffccaaced0a65836f5b7dbcdc18c98a062b02af",
+      "duration": 145.216,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/8E940A8D-0B1D-2BED-CDAE5466658B4E02/redw-WoodyDebrisLostManCreek_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "2d83bd70c6eecbd4b1d938f80b6810f29575cc59779219804cd87c2081060a07",
+      "bundle": "wood-in-creek/bundle.json"
+    },
+    "redwood-tree": {
+      "title": "Гигантская секвойя у ручья",
+      "sha256": "3449c0a015b1eb2a656e53fd04f7655f509c9795ca8d8e903a05b6bd42b1ef7e",
+      "duration": 64.597333,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/EFE6A42C-BE08-9DC4-6DD87ABB4DAE3BDF/redw-RedwoodatLostmanCreek2_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "e43a9c8a7cab4a9e26bfb0c47d289e4b439cc3c0b5ff072e07629cecca91e95c",
+      "bundle": "redwood-tree/bundle.json"
+    },
+    "redwood-trunk": {
+      "title": "От ручья к вершине секвойи",
+      "sha256": "37a835c22131666e0fe2a0782277c1bd46d934e52fa61142d73b64695be41af6",
+      "duration": 97.642667,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/F2A4BB60-A45E-4EEC-90F74BD73067803E/redw-Creeksideredwood-PrairieCreek_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "861c71ac43dabee755a64e302928f66170f52bfb6fcecb0ef3af4156280225b2",
+      "bundle": "redwood-trunk/bundle.json"
+    },
+    "prairie-creek": {
+      "title": "Звуки природы у Прери Крик",
+      "sha256": "aa3a4b2f3c5ac5daa5bb3cfb455a73b82b37f0ea058e9e318134026c0bdefe3b",
+      "duration": 65.301333,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/redw/F310C36C-CDBA-04CF-9B98BD68EF3A4A6F/redw-prairiecreek_1280x720.mp4",
+      "page": "https://www.nps.gov/redw/learn/photosmultimedia/broll.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "3cf43ca96b873d158816361341b120120de98a8fc57830d343303b56ca1507c8",
+      "bundle": "prairie-creek/bundle.json"
+    },
+    "mosaic-canyon": {
+      "title": "Мозаичный каньон — каменные узоры",
+      "sha256": "fd2cc20c9c197a70e212800eb81f8a568c653a178c6ea431dc85644415fa0a4b",
+      "duration": 94.876735,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/deva/BEB855EF-9E28-4D45-3077A632DA293D46/deva-MosaicCanyon_1280x720.mp4",
+      "page": "https://www.nps.gov/deva/learn/photosmultimedia/b-roll-footage.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "13a8c01d0400146685966c3486995ee9d0acb37d42f15cc9ad0782822d2706b2",
+      "bundle": "mosaic-canyon/bundle.json"
+    },
+    "panamint-mountains": {
+      "title": "Горные пейзажи Панаминт",
+      "sha256": "669bf1f5a77fc5be09226387139c31f2ed773bfc74764b8383312478f84e3551",
+      "duration": 176.309116,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/deva/57EF07D5-A653-3E82-A180AA82D2E8E88D/deva-PanamintMountainsBRoll_1280x720.mp4",
+      "page": "https://www.nps.gov/deva/learn/photosmultimedia/b-roll-footage.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "d1e2cf3c512b0e044393c63513300c7218576d85c43c30dd480020141f713db4",
+      "bundle": "panamint-mountains/bundle.json"
+    },
+    "sand-dunes": {
+      "title": "Песчаные дюны Долины Смерти",
+      "sha256": "abca410d4a0896756292e985589beecbbe8590cdbf8865e8ad66580242866e82",
+      "duration": 202.176145,
+      "width": 1280,
+      "height": 720,
+      "source": "https://www.nps.gov/nps-audiovideo/legacy/deva/59981D55-ADAE-9906-71049E116C8A0EC7/deva-SandDunesBRoll_1280x720.mp4",
+      "page": "https://www.nps.gov/deva/learn/photosmultimedia/b-roll-footage.htm",
+      "credit": "Courtesy of the National Park Service",
+      "bundle_sha256": "b2a2997079a31ea5365d83cf3ce4d420d4c2b96251e819ab415a78115879f2fe",
+      "bundle": "sand-dunes/bundle.json"
+    }
+  }
+}
