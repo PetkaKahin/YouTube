@@ -14,7 +14,13 @@ from video.application.processing import (
     InspectSource,
     RepairSourceProcessing,
 )
-from video.application.publications import CreateDraft, EditVideoSettings, GetVideoSettings, PublishVideo
+from video.application.publications import (
+    CreateDraft,
+    EditVideoSettings,
+    GetMyVideos,
+    GetVideoSettings,
+    PublishVideo,
+)
 from video.application.readiness import GetProcessing
 from video.application.search import GetSearch
 from video.application.thumbnails import (
@@ -33,6 +39,7 @@ from video.domain.delivery import ObjectDelivery, PlaylistDelivery, PublicationE
 from video.domain.encoding import ENCODE_TASK, PLAN_TASK
 from video.domain.feed import FeedCard, FeedPage, InvalidFeedCursor
 from video.domain.likes import InvalidLike, LikeState
+from video.domain.own_videos import InvalidVideoList, VideoSettingsPage
 from video.domain.permissions import InvalidPermissionCursor, PermissionPage
 from video.domain.processing import SourceInspectionError, TemporarySourceError
 from video.domain.publications import (
@@ -48,6 +55,9 @@ from video.domain.thumbnails import PREPARE_THUMBNAIL_TASK, ThumbnailError, Thum
 from video.domain.uploads import StorageUnavailable, UploadError, UploadPlan
 
 __all__ = [
+    'GetMyVideos',
+    'InvalidVideoList',
+    'VideoSettingsPage',
     'RetryVideoJob',
     'RequireDiscussionVideo',
     'GetVideoLike',

@@ -40,6 +40,13 @@ class PublicationRow(Base):
 
     __table_args__ = (
         Index(
+            "ix_video_publications_owner_list",
+            owner_id,
+            publication,
+            created_at.desc(),
+            id.desc(),
+        ),
+        Index(
             "ix_video_publications_channel_feed",
             owner_id,
             added_at.desc(),
@@ -71,6 +78,8 @@ class PublicationRow(Base):
         ),
         CheckConstraint("moderation IN ('visible', 'hidden')", name="valid_moderation"),
     )
+
+
 
 
 class LikeRow(Base):

@@ -6,7 +6,7 @@ from typing import Literal
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Query, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import Field, field_validator
 
@@ -16,8 +16,10 @@ from video.public import (
     AuthenticationRequired,
     CreateDraft,
     EditVideoSettings,
+    GetMyVideos,
     GetProcessing,
     GetVideoSettings,
+    InvalidVideoList,
     ProcessingStatus,
     VideoError,
     VideoMetadata,
@@ -74,6 +76,11 @@ class VideoSettingsResponse(JSONModel):
             created_at=value.created_at,
             updated_at=value.updated_at,
         )
+
+
+class VideoSettingsListResponse(JSONModel):
+    items: list[VideoSettingsResponse]
+    next_cursor: str | None
 
 
 class QualityResponse(JSONModel):
@@ -155,6 +162,41 @@ def videos_router() -> APIRouter:
         route_class=DishkaRoute,
     )
     security: dict[str, list[dict[str, list[str]]]] = {"security": [{"SessionCookie": []}]}
+
+    @router.get("/mine", response_model=VideoSettingsListResponse, openapi_extra=security)
+    async def mine(
+        request: Request,
+        response: Response,
+        scenario: FromDishka[GetMyVideos],
+        publication: str = Query(
+            default="published", json_schema_extra={"enum": ["published", "draft"]}
+        ),
+        cursor: str | None = None,
+    ) -> VideoSettingsListResponse | JSONResponse:
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["Vary"] = "Cookie"
+        # Invalid query shape still passes through the scenario's authentication first.
+        if any(
+            key not in {"publication", "cursor"} or len(request.query_params.getlist(key)) != 1
+            for key in request.query_params
+        ):
+            publication = ""
+        try:
+            page = await scenario(actor_id(request), publication, cursor)
+        except AuthenticationRequired as error:
+            return video_problem(request, error)
+        except InvalidVideoList:
+            return problem(
+                request,
+                422,
+                "invalid_video_list",
+                "Invalid video list request or cursor",
+                headers={"Cache-Control": "no-store", "Vary": "Cookie"},
+            )
+        return VideoSettingsListResponse(
+            items=[VideoSettingsResponse.from_value(value) for value in page.items],
+            next_cursor=page.next_cursor,
+        )
 
     @router.post("", status_code=201, response_model=VideoSettingsResponse, openapi_extra=security)
     async def create(

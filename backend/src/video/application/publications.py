@@ -3,8 +3,10 @@
 from common.contracts.transactions import Transactions
 from video.application.ports import Publications, VideoActors
 from video.domain.delivery import PublicationError
+from video.domain.own_videos import SIZE, InvalidVideoList, OwnedVideoBoundary, VideoSettingsPage
 from video.domain.publications import (
     AuthenticationRequired,
+    PublicationState,
     VideoMetadata,
     VideoNotFound,
     VideoSettings,
@@ -52,6 +54,34 @@ class GetVideoSettings:
             if value is None:
                 raise VideoNotFound
             return value
+
+
+class GetMyVideos:
+    def __init__(
+        self, actors: VideoActors, publications: Publications, transactions: Transactions
+    ) -> None:
+        self.actors, self.publications, self.transactions = actors, publications, transactions
+
+    async def __call__(
+        self, account_id: int | None, publication: str = "published", cursor: str | None = None
+    ) -> VideoSettingsPage:
+        actor = require_actor(account_id)
+        async with self.transactions.begin():
+            await self.actors.require(actor)
+            try:
+                state = PublicationState(publication)
+            except ValueError, TypeError:
+                raise InvalidVideoList from None
+            after = OwnedVideoBoundary.decode(cursor, actor, state) if cursor is not None else None
+            rows = await self.publications.list_owned(actor, state, after)
+            return VideoSettingsPage(
+                rows[:SIZE],
+                OwnedVideoBoundary(rows[SIZE - 1].created_at, rows[SIZE - 1].id).encode(
+                    actor, state
+                )
+                if len(rows) > SIZE
+                else None,
+            )
 
 
 class EditVideoSettings:

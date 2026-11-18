@@ -1,10 +1,13 @@
 """Owner-filtered PostgreSQL persistence; transaction boundaries stay in use cases."""
 
 from dataclasses import replace
+from typing import Any
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, literal_column, select, text, update
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from video.domain.own_videos import SIZE, OwnedVideoBoundary
 from video.domain.publications import (
     ModerationState,
     ProcessingState,
@@ -15,7 +18,13 @@ from video.domain.publications import (
     Visibility,
 )
 from video.infrastructure.models import PublicationRow
-from video.infrastructure.readiness import SqlProcessingViews
+from video.infrastructure.readiness import (
+    MEDIA_JOINS,
+    MEDIA_SNAPSHOT,
+    SqlProcessingViews,
+    object_value,
+    prepare,
+)
 
 
 def settings_value(row: PublicationRow) -> VideoSettings:
@@ -72,6 +81,35 @@ class SqlPublications:
             query = query.with_for_update()
         row = await self.session.scalar(query.execution_options(populate_existing=True))
         return await self.value(row) if row is not None else None
+
+    async def list_owned(
+        self, owner_id: int, publication: PublicationState, after: OwnedVideoBoundary | None
+    ) -> tuple[VideoSettings, ...]:
+        boundary = "AND (created_at,id)<(:created_at,:id)" if after is not None else ""
+        parameters: dict[str, Any] = {
+            "owner_id": owner_id,
+            "publication": publication.value,
+            "limit": SIZE + 1,
+        }
+        if after is not None:
+            parameters.update(created_at=after.created_at, id=after.id)
+        statement = text(
+            f"SELECT p.*, {MEDIA_SNAPSHOT} AS media FROM ("  # noqa: S608 -- fixed SQL fragments; values bound
+            "SELECT * FROM video_publications WHERE owner_id=:owner_id "
+            f"AND publication=:publication {boundary} "
+            "ORDER BY created_at DESC,id DESC LIMIT :limit"
+            f") p {MEDIA_JOINS} ORDER BY p.created_at DESC,p.id DESC"
+        )
+        rows = await self.session.execute(
+            select(PublicationRow, literal_column("media", type_=JSONB))
+            .from_statement(statement)
+            .execution_options(populate_existing=True),
+            parameters,
+        )
+        return tuple(
+            replace(settings_value(row), processing=prepare(object_value(media)).status.processing)
+            for row, media in rows
+        )
 
     async def update_metadata(self, value: VideoSettings) -> VideoSettings:
         row = (

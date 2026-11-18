@@ -48,7 +48,13 @@ from video.application.processing import (
     SourceInspector,
     SourceJobs,
 )
-from video.application.publications import CreateDraft, EditVideoSettings, GetVideoSettings, PublishVideo
+from video.application.publications import (
+    CreateDraft,
+    EditVideoSettings,
+    GetMyVideos,
+    GetVideoSettings,
+    PublishVideo,
+)
 from video.application.readiness import GetProcessing, ProcessingViews
 from video.application.search import GetSearch, SearchChannels, SearchPlaylists, SearchVideos
 from video.application.thumbnails import (
@@ -154,6 +160,7 @@ class VideoProvider(Provider):
     publications = provide(SqlPublications, provides=Publications)
     create_draft = provide(CreateDraft)
     get_settings = provide(GetVideoSettings)
+    get_my_videos = provide(GetMyVideos)
     processing_views = provide(SqlProcessingViews, provides=ProcessingViews)
     get_processing = provide(GetProcessing)
     edit_settings = provide(EditVideoSettings)
