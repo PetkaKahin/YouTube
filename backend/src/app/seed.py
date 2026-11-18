@@ -22,6 +22,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictInt
 
 from app.di import create_container
 from app.resources import create_cache
+from app.seed_activity import populate_activity, public_durations
 from app.settings import Settings
 from user.public import AccountError, AccountNotFound, SetRole
 from video.public import (
@@ -329,6 +330,17 @@ async def populate(root: Path, *, export_ready: bool) -> None:
                             print(f"Готово без кодирования: /watch?v={video_id}", flush=True)
                 finally:
                     api.call("POST", "/auth/logout")
+            if not export_ready and CLIPS:
+                video_ids = tuple(state.videos[clip.key] for clip in CLIPS)
+                durations = public_durations(api, video_ids)
+                channels = tuple(dict.fromkeys(clip.person.tag for clip in CLIPS))
+                for index, person in enumerate(PEOPLE):
+                    login_person(api, person, state, state_path)
+                    try:
+                        populate_activity(api, person, index, video_ids, channels, durations)
+                        print(f"Добавлена демоактивность: {person.email}", flush=True)
+                    finally:
+                        api.call("POST", "/auth/logout")
             if export_ready:
                 old = json.loads((ASSETS / "manifest.json").read_text())
                 previous = old["clips"] if old.get("version") == 2 else old

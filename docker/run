@@ -9,6 +9,8 @@ usage() {
 Usage:
   docker/run init                  Create local secrets and missing lock files in Docker
   docker/run lock                  Refresh both lock files in Docker
+  docker/run setup                 Build dev, migrate and start the application
+  docker/run refresh               Reset dev database and temporary state, migrate and seed
   docker/run dev <compose args>    Use development configuration
   docker/run prod <compose args>   Use production configuration
   docker/run media <compose args>  Isolated CPU media qualification (no queue or secrets)
@@ -74,6 +76,76 @@ compose() {
     fi
     docker compose --project-directory "$project_dir" \
         --env-file docker/versions.env --env-file "$config_env" "${files[@]}" "$@"
+}
+
+start_dev() {
+    compose dev up -d --wait postgres valkey rustfs
+    compose dev run --rm --no-deps -T rustfs-init
+    compose dev run --rm --no-deps -T python alembic upgrade head
+    compose dev up -d --wait
+}
+
+setup() {
+    prepare
+    compose dev build
+    compose dev stop python upload-maintenance media-worker nginx node
+    start_dev
+}
+
+refresh() {
+    require_docker
+    if [[ ! -f .env ]] || ! secrets_ready; then
+        prepare
+    fi
+    local identifiers=() container configurations
+    local listing
+    listing=$(compose dev ps --all --quiet)
+    if [[ -n $listing ]]; then
+        mapfile -t identifiers <<< "$listing"
+    fi
+    for container in "${identifiers[@]}"; do
+        configurations=$(docker inspect --format \
+            '{{ index .Config.Labels "com.docker.compose.project.config_files" }}' "$container")
+        if [[ ,$configurations, != *",$project_dir/docker-compose.dev.yml,"* ]]; then
+            printf 'Refresh отменён: в этом Compose-проекте есть контейнеры вне dev.\n' >&2
+            return 1
+        fi
+    done
+    local configuration volumes=() volume owner
+    # Avoid capturing Compose's automatic-build messages alongside the four values.
+    bootstrap build python >&2
+    configuration=$(compose dev config --format json | bootstrap run --rm --no-deps -T python \
+        python -c 'import json,sys
+config=json.load(sys.stdin)
+print(config["name"])
+for key in ("postgres_data", "job_error_spool", "media_scratch"):
+    volume=config["volumes"][key]
+    if volume.get("external"):
+        raise SystemExit("Refresh refuses external volumes")
+    print(volume["name"])')
+    mapfile -t volumes <<< "$configuration"
+    [[ ${#volumes[@]} == 4 ]] || { printf 'Не удалось определить тома dev.\n' >&2; return 1; }
+    for volume in "${volumes[@]:1}"; do
+        if docker volume inspect "$volume" >/dev/null 2>&1; then
+            owner=$(docker volume inspect --format \
+                '{{ index .Labels "com.docker.compose.project" }}' "$volume")
+            [[ $owner == "${volumes[0]}" ]] || {
+                printf 'Refresh отменён: том %s принадлежит другому проекту.\n' "$volume" >&2
+                return 1
+            }
+        fi
+    done
+    # Finish the build before discarding data; workers only start after migration.
+    compose dev build
+    compose dev down --remove-orphans
+    for volume in "${volumes[@]:1}"; do
+        if docker volume inspect "$volume" >/dev/null 2>&1; then
+            docker volume rm "$volume"
+        fi
+    done
+    start_dev
+    compose dev exec -T -e PYTHONPATH=/app/src media-worker python -m app.seed
+    printf 'БД dev пересоздана и заполнена тестовыми данными.\n'
 }
 
 check() {
@@ -142,6 +214,8 @@ DOCKERFILE
 case ${1:-help} in
     init) prepare ;;
     lock) prepare refresh ;;
+    setup) setup ;;
+    refresh) refresh ;;
     check) check ;;
     audit) shift; audit "$@" ;;
     context-check) context_check ;;

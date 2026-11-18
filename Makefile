@@ -9,7 +9,7 @@ override EMAIL := $(value EMAIL)
 override ROLE := $(value ROLE)
 export EMAIL ROLE ROLE_ACTION
 
-.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front role frontend-dev frontend-build seed
+.PHONY: help init up down build start stop restart refresh logs ps test check audit context-check lock shell shell-front role frontend-dev frontend-build seed
 
 ifneq ($(filter role,$(MAKECMDGOALS)),)
 ifneq ($(firstword $(MAKECMDGOALS)),role)
@@ -56,6 +56,9 @@ stop: ## Остановить dev, сохранив контейнеры
 restart: ## Перезапустить dev и дождаться готовности
 	$(DOCKER_RUN) dev restart
 	$(DOCKER_RUN) dev up -d --wait
+
+refresh: ## СБРОСИТЬ БД dev, применить миграции и заполнить тестовыми данными
+	$(DOCKER_RUN) refresh
 
 logs: ## Смотреть последние 100 строк и новые логи
 	$(DOCKER_RUN) dev logs --follow --tail 100

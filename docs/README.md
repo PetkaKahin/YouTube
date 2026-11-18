@@ -121,7 +121,8 @@ Docker-этап [T01](tasks/T01-docker.md) завершён;
 [33 задачи фронтенда](tasks/frontend/README.md) с требованиями и приёмкой;
 для бэкенда B01–B36 и серверные T03–T08 завершены.
 Серверная часть [админ-панели джоб T12](backend/job-administration.md) завершена;
-[интерфейс T12](frontend/job-administration.md) подключён, деплой — `todo`. Во фронтенде реализован первый этап оболочки,
+[интерфейс T12](frontend/job-administration.md) подключён;
+установка и dev refresh — [T11](tasks/T11-deploy.md). Во фронтенде реализован первый этап оболочки,
 регистрация, вход/выход и выдачи — [текущее покрытие](frontend/implementation.md).
 Начало загрузки F22 завершено по [функциональному профилю](frontend/upload-start.md),
 передача F23 — по [профилю прогресса и подтверждения](frontend/upload-transfer.md).
