@@ -16,6 +16,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: HomePage },
+    ...(['subscriptions', 'history', 'liked', 'playlists'] as const).map((kind) => ({ path: `/feed/${kind}`, component: () => import('../pages/library').then((m) => m.LibraryPage), props: { kind }, meta: { library: true } })),
     { path: '/results', component: SearchPage },
     { path: '/playlist', component: () => import('../pages/playlist-link').then((m) => m.PlaylistLinkPage) },
     { path: '/@:tag/:tab(videos|playlists)?', component: () => import('../pages/channel').then((m) => m.ChannelPage) },
