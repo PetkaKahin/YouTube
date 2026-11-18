@@ -18,3 +18,4 @@ class Settings(BaseSettings):
     rustfs_endpoint: str = "http://rustfs:9000"
     rustfs_bucket: str = "videos"
     job_error_spool_path: str = "/var/lib/youtube/job-errors"
+    job_retry_batch_size: int = Field(default=20, ge=1)

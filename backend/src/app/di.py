@@ -14,6 +14,7 @@ from pwdlib import PasswordHash
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
+from app.job_administration import JobAdministration
 from app.module_providers import module_providers
 from app.resources import Resources, open_resources
 from app.settings import Settings
@@ -30,6 +31,7 @@ class ApplicationProvider(Provider):
         self.require_cache = require_cache
 
     transactions = provide(SqlTransactions, provides=Transactions, scope=Scope.REQUEST)
+    job_administration = provide(JobAdministration, scope=Scope.REQUEST)
     configuration = from_context(provides=Settings, scope=Scope.APP)
     cache_client = from_context(provides=Redis, scope=Scope.APP)
 

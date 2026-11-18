@@ -31,4 +31,5 @@ class JobErrorRow(Base):
             "reason IN ('task_failed', 'worker_lost', 'cancelled')", name="valid_reason"
         ),
         Index("ix_background_job_errors_job_id", "job_id", "occurred_at"),
+        Index("ix_background_job_errors_order", "occurred_at", "id"),
     )

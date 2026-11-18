@@ -48,6 +48,7 @@ from video.domain.thumbnails import PREPARE_THUMBNAIL_TASK, ThumbnailError, Thum
 from video.domain.uploads import StorageUnavailable, UploadError, UploadPlan
 
 __all__ = [
+    'RetryVideoJob',
     'RequireDiscussionVideo',
     'GetVideoLike',
     'SetVideoLike',
@@ -118,3 +119,4 @@ __all__ = [
     'VideoNotFound',
     'VideoSettings',
 ]
+from video.application.job_retries import RetryVideoJob

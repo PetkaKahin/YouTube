@@ -36,6 +36,7 @@ services:
       RUSTFS_ACCESS_KEY_FILE: /run/secrets/rustfs_access_key
       RUSTFS_SECRET_KEY_FILE: /run/secrets/rustfs_secret_key
       JOB_ERROR_SPOOL_PATH: /var/lib/youtube/job-errors
+      JOB_RETRY_BATCH_SIZE: ${JOB_RETRY_BATCH_SIZE:-20}
     secrets:
       - csrf_secret
       - postgres_password

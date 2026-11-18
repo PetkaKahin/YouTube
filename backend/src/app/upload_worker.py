@@ -13,6 +13,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.di import create_container
+from app.job_administration import JobAdministration
 from app.resources import Resources, create_cache
 from app.secrets import read_secret
 from app.settings import Settings
@@ -171,6 +172,10 @@ async def main() -> None:
                             await (await operation.get(RepairSourceProcessing))()
                             await (await operation.get(RepairEncoding))()
                             await (await operation.get(RepairThumbnails))()
+                        async with container() as operation:
+                            await (await operation.get(JobAdministration)).dispatch(
+                                settings.job_retry_batch_size
+                            )
                         await enqueue_original_cleanup(queue)
                     except Exception:
                         logging.getLogger("background_jobs").error("Queue recovery is unavailable")

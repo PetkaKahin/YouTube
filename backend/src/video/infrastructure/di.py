@@ -36,6 +36,7 @@ from video.application.feed import (
     GetFeed,
     ReadFeed,
 )
+from video.application.job_retries import RetryVideoJob, VideoJobAdministrators, VideoJobRetries
 from video.application.likes import GetVideoLike, LikeActions, SetVideoLike, VideoLikes
 from video.application.moderation import ModerationViews, ReportVideoAccess, VideoStaffActors
 from video.application.originals import CleanupOriginals, OriginalDeletions, OriginalStorage
@@ -87,6 +88,7 @@ from video.infrastructure.discussions import SqlDiscussionPublications
 from video.infrastructure.encoder import S3MediaEncoder
 from video.infrastructure.encoding_jobs import SqlEncodingJobs
 from video.infrastructure.feed import ChannelFeedAuthors, ChannelFeedScope, SqlFeedCandidates
+from video.infrastructure.job_retries import SqlVideoJobRetries, UserJobAdministrators
 from video.infrastructure.likes import SqlVideoLikes
 from video.infrastructure.moderation import AccountVideoStaff, SqlModerationViews
 from video.infrastructure.multipart import S3Multipart
@@ -186,3 +188,6 @@ class VideoProvider(Provider):
     get_thumbnail_delivery = provide(GetThumbnailDelivery)
     prepare_thumbnail = provide(PrepareThumbnail)
     repair_thumbnails = provide(RepairThumbnails)
+    job_administrators = provide(UserJobAdministrators, provides=VideoJobAdministrators)
+    job_retries = provide(SqlVideoJobRetries, provides=VideoJobRetries)
+    retry_video_job = provide(RetryVideoJob)
