@@ -1,0 +1,76 @@
+{
+  "url": "https://m.youtube.com/@BlenderOfficial/videos",
+  "title": "Blender - YouTube",
+  "text": "Blender\nГлавная\nShorts\nВы\nBlender\n@BlenderOfficial\n1,26 млн подписчиков\n•\n1,5 тыс. видео\nOfficial YouTube channel for Blender, the Free and Open Source 3D Creation Suite. \n…ещё\n fund.blender.org\nи ещё 7 ссылок\nПодписаться\nГлавная\nВидео\nShorts\nТрансляции\nПодкасты\nПлейлисты\nЗаписи\nПоиск\nНовые\nПопулярные\nСтарые\n28:01\nЧто нового в Blender 5.3! Официальный обзор\n289 тыс. просмотров5 дней назад\n4:40\nMaking of: The Blender Open Movies Exhibition\n19 тыс. просмотров13 дней назад\n2:04:42\nBlender Education Community Meeting — BCON26\n13 тыс. просмотров3 недели назад\n2:29\nИтоги Blender Conference 2026\n24 тыс. просмотров1 месяц назад\n18:26\nБудущее рендеринга — BCON26\n29 тыс. просмотров1 месяц назад\n23:38\nSubject Extraction for Scene Reconstruction in VFX — BCON26\n6,8 тыс. просмотров1 месяц назад\n48:50\nA",
+  "elements": [
+    {
+      "selector": "ytd-page-header-renderer"
+    },
+    {
+      "selector": "yt-page-header-renderer",
+      "x": 0,
+      "y": 48,
+      "width": 390,
+      "height": 307.703125,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(241, 241, 241)"
+    },
+    {
+      "selector": "yt-content-metadata-view-model",
+      "x": 104,
+      "y": 169.703125,
+      "width": 270,
+      "height": 40,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-tab-group-shape",
+      "x": 14,
+      "y": 355.703125,
+      "width": 678.703125,
+      "height": 48,
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-tab-shape",
+      "x": 14,
+      "y": 355.703125,
+      "width": 60.53125,
+      "height": 48,
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-flexible-actions-view-model",
+      "x": 16,
+      "y": 299.703125,
+      "width": 358,
+      "height": 40,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(241, 241, 241)"
+    },
+    {
+      "selector": "ytd-rich-grid-renderer"
+    },
+    {
+      "selector": "ytm-c4-tabbed-header-renderer"
+    },
+    {
+      "selector": "ytm-rich-grid-renderer",
+      "x": 0,
+      "y": 420.703125,
+      "width": 390,
+      "height": 3204,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(241, 241, 241)"
+    }
+  ]
+}

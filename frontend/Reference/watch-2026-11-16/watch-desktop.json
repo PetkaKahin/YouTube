@@ -1,0 +1,320 @@
+{
+  "url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+  "title": "Big Buck Bunny 60fps 4K - Official Blender Foundation Short Film - YouTube",
+  "text": "RU\nПропустить\nВойти\n0:00 / 10:34\nBig Buck Bunny 60fps 4K - Official Blender Foundation Short Film\nBlender\n1,26 млн подписчиков\nПодписаться\n110 тыс.\n23 млн просмотров  12 л. назад\nUHD High Frame rate version of the iconic short film by Blender, Big Buck Bunny. More info:  https://studio.blender.org/projects/b...\n\nLearn more about this UHD high frame-rate version at: http://bbb3d.renderfarming.net \nещё\n\nКомментарии\n \n \n \n \n1:00:38\nWhere's Chicky? Funny Chicky 2023 | COMPILATION | Cartoon in English for Kids | New episodes\nWhere's Chicky? - Cartoon in English\n17 млн\n3 г. назад\n12:11\nCosmos Laundromat - First Cycle. Official Blender Foundation release.\nBlender\n1,3 млн\n11 л. назад\n11:46\nSNOW BEAR - A Hand-Drawn Animated Short Film (4K) by Aaron Blaise\nThe Art of Aaron Blaise\n10 млн\n11 мес. назад\nСбор средств\n37:19\nНовое\nФРАНЦИЯ НИЩАЯ СТРАНА\nАлексей Шевцов\n173 тыс.\n3 ч назад\n40:49\nSummertime Walk - Sunny Bunnies | Cartoons For Kids\nSunny Bunnies\n4,2 млн\n1 г. назад\n1:16:00\nНовое\nЧебурашка 🍊 ВСЕ СЕРИИ ПОДРЯД 🍊 Союзмультфильм 2026\nСоюзмультфильм\n23 тыс.\n2 дн. назад\nTiddler Dives with a Dolphin! 🐬🐟 | Shorts\n102 тыс. просмотров\nHunting for Garfield💥 Garfield #Shorts\n11 тыс. просмотров\nTurbozaurs to the Rescue! Let's Build with a 3D Printer!\n25 тыс. просмотров\nTHE DISRESPECT IS CRAZY 😭 #rabbids #shorts\n16 млн просмотров\n10:34\nBig Buck Bunny การ์ตูน 4K  Short Film Full  HD  #thailand  #การ์ตูนแอนิเมชั่น #การ์ตูนเต็มเรื่อง\nguspao channel\n13 тыс.\n3 г. назад\n4:49\nCGI 3D Animation Short",
+  "elements": [
+    {
+      "selector": "#player",
+      "x": 16,
+      "y": 68,
+      "width": 1337.25,
+      "height": 752.203125,
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "10px Roboto, Arial, sans-serif",
+      "fontSize": "10px"
+    },
+    {
+      "selector": "#movie_player",
+      "x": 16,
+      "y": 68,
+      "width": 1337.25,
+      "height": 752.203125,
+      "color": "rgb(238, 238, 238)",
+      "background": "rgb(0, 0, 0)",
+      "font": "11px / 14.3px \"YouTube Noto\", Roboto, Arial, Helvetica, sans-serif",
+      "fontSize": "11px"
+    },
+    {
+      "selector": "ytd-watch-flexy",
+      "x": 0,
+      "y": 56,
+      "width": 1905,
+      "height": 4264.234375,
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "10px Roboto, Arial, sans-serif",
+      "fontSize": "10px"
+    },
+    {
+      "selector": "#primary-inner",
+      "x": 16,
+      "y": 68,
+      "width": 1337.25,
+      "height": 1486.203125,
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "10px Roboto, Arial, sans-serif",
+      "fontSize": "10px"
+    },
+    {
+      "selector": "#secondary-inner",
+      "x": 1369.25,
+      "y": 68,
+      "width": 519.75,
+      "height": 4252.234375,
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "10px Roboto, Arial, sans-serif",
+      "fontSize": "10px"
+    },
+    {
+      "selector": "#title h1",
+      "x": 16,
+      "y": 832.203125,
+      "width": 1337.25,
+      "height": 28,
+      "color": "rgb(241, 241, 241)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "",
+      "fontSize": "20px"
+    },
+    {
+      "selector": "#owner",
+      "x": 16,
+      "y": 868.203125,
+      "width": 324.0625,
+      "height": 42,
+      "color": "rgb(241, 241, 241)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "10px Roboto, Arial, sans-serif",
+      "fontSize": "10px"
+    },
+    {
+      "selector": "#description",
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "10px Roboto, Arial, sans-serif",
+      "fontSize": "10px"
+    },
+    {
+      "selector": ".ytp-chrome-bottom",
+      "x": 28,
+      "y": 761.203125,
+      "width": 1313,
+      "height": 59,
+      "color": "rgb(238, 238, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "11px / 14.3px \"YouTube Noto\", Roboto, Arial, Helvetica, sans-serif",
+      "fontSize": "11px"
+    },
+    {
+      "selector": ".ytp-progress-bar-container",
+      "x": 28,
+      "y": 758.203125,
+      "width": 1313,
+      "height": 6,
+      "color": "rgb(238, 238, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "11px / 14.3px \"YouTube Noto\", Roboto, Arial, Helvetica, sans-serif",
+      "fontSize": "11px"
+    },
+    {
+      "selector": ".ytp-left-controls",
+      "x": 28,
+      "y": 764.203125,
+      "width": 1065,
+      "height": 56,
+      "color": "rgb(238, 238, 238)",
+      "background": "rgba(0, 0, 0, 0)",
+      "font": "11.99px / 56px \"YouTube Noto\", Roboto, Arial, Helvetica, sans-serif",
+      "fontSize": "11.99px"
+    },
+    {
+      "selector": ".ytp-right-controls",
+      "x": 1093,
+      "y": 772.203125,
+      "width": 248,
+      "height": 40,
+      "color": "rgb(238, 238, 238)",
+      "background": "rgba(0, 0, 0, 0.3)",
+      "font": "11.99px / 56px \"YouTube Noto\", Roboto, Arial, Helvetica, sans-serif",
+      "fontSize": "11.99px"
+    },
+    {
+      "selector": "ytm-watch"
+    }
+  ],
+  "buttons": [
+    {
+      "label": null,
+      "cls": "ytp-unmute ytp-popup ytp-button ytp-unmute-animated ytp-unmute-shrink"
+    },
+    {
+      "label": null,
+      "cls": "ytp-suggested-action-badge-dismiss-button-icon ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-featured-product-overflow-icon ytp-button"
+    },
+    {
+      "label": "Смотреть",
+      "cls": "ytp-large-play-button ytp-button"
+    },
+    {
+      "label": "Копировать ссылку",
+      "cls": "ytp-button ytp-copylink-button"
+    },
+    {
+      "label": "Показать подсказки",
+      "cls": "ytp-button ytp-cards-button"
+    },
+    {
+      "label": "Показать подсказки",
+      "cls": "ytp-cards-teaser-info-icon"
+    },
+    {
+      "label": "Закрыть",
+      "cls": "ytp-cards-teaser-close-button"
+    },
+    {
+      "label": "Другие параметры",
+      "cls": "ytp-button ytp-overflow-button"
+    },
+    {
+      "label": "Плейлист",
+      "cls": "ytp-playlist-menu-button ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-button ytp-suggested-action-badge ytp-suggested-action-badge-with-controls"
+    },
+    {
+      "label": null,
+      "cls": "ytp-suggested-action-badge-dismiss-button-icon ytp-button"
+    },
+    {
+      "label": "",
+      "cls": "ytp-button ytp-suggested-action-badge ytp-suggested-action-badge-with-controls ytp-suggested-action-badge-expanded"
+    },
+    {
+      "label": "",
+      "cls": "ytp-suggested-action-badge-dismiss-button-icon ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-suggested-action-badge-dismiss-button-icon ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-featured-product-overflow-icon ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "branding-img-container ytp-button"
+    },
+    {
+      "label": "поставить отметку \"Нравится\" (это видео понравилось 110 465 пользователям)",
+      "cls": "ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextOverlay ytSpecButtonShapeNextSizeS ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextOverrideSmallSizeIcon ytSpecButtonShapeNextEnableBackdropFilterExperiment ytSpecButtonShapeNextMainstageIconSize ytSpecButtonShapeNextMainstagePadding"
+    },
+    {
+      "label": "Поставить отметку \"Не нравится\"",
+      "cls": "ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextOverlay ytSpecButtonShapeNextSizeS ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextOverrideSmallSizeIcon ytSpecButtonShapeNextEnableBackdropFilterExperiment ytSpecButtonShapeNextMainstageIconSize ytSpecButtonShapeNextMainstagePadding"
+    },
+    {
+      "label": "Комментарии",
+      "cls": "ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextOverlay ytSpecButtonShapeNextSizeS ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextOverrideSmallSizeIcon ytSpecButtonShapeNextEnableBackdropFilterExperiment ytSpecButtonShapeNextMainstageIconSize ytSpecButtonShapeNextMainstagePadding"
+    },
+    {
+      "label": "Поделиться",
+      "cls": "ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextOverlay ytSpecButtonShapeNextSizeS ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextOverrideSmallSizeIcon ytSpecButtonShapeNextEnableBackdropFilterExperiment ytSpecButtonShapeNextMainstageIconSize ytSpecButtonShapeNextMainstagePadding"
+    },
+    {
+      "label": "Другие действия",
+      "cls": "ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextOverlay ytSpecButtonShapeNextSizeS ytSpecButtonShapeNextIconButton ytSpecButtonShapeNextOverrideSmallSizeIcon ytSpecButtonShapeNextEnableBackdropFilterExperiment ytSpecButtonShapeNextMainstageIconSize ytSpecButtonShapeNextMainstagePadding"
+    },
+    {
+      "label": "Отменить автовоспроизведение",
+      "cls": "ytp-autonav-endscreen-upnext-button ytp-autonav-endscreen-upnext-cancel-button ytp-autonav-endscreen-upnext-button-rounded"
+    },
+    {
+      "label": "Назад",
+      "cls": "ytp-button ytp-endscreen-previous"
+    },
+    {
+      "label": "Следующее",
+      "cls": "ytp-button ytp-endscreen-next"
+    },
+    {
+      "label": null,
+      "cls": "ytp-button ytp-mdx-privacy-popup-cancel"
+    },
+    {
+      "label": null,
+      "cls": "ytp-button ytp-mdx-privacy-popup-confirm"
+    },
+    {
+      "label": "Закрыть",
+      "cls": "ytp-playlist-menu-close ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-share-panel-close ytp-button"
+    },
+    {
+      "label": "Закрыть",
+      "cls": "ytp-overflow-panel-close ytp-button"
+    },
+    {
+      "label": "Смотреть (k)",
+      "cls": "ytp-play-button ytp-button"
+    },
+    {
+      "label": "Отключение звука (m)",
+      "cls": "ytp-volume-icon ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-live-badge ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-chapter-title ytp-button ytp-chapter-container-disabled"
+    },
+    {
+      "label": null,
+      "cls": "ytp-chapter-title ytp-button ytp-chapter-container-disabled"
+    },
+    {
+      "label": "Развернуть",
+      "cls": "ytp-expand-right-bottom-section-button ytp-button"
+    },
+    {
+      "label": "Автовоспроизведение включено",
+      "cls": "ytp-button ytp-autonav-toggle delhi-fast-follow-autonav-toggle"
+    },
+    {
+      "label": "Субтитры недоступны",
+      "cls": "ytp-subtitles-button ytp-button"
+    },
+    {
+      "label": "Настройки",
+      "cls": "ytp-button ytp-settings-button"
+    },
+    {
+      "label": "Широкий экран (t)",
+      "cls": "ytp-size-button ytp-button"
+    },
+    {
+      "label": "Воспроизвести на телевизоре",
+      "cls": "ytp-remote-button ytp-button"
+    },
+    {
+      "label": "Во весь экран (f)",
+      "cls": "ytp-fullscreen-button ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-pip-button ytp-button"
+    },
+    {
+      "label": null,
+      "cls": "ytp-fullscreen-grid-expand-button ytp-button"
+    }
+  ]
+}

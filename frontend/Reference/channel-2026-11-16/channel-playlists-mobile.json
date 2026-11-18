@@ -1,0 +1,69 @@
+{
+  "url": "https://m.youtube.com/@BlenderOfficial/playlists",
+  "title": "Blender - YouTube",
+  "text": "Blender\nГлавная\nShorts\nВы\nBlender\n@BlenderOfficial\n1,26 млн подписчиков\n•\n1,5 тыс. видео\nOfficial YouTube channel for Blender, the Free and Open Source 3D Creation Suite. \n…ещё\n fund.blender.org\nи ещё 7 ссылок\nПодписаться\nГлавная\nВидео\nShorts\nТрансляции\nПодкасты\nПлейлисты\nЗаписи\nПоиск\nДата добавления: сначала новые\nПо дате обновления\n95\nBlender Conference 2026\nBlender · Плейлист\n84\nBlender Conference 2025\nBlender · Плейлист\n87\nBlender Conference 2024\nBlender · Плейлист\n1\nBlender Feature Demos\nBlender · Плейлист\n93\nBlender Conference 2023\nBlender · Плейлист\n13\nBLENDERHEADS\nBlender · Плейлист\n8\nBlender Conference 2022 Podcasts\nBlender · Подкаст\n96\nBlender Conference 2022\nBlender · Плейлист\n20\nBlender Releases\nBlender · Плейлист\n3\nBlender HQ\nBlender · Плейлист\n10\nDevelopment Updates\nBlender ·",
+  "elements": [
+    {
+      "selector": "ytd-page-header-renderer"
+    },
+    {
+      "selector": "yt-page-header-renderer",
+      "x": 0,
+      "y": 48,
+      "width": 390,
+      "height": 307.703125,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(241, 241, 241)"
+    },
+    {
+      "selector": "yt-content-metadata-view-model",
+      "x": 104,
+      "y": 169.703125,
+      "width": 270,
+      "height": 40,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-tab-group-shape",
+      "x": 14,
+      "y": 355.703125,
+      "width": 678.703125,
+      "height": 48,
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-tab-shape",
+      "x": 14,
+      "y": 355.703125,
+      "width": 60.53125,
+      "height": 48,
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-flexible-actions-view-model",
+      "x": 16,
+      "y": 299.703125,
+      "width": 358,
+      "height": 40,
+      "fontSize": "12px",
+      "lineHeight": "normal",
+      "color": "rgb(241, 241, 241)"
+    },
+    {
+      "selector": "ytd-rich-grid-renderer"
+    },
+    {
+      "selector": "ytm-c4-tabbed-header-renderer"
+    },
+    {
+      "selector": "ytm-rich-grid-renderer"
+    }
+  ]
+}

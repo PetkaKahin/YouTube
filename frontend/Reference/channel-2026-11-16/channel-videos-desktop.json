@@ -1,0 +1,76 @@
+{
+  "url": "https://www.youtube.com/@BlenderOfficial/videos",
+  "title": "Blender - YouTube",
+  "text": "RU\nПропустить\nВойти\nГлавная\nShorts\nПодписки\nВы\nИстория\nВы сможете ставить отметки \"Нравится\", писать комментарии и подписываться на каналы.\nВойти\nНавигатор\nМузыка\nФильмы\nТрансляции\nРазвернуть\nДругие возможности\nYouTube Music\nYouTube Детям\nYouTube Labs\nЖалобы\nО сервисеПрессеАвторские праваСвязаться с намиАвторамРекламодателямРазработчикам\nУсловия использованияКонфиденциальностьПравила и безопасностьКак работает YouTubeТестирование новых функций\n© 2026 Google LLC\nBlender\n@BlenderOfficial\n•\n1,26 млн подписчиков\n•\n1,5 тыс. видео\nOfficial YouTube channel for Blender, the Free and Open Source 3D Creation Suite. \n…ещё\n fund.blender.org\nи ещё 7 ссылок\nПодписаться\nГлавная\nВидео\nShorts\nТрансляции\nПодкасты\nПлейлисты\nЗаписи\nНовые\nПопулярные\nСтарые\n28:01\nЧто нового в Blender 5.3! Официальный обзор\n289 ",
+  "elements": [
+    {
+      "selector": "ytd-page-header-renderer"
+    },
+    {
+      "selector": "yt-page-header-renderer",
+      "x": 430.5,
+      "y": 278.96875,
+      "width": 1284,
+      "height": 196,
+      "fontSize": "10px",
+      "lineHeight": "normal",
+      "color": "rgb(0, 0, 0)"
+    },
+    {
+      "selector": "yt-content-metadata-view-model",
+      "x": 606.5,
+      "y": 328.96875,
+      "width": 1108,
+      "height": 22,
+      "fontSize": "10px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-tab-group-shape",
+      "x": 430.5,
+      "y": 478.96875,
+      "width": 678.703125,
+      "height": 48,
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-tab-shape",
+      "x": 430.5,
+      "y": 478.96875,
+      "width": 60.53125,
+      "height": 48,
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "color": "rgb(170, 170, 170)"
+    },
+    {
+      "selector": "yt-flexible-actions-view-model",
+      "x": 606.5,
+      "y": 426.96875,
+      "width": 1108,
+      "height": 40,
+      "fontSize": "10px",
+      "lineHeight": "normal",
+      "color": "rgb(0, 0, 0)"
+    },
+    {
+      "selector": "ytd-rich-grid-renderer",
+      "x": 418.5,
+      "y": 526.96875,
+      "width": 1308,
+      "height": 3572.34375,
+      "fontSize": "10px",
+      "lineHeight": "normal",
+      "color": "rgb(0, 0, 0)"
+    },
+    {
+      "selector": "ytm-c4-tabbed-header-renderer"
+    },
+    {
+      "selector": "ytm-rich-grid-renderer"
+    }
+  ]
+}
