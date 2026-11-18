@@ -1,0 +1,42 @@
+{
+  "multipart.mp4": {
+    "url": "https://storage.googleapis.com/shaka-demo-assets/bbb-dark-truths/v-0360p-0750k-libx264.mp4",
+    "bytes": 29817869,
+    "sha256": "09158883d80e77f647a9cf28182527bf8a88bfb23ab927e5cfeec891ac5eee83"
+  },
+  "video.mp4": {
+    "url": "https://storage.googleapis.com/shaka-demo-assets/angel-one/video_480p_1M_h264.mp4",
+    "bytes": 7498543,
+    "sha256": "bfff2997fc197b103fc9ff9751addb102044e4d9449834cfc13bd0c1598cd10b"
+  },
+  "audio.mp4": {
+    "url": "https://storage.googleapis.com/shaka-demo-assets/angel-one/audio_en_2c_128k_aac.mp4",
+    "bytes": 963823,
+    "sha256": "2473dcaea932e741e832180ce06a9d990eacaf8e6ba9b6fe5903cb50213a1a5c"
+  },
+  "captions.vtt": {
+    "url": [
+      "https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/s-en-s1.vtt",
+      "https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/s-en-s2.vtt",
+      "https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/s-en-s3.vtt",
+      "https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/s-en-s4.vtt"
+    ],
+    "bytes": 261,
+    "sha256": "6582fa14248811cc419ac063d87c73db58aa31bb51af636caa5d4ec4d8ebf187"
+  },
+  "portrait.mp4": {
+    "url": "https://chromium.googlesource.com/chromium/src/+/main/media/test/data/bear_rotate_90.mp4?format=TEXT",
+    "bytes": 63080,
+    "sha256": "433e32570d5b2960a2045924c0fa8f54bd479461c0881cdac65379aed3f42060"
+  },
+  "thumbnail.png": {
+    "url": "https://www.w3.org/Icons/w3c_home.png",
+    "bytes": 1848,
+    "sha256": "590608bf256237f22d84bbab2a0a1afc0d4f20db6350bbac2c6841f1f3e13b01"
+  },
+  "low.webm": {
+    "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/120.0.6099.129/media/test/data/bear-320x240-video-only.webm?format=TEXT",
+    "bytes": 195574,
+    "sha256": "744978d48d76ab0a251cfa42e67ebbfadbd34afdb0c61579022c5a5484ad8504"
+  }
+}

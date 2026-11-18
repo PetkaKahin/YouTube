@@ -1,0 +1,8 @@
+# The API fixture also runs a real media worker. Apply the normal default media limits.
+services:
+  python:
+    cpus: ${MEDIA_CPUS:-2}
+    mem_limit: ${MEDIA_MEMORY:-8g}
+    memswap_limit: ${MEDIA_MEMORY:-8g}
+    volumes:
+      - media_scratch:/var/lib/youtube/media
