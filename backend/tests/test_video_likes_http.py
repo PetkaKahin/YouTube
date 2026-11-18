@@ -63,6 +63,8 @@ def test_guest_owner_idempotence_counter_and_forged_fields(
             "liked": desired,
             "like_count": total,
             "can_like": True,
+            "disliked": False,
+            "can_dislike": True,
         }
         assert (
             client.get(endpoint, params={"account_id": account["account_id"]}).json()
@@ -74,18 +76,38 @@ def test_guest_owner_idempotence_counter_and_forged_fields(
         )
     assert client.get(base + "/settings").json() == before
     assert login(client, csrf, other).status_code == 200
-    assert client.get(endpoint).json() == {"liked": False, "like_count": 1, "can_like": True}
+    assert client.get(endpoint).json() == {
+        "liked": False,
+        "like_count": 1,
+        "can_like": True,
+        "disliked": False,
+        "can_dislike": True,
+    }
     assert client.put(
         endpoint, headers=csrf, json={"liked": False, "user_id": owner[1]["account_id"]}
-    ).json() == {"liked": False, "like_count": 1, "can_like": True}
+    ).json() == {
+        "liked": False,
+        "like_count": 1,
+        "can_like": True,
+        "disliked": False,
+        "can_dislike": True,
+    }
     assert client.put(endpoint, json={"liked": True}).status_code == 403
     assert client.put(endpoint, headers=csrf, json={"liked": True}).json() == {
         "liked": True,
         "like_count": 2,
         "can_like": True,
+        "disliked": False,
+        "can_dislike": True,
     }
     assert client.post("/v1/auth/logout", headers=csrf).status_code == 204
-    assert client.get(endpoint).json() == {"liked": False, "like_count": 2, "can_like": False}
+    assert client.get(endpoint).json() == {
+        "liked": False,
+        "like_count": 2,
+        "can_like": False,
+        "disliked": False,
+        "can_dislike": False,
+    }
     assert client.put(endpoint, headers=csrf, json={"liked": True}).status_code == 401
     schema = client.get("/openapi.json").json()
     route = schema["paths"]["/v1/videos/{video_id}/like"]
@@ -112,7 +134,13 @@ def test_invalid_target_never_writes(client, csrf, owner, published, body):
     base, _ = published
     response = client.put(base + "/like", headers=csrf, json=body)
     assert response.status_code == 422
-    assert client.get(base + "/like").json() == {"liked": False, "like_count": 0, "can_like": True}
+    assert client.get(base + "/like").json() == {
+        "liked": False,
+        "like_count": 0,
+        "can_like": True,
+        "disliked": False,
+        "can_dislike": True,
+    }
 
 
 @pytest.mark.parametrize("role", ["user", "moderator", "admin"])
@@ -149,6 +177,8 @@ def test_private_counters_and_mutations_require_access_for_every_role(
         "liked": True,
         "like_count": 2,
         "can_like": True,
+        "disliked": False,
+        "can_dislike": True,
     }
     assert login(client, csrf, owner[0]).status_code == 200
     assert (
@@ -157,7 +187,13 @@ def test_private_counters_and_mutations_require_access_for_every_role(
         ).status_code
         == 200
     )
-    assert client.get(endpoint).json() == {"liked": True, "like_count": 2, "can_like": True}
+    assert client.get(endpoint).json() == {
+        "liked": True,
+        "like_count": 2,
+        "can_like": True,
+        "disliked": False,
+        "can_dislike": True,
+    }
     assert login(client, csrf, viewer).status_code == 200
     assert (
         client.get(endpoint).status_code == 404
@@ -198,7 +234,13 @@ def test_failed_aggregate_rolls_back_pair_and_preserves_metadata(client, csrf, o
             raise SQLAlchemyError("private counter detail")
 
     for current in (False, True):
-        expected = {"liked": current, "like_count": int(current), "can_like": True}
+        expected = {
+            "liked": current,
+            "like_count": int(current),
+            "can_like": True,
+            "disliked": False,
+            "can_dislike": True,
+        }
         assert client.put(endpoint, headers=csrf, json={"liked": current}).json() == expected
         with query_hook(client, fail):
             for method, data in (("GET", None), ("PUT", {"liked": not current})):

@@ -37,7 +37,13 @@ from video.application.feed import (
     ReadFeed,
 )
 from video.application.job_retries import RetryVideoJob, VideoJobAdministrators, VideoJobRetries
-from video.application.likes import GetVideoLike, LikeActions, SetVideoLike, VideoLikes
+from video.application.likes import (
+    GetVideoLike,
+    LikeActions,
+    SetVideoDislike,
+    SetVideoLike,
+    VideoLikes,
+)
 from video.application.moderation import ModerationViews, ReportVideoAccess, VideoStaffActors
 from video.application.originals import CleanupOriginals, OriginalDeletions, OriginalStorage
 from video.application.playlist_cards import (
@@ -148,6 +154,7 @@ class VideoProvider(Provider):
     like_actions = provide(LikeActions)
     get_video_like = provide(GetVideoLike)
     set_video_like = provide(SetVideoLike)
+    set_video_dislike = provide(SetVideoDislike)
     publish_video = provide(PublishVideo)
     media_redirects = provide(S3MediaRedirects, provides=MediaRedirects)
     get_media = provide(GetMedia)

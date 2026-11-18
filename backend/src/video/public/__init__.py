@@ -5,7 +5,7 @@ from video.application.delivery import GetMedia, GetThumbnailDelivery
 from video.application.discussions import RequireDiscussionVideo
 from video.application.encoding import EncodeTrack, PlanMedia, RepairEncoding
 from video.application.feed import GetChannelFeed, GetFeed
-from video.application.likes import GetVideoLike, SetVideoLike
+from video.application.likes import GetVideoLike, SetVideoDislike, SetVideoLike
 from video.application.originals import CleanupOriginals
 from video.application.playlist_cards import (
     GetPlaylistVideoCards,
@@ -74,6 +74,7 @@ __all__ = [
     'RequireDiscussionVideo',
     'GetVideoLike',
     'SetVideoLike',
+    'SetVideoDislike',
     'InvalidLike',
     'LikeState',
     'InvalidPermissionCursor',

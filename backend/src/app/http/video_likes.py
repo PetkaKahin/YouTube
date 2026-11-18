@@ -4,7 +4,7 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
-from pydantic import Field, StrictBool
+from pydantic import ConfigDict, Field, StrictBool
 
 from app.http.videos import actor_id, video_problem
 from common.http.errors import problem
@@ -13,6 +13,8 @@ from video.public import (
     AuthenticationRequired,
     GetVideoLike,
     InvalidLike,
+    LikeState,
+    SetVideoDislike,
     SetVideoLike,
     VideoNotFound,
 )
@@ -24,10 +26,27 @@ class LikeBody(JSONModel):
     liked: StrictBool
 
 
+class DislikeBody(JSONModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    disliked: StrictBool
+
+
 class LikeResponse(JSONModel):
     liked: bool
     like_count: int = Field(ge=0)
     can_like: bool
+    disliked: bool
+    can_dislike: bool
+
+    @classmethod
+    def from_value(cls, value: LikeState) -> LikeResponse:
+        return cls(
+            liked=value.liked,
+            like_count=value.like_count,
+            can_like=value.can_like,
+            disliked=value.disliked,
+            can_dislike=value.can_dislike,
+        )
 
 
 def like_problem(request: Request, error: Exception) -> JSONResponse:
@@ -55,9 +74,7 @@ def video_likes_router() -> APIRouter:
         response.headers.update(HEADERS)
         try:
             value = await scenario(actor_id(request), video_id)
-            return LikeResponse(
-                liked=value.liked, like_count=value.like_count, can_like=value.can_like
-            )
+            return LikeResponse.from_value(value)
         except Exception as error:
             return like_problem(request, error)
 
@@ -76,9 +93,26 @@ def video_likes_router() -> APIRouter:
         response.headers.update(HEADERS)
         try:
             value = await scenario(actor_id(request), video_id, body.liked)
-            return LikeResponse(
-                liked=value.liked, like_count=value.like_count, can_like=value.can_like
-            )
+            return LikeResponse.from_value(value)
+        except Exception as error:
+            return like_problem(request, error)
+
+    @router.put(
+        "/{video_id}/dislike",
+        response_model=LikeResponse,
+        openapi_extra={"security": [{"SessionCookie": []}]},
+    )
+    async def set_dislike(
+        video_id: Identifier,
+        body: DislikeBody,
+        request: Request,
+        response: Response,
+        scenario: FromDishka[SetVideoDislike],
+    ) -> LikeResponse | JSONResponse:
+        response.headers.update(HEADERS)
+        try:
+            value = await scenario(actor_id(request), video_id, body.disliked)
+            return LikeResponse.from_value(value)
         except Exception as error:
             return like_problem(request, error)
 

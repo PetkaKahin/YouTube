@@ -119,6 +119,15 @@ class LikeRow(Base):
     account_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("user_accounts.id"), primary_key=True
     )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.clock_timestamp()
+    )
+    reaction: Mapped[str] = mapped_column(Text, server_default="like")
+
+    __table_args__ = (
+        CheckConstraint("reaction IN ('like','dislike')", name="valid_reaction"),
+        Index("ix_video_likes_account_order", account_id, created_at.desc(), video_id.desc()),
+    )
 
 
 class PrivateGrantRow(Base):
