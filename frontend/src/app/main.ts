@@ -19,6 +19,7 @@ const router = createRouter({
     { path: '/results', component: SearchPage },
     { path: '/playlist', component: () => import('../pages/playlist-link').then((m) => m.PlaylistLinkPage) },
     { path: '/@:tag/:tab(videos|playlists)?', component: () => import('../pages/channel').then((m) => m.ChannelPage) },
+    { path: '/watch', component: () => import('../pages/watch').then((m) => m.WatchPage), meta: { watchLayout: true } },
     { path: '/login', component: LoginPage, meta: { standalone: true } },
     { path: '/register', component: RegisterPage, meta: { standalone: true } },
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
