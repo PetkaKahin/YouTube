@@ -6,6 +6,7 @@ from fastapi import APIRouter, Request
 
 from app.http.accounts import accounts_router
 from app.http.channels import channels_router
+from app.http.comments import comments_router
 from app.http.feed import feed_router
 from app.http.media import media_router
 from app.http.playlists import playlists_router
@@ -55,6 +56,7 @@ def api_router() -> APIRouter:
     router.include_router(videos_router())
     router.include_router(video_access_router())
     router.include_router(video_likes_router())
+    router.include_router(comments_router())
     router.include_router(media_router())
     router.include_router(upload_router())
     router.include_router(thumbnails_router())

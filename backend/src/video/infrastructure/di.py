@@ -20,6 +20,7 @@ from video.application.access import (
     ViewingPolicy,
 )
 from video.application.delivery import GetMedia, GetThumbnailDelivery, MediaRedirects
+from video.application.discussions import DiscussionPublications, RequireDiscussionVideo
 from video.application.encoding import (
     EncodeTrack,
     EncodingJobs,
@@ -37,11 +38,7 @@ from video.application.feed import (
 )
 from video.application.likes import GetVideoLike, LikeActions, SetVideoLike, VideoLikes
 from video.application.originals import CleanupOriginals, OriginalDeletions, OriginalStorage
-from video.application.playlist_cards import (
-    GetPlaylistVideoCards,
-    PlaylistCardViews,
-    PlaylistVideoOwnership,
-)
+from video.application.playlist_cards import GetPlaylistVideoCards, PlaylistCardViews, PlaylistVideoOwnership
 from video.application.ports import Publications, VideoActors
 from video.application.processing import (
     InspectSource,
@@ -49,12 +46,7 @@ from video.application.processing import (
     SourceInspector,
     SourceJobs,
 )
-from video.application.publications import (
-    CreateDraft,
-    EditVideoSettings,
-    GetVideoSettings,
-    PublishVideo,
-)
+from video.application.publications import CreateDraft, EditVideoSettings, GetVideoSettings, PublishVideo
 from video.application.readiness import GetProcessing, ProcessingViews
 from video.application.search import GetSearch, SearchChannels, SearchPlaylists, SearchVideos
 from video.application.thumbnails import (
@@ -90,6 +82,7 @@ from video.infrastructure.access import (
 )
 from video.infrastructure.actors import AccountActors
 from video.infrastructure.delivery import S3MediaRedirects
+from video.infrastructure.discussions import SqlDiscussionPublications
 from video.infrastructure.encoder import S3MediaEncoder
 from video.infrastructure.encoding_jobs import SqlEncodingJobs
 from video.infrastructure.feed import ChannelFeedAuthors, ChannelFeedScope, SqlFeedCandidates
@@ -124,6 +117,8 @@ class VideoProvider(Provider):
     set_private_access = provide(SetPrivateAccess)
     get_viewable_video = provide(GetViewableVideo)
     video_access = provide(VideoAccess)
+    discussion_publications = provide(SqlDiscussionPublications, provides=DiscussionPublications)
+    require_discussion_video = provide(RequireDiscussionVideo)
     video_likes = provide(SqlVideoLikes, provides=VideoLikes)
     like_actions = provide(LikeActions)
     get_video_like = provide(GetVideoLike)

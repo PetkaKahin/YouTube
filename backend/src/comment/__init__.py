@@ -1,1 +1,1 @@
-"""Comment module boundary. Business implementation is pending."""
+"""Comment module: public-video discussions and comment likes."""
