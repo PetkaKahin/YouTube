@@ -24,6 +24,7 @@ RUN mkdir -p /var/lib/youtube/media \
     && chown app:app /var/lib/youtube/media \
     && chmod 700 /var/lib/youtube/media
 WORKDIR /app
+COPY --chown=app:app backend/seed-media ./seed-media
 
 FROM base AS dev
 COPY backend/pyproject.toml backend/uv.lock ./

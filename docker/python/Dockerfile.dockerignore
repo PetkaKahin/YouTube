@@ -9,6 +9,8 @@ backend/**
 !backend/migrations/**
 !backend/src/
 !backend/src/**
+!backend/seed-media/
+!backend/seed-media/**
 
 # Business tests stay in the checkout/dev mount, not in Python build images.
 backend/src/*/tests

@@ -55,6 +55,12 @@ from video.application.playlist_cards import (
     RequirePlaylistVideo,
 )
 from video.application.ports import Publications, VideoActors
+from video.application.prepared_media import (
+    CheckPreparedVideo,
+    ExportPreparedVideo,
+    ImportPreparedVideo,
+    PreparedMedia,
+)
 from video.application.processing import (
     InspectSource,
     RepairSourceProcessing,
@@ -116,6 +122,7 @@ from video.infrastructure.moderation import AccountVideoStaff, SqlModerationView
 from video.infrastructure.multipart import S3Multipart
 from video.infrastructure.originals import S3OriginalStorage, SqlOriginalDeletions
 from video.infrastructure.playlist_cards import SqlPlaylistCardViews
+from video.infrastructure.prepared_media import SqlPreparedMedia
 from video.infrastructure.processing import SqlSourceJobs
 from video.infrastructure.publications import SqlPublications
 from video.infrastructure.readiness import SqlProcessingViews
@@ -136,6 +143,10 @@ class VideoProvider(Provider):
     watch_progress = provide(SqlWatchProgress, provides=WatchProgressStore)
     read_watch_progress = provide(ReadWatchProgress)
     set_watch_progress = provide(SetWatchProgress)
+    prepared_media = provide(SqlPreparedMedia, provides=PreparedMedia)
+    check_prepared_video = provide(CheckPreparedVideo)
+    export_prepared_video = provide(ExportPreparedVideo)
+    import_prepared_video = provide(ImportPreparedVideo)
     permission_emails = provide(AccountPermissionEmails, provides=PermissionEmails)
     private_grants = provide(SqlPrivateGrants, provides=PrivateGrants)
     viewer_identities = provide(AccountViewers, provides=ViewerIdentities)

@@ -2,11 +2,14 @@
 .NOTPARALLEL:
 
 DOCKER_RUN := ./docker/run
+SEED_MODE ?= dev
+override SEED_MODE := $(value SEED_MODE)
+export SEED_MODE
 override EMAIL := $(value EMAIL)
 override ROLE := $(value ROLE)
 export EMAIL ROLE ROLE_ACTION
 
-.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front role
+.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front role seed
 
 ifneq ($(filter role,$(MAKECMDGOALS)),)
 ifneq ($(firstword $(MAKECMDGOALS)),role)
@@ -55,6 +58,10 @@ ps: ## Показать состояние всех контейнеров dev
 
 test: ## Запустить все тесты бэкенда в работающем dev
 	$(DOCKER_RUN) dev exec -T python pytest
+
+seed: ## Создать 5 демо-аккаунтов, включая администратора, и 12 природных HD-роликов
+	@case "$$SEED_MODE" in dev|prod) ;; *) printf '%s\n' 'SEED_MODE должен быть dev или prod'; exit 2;; esac
+	$(DOCKER_RUN) "$$SEED_MODE" exec -T -e PYTHONPATH=/app/src media-worker python -m app.seed
 
 role: override ROLE_ACTION := $(word 2,$(MAKECMDGOALS))
 role: ## Роль аккаунта: make role get EMAIL=адрес / make role set EMAIL=адрес ROLE=роль
