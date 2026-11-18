@@ -40,7 +40,13 @@ from video.application.job_retries import RetryVideoJob, VideoJobAdministrators,
 from video.application.likes import GetVideoLike, LikeActions, SetVideoLike, VideoLikes
 from video.application.moderation import ModerationViews, ReportVideoAccess, VideoStaffActors
 from video.application.originals import CleanupOriginals, OriginalDeletions, OriginalStorage
-from video.application.playlist_cards import GetPlaylistVideoCards, PlaylistCardViews, PlaylistVideoOwnership
+from video.application.playlist_cards import (
+    GetPlaylistVideoCards,
+    PlaylistCardViews,
+    PlaylistVideoOwnership,
+    PlaylistViewLocks,
+    RequirePlaylistVideo,
+)
 from video.application.ports import Publications, VideoActors
 from video.application.processing import (
     InspectSource,
@@ -82,6 +88,8 @@ from video.application.uploads import (
     UploadOperations,
     Uploads,
 )
+from video.application.watch_progress import ReadWatchProgress, WatchProgressStore
+from video.application.watch_progress_write import SetWatchProgress
 from video.infrastructure.access import (
     AccountPermissionEmails,
     AccountViewers,
@@ -109,10 +117,14 @@ from video.infrastructure.thumbnail_jobs import SqlThumbnailJobs, SqlThumbnailUp
 from video.infrastructure.thumbnail_media import S3ThumbnailProcessor
 from video.infrastructure.uploads import SqlUploads
 from video.infrastructure.viewing_policy import create_viewing_policy
+from video.infrastructure.watch_progress import SqlWatchProgress
 
 
 class VideoProvider(Provider):
     scope = Scope.REQUEST
+    watch_progress = provide(SqlWatchProgress, provides=WatchProgressStore)
+    read_watch_progress = provide(ReadWatchProgress)
+    set_watch_progress = provide(SetWatchProgress)
     permission_emails = provide(AccountPermissionEmails, provides=PermissionEmails)
     private_grants = provide(SqlPrivateGrants, provides=PrivateGrants)
     viewer_identities = provide(AccountViewers, provides=ViewerIdentities)
@@ -148,6 +160,8 @@ class VideoProvider(Provider):
     playlist_card_views = provide(SqlPlaylistCardViews, provides=PlaylistCardViews)
     get_playlist_cards = provide(GetPlaylistVideoCards)
     playlist_ownership = provide(PlaylistVideoOwnership)
+    playlist_view_locks = provide(SqlPlaylistCardViews, provides=PlaylistViewLocks)
+    require_playlist_video = provide(RequirePlaylistVideo)
     search_videos = provide(SqlSearchVideos, provides=SearchVideos)
     search_channels = provide(ChannelSearchResults, provides=SearchChannels)
     search_playlists = provide(PlaylistSearchResults, provides=SearchPlaylists)

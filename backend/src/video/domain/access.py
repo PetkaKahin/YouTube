@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from video.domain.delivery import MediaDelivery
+from video.domain.feed import FeedAuthor
+from video.domain.watch_progress import WatchProgress
 
 
 @dataclass(frozen=True)
@@ -45,6 +47,12 @@ class VideoView:
     uhd: bool
     hdr: bool
     uhd_hdr: bool
+
+
+@dataclass(frozen=True)
+class VideoDetails(VideoView):
+    channel: FeedAuthor
+    watch_progress: WatchProgress | None = None
 
 
 @dataclass(frozen=True)

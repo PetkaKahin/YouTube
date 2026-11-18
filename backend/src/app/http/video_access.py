@@ -9,7 +9,9 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import Field, StrictBool
 
+from app.http.feed import FeedChannelResponse
 from app.http.videos import actor_id, video_problem
+from app.http.watch_progress import WatchProgressResponse
 from common.http.errors import problem
 from common.http.schemas import Identifier, JSONModel
 from video.public import (
@@ -18,9 +20,9 @@ from video.public import (
     GetViewableVideo,
     InvalidPermissionCursor,
     SetPrivateAccess,
+    VideoDetails,
     VideoError,
     VideoNotFound,
-    VideoView,
 )
 
 
@@ -63,8 +65,13 @@ class VideoViewResponse(JSONModel):
     hls_url: str
     preview_url: str
 
+
+class VideoDetailsResponse(VideoViewResponse):
+    channel: FeedChannelResponse
+    watch_progress: WatchProgressResponse | None
+
     @classmethod
-    def from_value(cls, value: VideoView) -> VideoViewResponse:
+    def from_value(cls, value: VideoDetails) -> VideoDetailsResponse:
         payload = asdict(value)
         payload["qualities"] = [asdict(item) for item in value.qualities]
         payload["hls_url"] = f"/api/v1/videos/{value.id}/hls/master.m3u8"
@@ -119,7 +126,7 @@ def video_access_router() -> APIRouter:
 
     @router.get(
         "/{video_id}",
-        response_model=VideoViewResponse,
+        response_model=VideoDetailsResponse,
         openapi_extra={"security": [{}, {"SessionCookie": []}]},
     )
     async def view(
@@ -127,12 +134,12 @@ def video_access_router() -> APIRouter:
         request: Request,
         response: Response,
         scenario: FromDishka[GetViewableVideo],
-    ) -> VideoViewResponse | JSONResponse:
+    ) -> VideoDetailsResponse | JSONResponse:
         no_store(response)
         try:
             value = await scenario(actor_id(request), video_id)
         except (AuthenticationRequired, VideoNotFound) as error:
             return video_problem(request, error)
-        return VideoViewResponse.from_value(value)
+        return VideoDetailsResponse.from_value(value)
 
     return router

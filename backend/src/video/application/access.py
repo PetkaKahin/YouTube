@@ -3,9 +3,11 @@
 from typing import Protocol
 
 from common.contracts.transactions import Transactions
+from video.application.feed import FeedAuthors
 from video.application.ports import VideoActors
 from video.application.publications import require_actor
-from video.domain.access import VideoView, ViewConditions, Viewer, ViewingSnapshot
+from video.application.watch_progress import ReadWatchProgress
+from video.domain.access import VideoDetails, VideoView, ViewConditions, Viewer, ViewingSnapshot
 from video.domain.permissions import SIZE, PermissionCursor, PermissionGrant, PermissionPage
 from video.domain.publications import VideoError, VideoNotFound, valid_identifier
 
@@ -112,13 +114,16 @@ class VideoAccess:
             else Viewer()
         )
 
-    async def require(self, viewer: Viewer, video_id: int) -> VideoView:
+    async def snapshot(self, viewer: Viewer, video_id: int) -> ViewingSnapshot:
         if not valid_identifier(video_id):
             raise VideoNotFound
         snapshot = await self.views.snapshot(video_id, viewer)
         if snapshot is None or not self.policy.allows(viewer, snapshot.conditions):
             raise VideoNotFound
-        return snapshot.video
+        return snapshot
+
+    async def require(self, viewer: Viewer, video_id: int) -> VideoView:
+        return (await self.snapshot(viewer, video_id)).video
 
     async def read(self, account_id: int | None, video_id: int) -> VideoView:
         if not valid_identifier(video_id):
@@ -127,9 +132,38 @@ class VideoAccess:
 
 
 class GetViewableVideo:
-    def __init__(self, access: VideoAccess, transactions: Transactions) -> None:
-        self.access, self.transactions = access, transactions
+    def __init__(
+        self,
+        access: VideoAccess,
+        authors: FeedAuthors,
+        transactions: Transactions,
+        progress: ReadWatchProgress,
+    ) -> None:
+        self.access, self.authors, self.transactions = access, authors, transactions
+        self.progress = progress
 
-    async def __call__(self, account_id: int | None, video_id: int) -> VideoView:
+    async def __call__(self, account_id: int | None, video_id: int) -> VideoDetails:
         async with self.transactions.begin():
-            return await self.access.read(account_id, video_id)
+            if not valid_identifier(video_id):
+                raise VideoNotFound
+            snapshot = await self.access.snapshot(await self.access.viewer(account_id), video_id)
+            owner_id = snapshot.conditions.owner_id
+            author = (await self.authors.get((owner_id,))).get(owner_id)
+            if author is None:
+                raise VideoNotFound
+            video = snapshot.video
+            return VideoDetails(
+                id=video.id,
+                title=video.title,
+                description=video.description,
+                visibility=video.visibility,
+                added_at=video.added_at,
+                updated_at=video.updated_at,
+                qualities=video.qualities,
+                hd=video.hd,
+                uhd=video.uhd,
+                hdr=video.hdr,
+                uhd_hdr=video.uhd_hdr,
+                channel=author,
+                watch_progress=(await self.progress(account_id, (video.id,))).get(video.id),
+            )

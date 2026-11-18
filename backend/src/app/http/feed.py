@@ -8,9 +8,11 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import Field
 
+from app.http.videos import actor_id, video_problem
+from app.http.watch_progress import WatchProgressResponse
 from common.http.errors import problem
 from common.http.schemas import Identifier, JSONModel
-from video.public import FeedCard, GetFeed, InvalidFeedCursor
+from video.public import AuthenticationRequired, FeedCard, GetFeed, InvalidFeedCursor
 
 HEADERS = {"Cache-Control": "no-store", "Vary": "Cookie"}
 
@@ -28,6 +30,7 @@ class FeedCardResponse(JSONModel):
     duration_seconds: float = Field(gt=0, le=3600)
     channel: FeedChannelResponse
     preview_url: str | None
+    watch_progress: WatchProgressResponse | None
 
     @classmethod
     def from_value(cls, value: FeedCard) -> FeedCardResponse:
@@ -40,6 +43,9 @@ class FeedCardResponse(JSONModel):
                 id=value.channel.id, name=value.channel.name, tag=value.channel.tag
             ),
             preview_url=f"/api/v1/videos/{value.id}/preview.webp" if value.preview_ready else None,
+            watch_progress=WatchProgressResponse.from_value(value.watch_progress)
+            if value.watch_progress is not None
+            else None,
         )
 
 
@@ -66,7 +72,9 @@ def feed_router() -> APIRouter:
         try:
             if len(request.query_params.getlist("cursor")) > 1:
                 raise InvalidFeedCursor
-            page = await scenario(cursor)
+            page = await scenario(cursor, account_id=actor_id(request))
+        except AuthenticationRequired as error:
+            return video_problem(request, error)
         except InvalidFeedCursor:
             return problem(request, 422, "invalid_cursor", "Invalid feed cursor", headers=HEADERS)
         except Exception:

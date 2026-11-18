@@ -94,7 +94,16 @@ def test_public_feed_shape_private_owner_and_staff_never_gain_discovery(
     response = client.get(path)
     assert response.status_code == 200
     card = response.json()["items"][0]
-    assert set(card) == {"id", "title", "added_at", "duration_seconds", "channel", "preview_url"}
+    assert set(card) == {
+        "id",
+        "title",
+        "added_at",
+        "duration_seconds",
+        "channel",
+        "preview_url",
+        "watch_progress",
+    }
+    assert card["watch_progress"] is None
     assert card["id"] == draft["id"] and card["title"] == draft["title"]
     assert card["channel"]["name"] == data["name"] and card["channel"]["tag"] == data["tag"]
     assert set(card["channel"]) == {"id", "name", "tag"}

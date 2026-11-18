@@ -7,6 +7,8 @@ import struct
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
+from channel.domain.profiles import PublicChannel
+
 SIZE = 20
 EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 TOKEN = struct.Struct(">BBQQqQ")
@@ -71,6 +73,26 @@ class PlaylistList:
 
 
 @dataclass(frozen=True)
+class SavedPlaylistList(PlaylistList):
+    saved: bool
+
+
+@dataclass(frozen=True)
+class SavedPlaylistSelection:
+    playlist_id: int
+    video_id: int
+    selected: bool
+    saved: bool
+
+
+@dataclass(frozen=True)
+class PlaylistWatchProgress:
+    position_seconds: float
+    duration_seconds: float
+    updated_at: datetime
+
+
+@dataclass(frozen=True)
 class PlaylistVideo:
     id: int
     title: str
@@ -80,6 +102,7 @@ class PlaylistVideo:
     channel_name: str
     channel_tag: str
     preview_ready: bool
+    watch_progress: PlaylistWatchProgress | None = None
 
 
 @dataclass(frozen=True)
@@ -87,6 +110,7 @@ class PlaylistView:
     playlist: Playlist
     items: tuple[PlaylistVideo, ...]
     next_cursor: str | None
+    channel: PublicChannel
 
 
 @dataclass(frozen=True)

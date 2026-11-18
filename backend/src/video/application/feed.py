@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from common.contracts.transactions import Transactions
+from video.application.watch_progress import ReadWatchProgress
 from video.domain.feed import (
     FEED_SIZE,
     ChannelFeedCursor,
@@ -64,14 +65,21 @@ class ReadFeed:
 
 
 class GetFeed:
-    def __init__(self, reader: ReadFeed, transactions: Transactions) -> None:
-        self.reader, self.transactions = reader, transactions
+    def __init__(
+        self, reader: ReadFeed, transactions: Transactions, progress: ReadWatchProgress
+    ) -> None:
+        self.reader, self.transactions, self.progress = reader, transactions, progress
 
-    async def __call__(self, cursor: str | None = None) -> FeedPage:
+    async def __call__(
+        self, cursor: str | None = None, *, account_id: int | None = None
+    ) -> FeedPage:
         position = FeedPosition.decode(cursor) if cursor is not None else None
         async with self.transactions.begin():
             window = await self.reader(position)
-            return FeedPage(window.items, window.after.encode() if window.after else None)
+            return FeedPage(
+                await self.progress.cards(account_id, window.items),
+                window.after.encode() if window.after else None,
+            )
 
 
 @dataclass(frozen=True)
@@ -86,11 +94,18 @@ class FeedChannels(Protocol):
 
 class GetChannelFeed:
     def __init__(
-        self, channels: FeedChannels, reader: ReadFeed, transactions: Transactions
+        self,
+        channels: FeedChannels,
+        reader: ReadFeed,
+        transactions: Transactions,
+        progress: ReadWatchProgress,
     ) -> None:
         self.channels, self.reader, self.transactions = channels, reader, transactions
+        self.progress = progress
 
-    async def __call__(self, tag: str, cursor: str | None = None) -> FeedPage:
+    async def __call__(
+        self, tag: str, cursor: str | None = None, *, account_id: int | None = None
+    ) -> FeedPage:
         async with self.transactions.begin():
             channel = await self.channels.find(tag)
             if channel is None:
@@ -102,6 +117,6 @@ class GetChannelFeed:
             )
             window = await self.reader(after, channel.owner_id)
             return FeedPage(
-                window.items,
+                await self.progress.cards(account_id, window.items),
                 ChannelFeedCursor(channel.id, window.after).encode() if window.after else None,
             )

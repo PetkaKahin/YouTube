@@ -8,6 +8,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    Double,
     ForeignKey,
     Identity,
     Index,
@@ -80,6 +81,33 @@ class PublicationRow(Base):
     )
 
 
+class WatchProgressRow(Base):
+    __tablename__ = "video_watch_progress"
+
+    account_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("user_accounts.id", ondelete="CASCADE"), primary_key=True
+    )
+    video_id: Mapped[int] = mapped_column(
+        BigInteger,
+        ForeignKey("video_publications.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True,
+    )
+    position_seconds: Mapped[float] = mapped_column(Double)
+    duration_seconds: Mapped[float] = mapped_column(Double)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.clock_timestamp()
+    )
+
+    __table_args__ = (
+        Index(
+            "ix_video_watch_progress_account_order", account_id, updated_at.desc(), video_id.desc()
+        ),
+        CheckConstraint("duration_seconds > 0 AND duration_seconds <= 3600", name="valid_duration"),
+        CheckConstraint(
+            "position_seconds >= 0 AND position_seconds <= duration_seconds", name="valid_position"
+        ),
+    )
 
 
 class LikeRow(Base):

@@ -18,6 +18,7 @@ from app.http.uploads import upload_router
 from app.http.video_access import video_access_router
 from app.http.video_likes import video_likes_router
 from app.http.videos import videos_router
+from app.http.watch_progress import watch_progress_router
 from app.resources import Resources
 from common.http.errors import problem
 from common.http.schemas import JSONModel
@@ -57,6 +58,7 @@ def api_router() -> APIRouter:
     router.include_router(search_router())
     router.include_router(videos_router())
     router.include_router(video_access_router())
+    router.include_router(watch_progress_router())
     router.include_router(video_likes_router())
     router.include_router(comments_router())
     router.include_router(job_administration_router())

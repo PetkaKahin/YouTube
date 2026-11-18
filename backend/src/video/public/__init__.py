@@ -7,7 +7,11 @@ from video.application.encoding import EncodeTrack, PlanMedia, RepairEncoding
 from video.application.feed import GetChannelFeed, GetFeed
 from video.application.likes import GetVideoLike, SetVideoLike
 from video.application.originals import CleanupOriginals
-from video.application.playlist_cards import GetPlaylistVideoCards, PlaylistVideoOwnership
+from video.application.playlist_cards import (
+    GetPlaylistVideoCards,
+    PlaylistVideoOwnership,
+    RequirePlaylistVideo,
+)
 from video.application.processing import (
     INSPECTION_TASK,
     MEDIA_QUEUE,
@@ -34,7 +38,9 @@ from video.application.thumbnails import (
     StartThumbnailUpload,
 )
 from video.application.uploads import CompleteUpload, ExpireUploads, RefreshUpload, StartUpload
-from video.domain.access import VideoView
+from video.application.watch_progress import ReadWatchProgress
+from video.application.watch_progress_write import SetWatchProgress
+from video.domain.access import VideoDetails, VideoView
 from video.domain.delivery import ObjectDelivery, PlaylistDelivery, PublicationError
 from video.domain.encoding import ENCODE_TASK, PLAN_TASK
 from video.domain.feed import FeedCard, FeedPage, InvalidFeedCursor
@@ -53,8 +59,14 @@ from video.domain.readiness import ProcessingStatus
 from video.domain.search import InvalidSearch, SearchChannel, SearchPage, SearchQuery
 from video.domain.thumbnails import PREPARE_THUMBNAIL_TASK, ThumbnailError, ThumbnailOptions
 from video.domain.uploads import StorageUnavailable, UploadError, UploadPlan
+from video.domain.watch_progress import InvalidWatchProgress, WatchProgress
 
 __all__ = [
+    'RequirePlaylistVideo',
+    'ReadWatchProgress',
+    'SetWatchProgress',
+    'WatchProgress',
+    'InvalidWatchProgress',
     'GetMyVideos',
     'InvalidVideoList',
     'VideoSettingsPage',
@@ -87,6 +99,7 @@ __all__ = [
     'GetPrivateAccess',
     'SetPrivateAccess',
     'GetViewableVideo',
+    'VideoDetails',
     'VideoView',
     'CleanupOriginals',
     'GetProcessing',

@@ -123,20 +123,22 @@ def test_inaccessible_entries_are_filtered_before_page_and_continuation(backend_
                 ),
             ):
                 first = await invoke(container, GetPlaylist, None, playlist.id)
+                assert first.channel.id == playlist.channel_id
+                assert first.channel.tag == feed_seed[0].tag
                 assert [item.id for item in first.items] == [
                     identity for identity, _ in pairs[43:63]
                 ]
                 assert first.next_cursor
                 second = await invoke(container, GetPlaylist, None, playlist.id, first.next_cursor)
+                assert second.channel == first.channel
                 assert [item.id for item in second.items] == [
                     pairs[-1][0]
                 ] and second.next_cursor is None
             # Already known continuation does not survive a fresh privacy change.
             async with resources.sessions.begin() as session:
                 (await session.get(PublicationRow, pairs[-1][0])).visibility = "private"
-            assert (
-                await invoke(container, GetPlaylist, None, playlist.id, first.next_cursor)
-            ).items == ()
+            empty = await invoke(container, GetPlaylist, None, playlist.id, first.next_cursor)
+            assert empty.items == () and empty.channel == first.channel
             other = await invoke(
                 container, CreatePlaylist, owner, PlaylistMetadata("other", "", "public")
             )

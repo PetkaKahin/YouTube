@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
 from video.domain.publications import valid_identifier
+from video.domain.watch_progress import WatchProgress
 
 FEED_SIZE = 20
 EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
@@ -113,6 +114,7 @@ class FeedCard:
     duration_seconds: float
     channel: FeedAuthor
     preview_ready: bool
+    watch_progress: WatchProgress | None = None
 
 
 @dataclass(frozen=True)

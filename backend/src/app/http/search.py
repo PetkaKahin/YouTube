@@ -10,9 +10,10 @@ from fastapi.responses import JSONResponse
 from pydantic import Field
 
 from app.http.feed import FeedCardResponse, FeedChannelResponse
+from app.http.videos import actor_id, video_problem
 from common.http.errors import problem
 from common.http.schemas import Identifier, JSONModel
-from video.public import GetSearch, InvalidSearch, SearchQuery
+from video.public import AuthenticationRequired, GetSearch, InvalidSearch, SearchQuery
 
 HEADERS = {"Cache-Control": "no-store", "Vary": "Cookie"}
 
@@ -76,7 +77,10 @@ def search_router() -> APIRouter:
             page = await scenario(
                 SearchQuery(q, type, sort, duration, period, tuple(feature or ())),
                 cursor,
+                account_id=actor_id(request),
             )
+        except AuthenticationRequired as error:
+            return video_problem(request, error)
         except InvalidSearch:
             return problem(
                 request, 422, "invalid_search", "Invalid search parameters", headers=HEADERS

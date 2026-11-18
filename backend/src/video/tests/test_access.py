@@ -10,6 +10,7 @@ import pytest
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from channel.public import Register, Registration
 from user.public import CreateAccount, GetAccount, NewAccount, SetRole
 from video.domain.access import ViewConditions, Viewer
 from video.domain.processing import SourceInspectionError
@@ -41,6 +42,20 @@ from video.tests.test_source_processing import process, source_environment
 from video.tests.test_subtitle_jobs import ffmpeg
 
 pytestmark = pytest.mark.usefixtures("video_media_cleanup")
+
+
+@pytest.fixture(autouse=True)
+def registered_source_owner(monkeypatch):
+    async def create_owner(container):
+        token = uuid4().hex
+        registered = await invoke(
+            container,
+            Register,
+            Registration("Иван", token + "@example.com", "t" + token[:28], "abcdef", "abcdef"),
+        )
+        return await invoke(container, GetAccount, registered.account_id)
+
+    monkeypatch.setattr(support, "account", create_owner)
 
 
 @pytest.fixture(scope="module")

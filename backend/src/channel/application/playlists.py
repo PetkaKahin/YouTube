@@ -1,5 +1,6 @@
 """Playlist changes are atomic; ordered contents retain independent video rights."""
 
+from dataclasses import replace
 from typing import Protocol
 
 from channel.domain.playlists import (
@@ -15,8 +16,10 @@ from channel.domain.playlists import (
     PlaylistOption,
     PlaylistVideo,
     PlaylistView,
+    PlaylistWatchProgress,
     identifier,
 )
+from channel.domain.profiles import PublicChannel
 from common.contracts.transactions import Transactions
 
 
@@ -25,9 +28,14 @@ class PlaylistActors(Protocol):
 
 
 class PlaylistStore(Protocol):
+    async def select_one(
+        self, channel_id: int, playlist_id: int, video_id: int, selected: bool
+    ) -> None: ...
+    async def saved(self, channel_id: int, video_id: int) -> bool: ...
     async def channel(self, account_id: int, *, lock: bool = False) -> int | None: ...
     async def create(self, channel_id: int, metadata: PlaylistMetadata) -> Playlist: ...
     async def get(self, playlist_id: int) -> Playlist | None: ...
+    async def profile(self, channel_id: int) -> PublicChannel | None: ...
     async def owned(
         self, channel_id: int, after: PlaylistBoundary | None
     ) -> tuple[Playlist, ...]: ...
@@ -37,6 +45,11 @@ class PlaylistStore(Protocol):
 
 
 class PlaylistVideos(Protocol):
+    async def lock_viewable(self, account_id: int, video_id: int) -> None: ...
+    async def progress(
+        self, account_id: int | None, ids: tuple[int, ...]
+    ) -> dict[int, PlaylistWatchProgress]: ...
+
     async def lock_owned(self, account_id: int, video_id: int) -> None: ...
     async def touch(self, account_id: int, video_id: int) -> None: ...
     async def cards(
@@ -75,10 +88,22 @@ class CreatePlaylist:
     def __init__(self, actions: PlaylistActions) -> None:
         self.actions = actions
 
-    async def __call__(self, account_id: int | None, metadata: PlaylistMetadata) -> Playlist:
+    async def __call__(
+        self, account_id: int | None, metadata: PlaylistMetadata, video_id: int | None = None
+    ) -> Playlist:
         async with self.actions.transactions.begin():
-            _, channel = await self.actions.owner(account_id, lock=True)
-            return await self.actions.store.create(channel, metadata.normalized())
+            actor, _ = await self.actions.owner(account_id)
+            if video_id is not None:
+                await self.actions.videos.lock_viewable(actor, video_id)
+            _, channel = await self.actions.owner(actor, lock=True)
+            playlist = await self.actions.store.create(channel, metadata.normalized())
+            if video_id is None:
+                return playlist
+            await self.actions.store.select_one(channel, playlist.id, video_id, True)
+            result = await self.actions.store.get(playlist.id)
+            if result is None:
+                raise PlaylistNotFound
+            return result
 
 
 class GetMyPlaylists:
@@ -135,6 +160,19 @@ class GetPlaylist:
     def __init__(self, actions: PlaylistActions) -> None:
         self.actions = actions
 
+    async def with_progress(self, account_id: int | None, view: PlaylistView) -> PlaylistView:
+        if not view.items:
+            return view
+        positions = await self.actions.videos.progress(
+            account_id, tuple(card.id for card in view.items)
+        )
+        return replace(
+            view,
+            items=tuple(
+                replace(card, watch_progress=positions.get(card.id)) for card in view.items
+            ),
+        )
+
     async def __call__(
         self, account_id: int | None, playlist_id: int, cursor: str | None = None
     ) -> PlaylistView:
@@ -151,6 +189,9 @@ class GetPlaylist:
             after = (
                 PlaylistBoundary.decode(cursor, 3, playlist_id, 0).id if cursor is not None else 0
             )
+            channel = await self.actions.store.profile(value.channel_id)
+            if channel is None:
+                raise PlaylistNotFound
             visible: list[tuple[int, PlaylistVideo]] = []
             while True:
                 entries = await self.actions.store.entries(playlist_id, after)
@@ -165,11 +206,20 @@ class GetPlaylist:
                     if video in cards:
                         visible.append((entry, cards[video]))
                     if len(visible) > SIZE:
-                        return PlaylistView(
-                            value,
-                            tuple(card for _, card in visible[:SIZE]),
-                            PlaylistBoundary(EPOCH, visible[SIZE - 1][0]).encode(3, playlist_id, 0),
+                        return await self.with_progress(
+                            account_id,
+                            PlaylistView(
+                                value,
+                                tuple(card for _, card in visible[:SIZE]),
+                                PlaylistBoundary(EPOCH, visible[SIZE - 1][0]).encode(
+                                    3, playlist_id, 0
+                                ),
+                                channel,
+                            ),
                         )
                 if len(entries) < SIZE + 1:
-                    return PlaylistView(value, tuple(card for _, card in visible), None)
+                    return await self.with_progress(
+                        account_id,
+                        PlaylistView(value, tuple(card for _, card in visible), None, channel),
+                    )
                 after = entries[-1][0]

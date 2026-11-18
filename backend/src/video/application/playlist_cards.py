@@ -2,7 +2,7 @@
 
 from typing import Protocol
 
-from video.application.access import ViewerIdentities, ViewingPolicy
+from video.application.access import VideoAccess, ViewerIdentities, ViewingPolicy
 from video.application.feed import FeedAuthors
 from video.application.ports import Publications, VideoActors
 from video.application.publications import require_actor
@@ -15,6 +15,23 @@ class PlaylistCardViews(Protocol):
     async def candidates(
         self, ids: tuple[int, ...], viewer: Viewer
     ) -> tuple[tuple[FeedCandidate, ViewConditions], ...]: ...
+
+
+class PlaylistViewLocks(Protocol):
+    async def lock(self, video_id: int) -> bool: ...
+
+
+class RequirePlaylistVideo:
+    """Ordinary viewing for saves; holds access stable in the caller's transaction."""
+
+    def __init__(self, access: VideoAccess, publications: PlaylistViewLocks) -> None:
+        self.access, self.publications = access, publications
+
+    async def __call__(self, account_id: int | None, video_id: int) -> None:
+        viewer = await self.access.viewer(require_actor(account_id))
+        if not valid_identifier(video_id) or not await self.publications.lock(video_id):
+            raise VideoNotFound
+        await self.access.require(viewer, video_id)
 
 
 class PlaylistVideoOwnership:

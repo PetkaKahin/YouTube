@@ -17,7 +17,7 @@ from channel.domain.pages import (
     ChannelPlaylistPage,
     ChannelProfile,
 )
-from channel.domain.playlists import Playlist, PlaylistAuthenticationRequired, PlaylistError, PlaylistList, PlaylistMetadata, PlaylistNotFound, PlaylistVideo, PlaylistView
+from channel.domain.playlists import Playlist, PlaylistAuthenticationRequired, PlaylistError, PlaylistList, PlaylistMetadata, PlaylistNotFound, PlaylistVideo, PlaylistView, PlaylistWatchProgress
 from channel.domain.profiles import PublicChannel
 from channel.domain.registration import Registered, Registration, RegistrationError
 from channel.domain.search import ChannelSearchHit, PlaylistSearchHit
@@ -53,6 +53,7 @@ __all__ = [
     'PlaylistMetadata',
     'PlaylistNotFound',
     'PlaylistVideo',
+    'PlaylistWatchProgress',
     'PlaylistView',
     'FindChannels',
     'ChannelSearchHit',

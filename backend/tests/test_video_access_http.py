@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from channel.public import GetPublicChannels
 from tests.test_uploads_http import send
 from tests.test_videos_http import create, login
 from user.public import SetRole
@@ -79,7 +80,7 @@ def published(client, csrf, owner, source_queue):
 def test_email_before_registration_same_response_and_real_session_viewing(
     client, csrf, owner, published, caplog
 ):
-    data, _ = owner
+    data, author = owner
     base, draft = published
     permissions = base + "/permissions"
     email = uuid4().hex + "@example.com"
@@ -105,6 +106,11 @@ def test_email_before_registration_same_response_and_real_session_viewing(
         and view.json()["description"] == draft["description"]
     )
     assert view.json()["qualities"] == [{"quality": 1, "range": "sdr"}]
+    assert view.json()["channel"] == {
+        "id": author["channel_id"],
+        "name": data["name"],
+        "tag": author["tag"],
+    }
     assert not any(
         key in view.text
         for key in (
@@ -152,13 +158,16 @@ def test_foreign_permissions_and_view_are_indistinguishable_from_missing(
     client.portal.call(grant)
     assert login(client, csrf, other).json()["role"] == role
     for suffix in ("", "/permissions"):
-        own = client.get(base + suffix)
-        missing = client.get(f"/v1/videos/{2**62}" + suffix)
+        with patch.object(GetPublicChannels, "__call__") as channels:
+            own = client.get(base + suffix)
+            missing = client.get(f"/v1/videos/{2**62}" + suffix)
+        channels.assert_not_awaited()
         assert own.status_code == missing.status_code == 404
         assert {k: v for k, v in own.json().items() if k != "request_id"} == {
             k: v for k, v in missing.json().items() if k != "request_id"
         }
         assert "private-marker" not in own.text
+        assert "channel" not in own.json()
     assert (
         client.put(
             base + "/permissions", json={"email": other["email"], "allowed": True}, headers=csrf
@@ -207,8 +216,10 @@ def test_csrf_and_lost_session_never_grant_private_access(client, csrf, owner, p
 def test_public_guest_then_private_hidden_and_missing_quality_fail_closed(
     client, csrf, owner, published
 ):
-    data, _ = owner
+    data, author = owner
     base, draft = published
+    expected_channel = {"id": author["channel_id"], "name": data["name"], "tag": author["tag"]}
+    assert client.get(base).json()["channel"] == expected_channel
 
     async def change(values):
         allowed = {
@@ -234,14 +245,53 @@ def test_public_guest_then_private_hidden_and_missing_quality_fail_closed(
 
     client.portal.call(change, {"visibility": "public"})
     assert client.post("/v1/auth/logout", headers=csrf).status_code == 204
-    assert client.get(base).status_code == 200
+    public = client.get(base)
+    assert public.status_code == 200
+    assert public.json()["channel"] == expected_channel
+    profile = client.get(f"/v1/channels/{expected_channel['tag']}")
+    assert profile.status_code == 200
+    assert {key: profile.json()[key] for key in expected_channel} == expected_channel
     client.portal.call(change, {"visibility": "private"})
     assert client.get(base).status_code == 404
     assert login(client, csrf, data).status_code == 200
     for values in ({"moderation": "hidden"}, {"moderation": "visible", "publication": "draft"}):
         client.portal.call(change, values)
-        assert client.get(base).status_code == 404
+        with patch.object(GetPublicChannels, "__call__") as channels:
+            denied = client.get(base)
+        assert denied.status_code == 404 and "channel" not in denied.json()
+        channels.assert_not_awaited()
         assert client.get(base + "/settings").status_code == 200
+
+
+@pytest.mark.parametrize("unavailable", ["missing", "failure"])
+def test_author_lookup_never_returns_partial_video(client, csrf, owner, published, unavailable):
+    base, _ = published
+    with patch.object(GetPublicChannels, "__call__") as channels:
+        if unavailable == "missing":
+            channels.return_value = {}
+        else:
+            channels.side_effect = SQLAlchemyError("synthetic author lookup marker")
+        response = client.get(base)
+    channels.assert_awaited_once()
+    assert response.status_code == (404 if unavailable == "missing" else 500)
+    assert not {"id", "description", "channel", "qualities", "hls_url"}.intersection(
+        response.json()
+    )
+    assert "private-marker" not in response.text and "synthetic" not in response.text
+    assert response.headers["cache-control"] == "no-store"
+    assert "cookie" in response.headers["vary"].lower()
+
+
+def test_openapi_requires_public_author_identity_on_ordinary_view(client):
+    schema = client.get("/openapi.json").json()
+    response = schema["paths"]["/v1/videos/{video_id}"]["get"]["responses"]["200"]
+    name = response["content"]["application/json"]["schema"]["$ref"].rsplit("/", 1)[-1]
+    details = schema["components"]["schemas"][name]
+    assert "channel" in details["required"]
+    channel_ref = details["properties"]["channel"]["$ref"].rsplit("/", 1)[-1]
+    channel = schema["components"]["schemas"][channel_ref]
+    assert set(channel["required"]) == set(channel["properties"]) == {"id", "name", "tag"}
+    assert "channel" not in schema["components"]["schemas"]["VideoViewResponse"]["properties"]
 
 
 def test_database_failure_cannot_return_cached_private_metadata(client, csrf, owner, published):
