@@ -6,7 +6,6 @@
 /docker/secrets/
 
 # Editors and operating systems
-/AI chats/
 .idea/
 .DS_Store
 Thumbs.db
