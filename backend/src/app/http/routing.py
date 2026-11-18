@@ -9,6 +9,7 @@ from app.http.channels import channels_router
 from app.http.comments import comments_router
 from app.http.feed import feed_router
 from app.http.job_administration import job_administration_router
+from app.http.library import library_router
 from app.http.media import media_router
 from app.http.moderation import moderation_router
 from app.http.playlists import playlists_router
@@ -54,6 +55,7 @@ def api_router() -> APIRouter:
     router.include_router(accounts_router())
     router.include_router(channels_router())
     router.include_router(feed_router())
+    router.include_router(library_router())
     router.include_router(playlists_router())
     router.include_router(search_router())
     router.include_router(videos_router())

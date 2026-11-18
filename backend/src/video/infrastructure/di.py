@@ -37,6 +37,7 @@ from video.application.feed import (
     ReadFeed,
 )
 from video.application.job_retries import RetryVideoJob, VideoJobAdministrators, VideoJobRetries
+from video.application.library import GetLibraryVideos, LibraryCandidates, SubscribedOwners
 from video.application.likes import (
     GetVideoLike,
     LikeActions,
@@ -109,6 +110,7 @@ from video.infrastructure.encoder import S3MediaEncoder
 from video.infrastructure.encoding_jobs import SqlEncodingJobs
 from video.infrastructure.feed import ChannelFeedAuthors, ChannelFeedScope, SqlFeedCandidates
 from video.infrastructure.job_retries import SqlVideoJobRetries, UserJobAdministrators
+from video.infrastructure.library import ChannelSubscribedOwners, SqlLibraryCandidates
 from video.infrastructure.likes import SqlVideoLikes
 from video.infrastructure.moderation import AccountVideoStaff, SqlModerationViews
 from video.infrastructure.multipart import S3Multipart
@@ -128,6 +130,9 @@ from video.infrastructure.watch_progress import SqlWatchProgress
 
 class VideoProvider(Provider):
     scope = Scope.REQUEST
+    library_candidates = provide(SqlLibraryCandidates, provides=LibraryCandidates)
+    library_subscriptions = provide(ChannelSubscribedOwners, provides=SubscribedOwners)
+    get_library_videos = provide(GetLibraryVideos)
     watch_progress = provide(SqlWatchProgress, provides=WatchProgressStore)
     read_watch_progress = provide(ReadWatchProgress)
     set_watch_progress = provide(SetWatchProgress)

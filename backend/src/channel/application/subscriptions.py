@@ -3,6 +3,8 @@
 from typing import Protocol
 
 from channel.application.pages import FindChannel
+from channel.domain.pages import ChannelIdentity
+from channel.domain.subscription_lists import SubscriptionBoundary
 from channel.domain.subscriptions import (
     SubscriptionAuthenticationRequired,
     SubscriptionError,
@@ -16,6 +18,11 @@ class SubscriptionActors(Protocol):
 
 
 class Subscriptions(Protocol):
+    async def channels(
+        self, subscriber_id: int, after: SubscriptionBoundary | None
+    ) -> tuple[ChannelIdentity, ...]: ...
+    async def owners(self, subscriber_id: int) -> tuple[int, ...]: ...
+
     async def get(self, subscriber_id: int, channel_id: int) -> bool: ...
 
     async def set(self, subscriber_id: int, channel_id: int, subscribed: bool) -> None: ...

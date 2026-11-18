@@ -10,12 +10,14 @@ from pydantic import Field, StrictBool
 
 from app.http.feed import FeedCardResponse, FeedResponse
 from app.http.playlists import PlaylistResponse
-from app.http.videos import actor_id
+from app.http.videos import actor_id, video_problem
 from channel.public import (
     ChannelNotFound,
     GetChannel,
     GetChannelPlaylists,
+    GetSubscribedChannels,
     GetSubscription,
+    InvalidSubscriptionCursor,
     PlaylistError,
     SetSubscription,
     SubscriptionAuthenticationRequired,
@@ -23,7 +25,7 @@ from channel.public import (
 )
 from common.http.errors import problem
 from common.http.schemas import Identifier, JSONModel
-from video.public import GetChannelFeed, InvalidFeedCursor, VideoNotFound
+from video.public import AuthenticationRequired, GetChannelFeed, InvalidFeedCursor, VideoNotFound
 
 HEADERS = {"Cache-Control": "no-store", "Vary": "Cookie"}
 
@@ -41,6 +43,11 @@ class ChannelPlaylistsResponse(JSONModel):
     next_cursor: str | None
 
 
+class SubscribedChannelsResponse(JSONModel):
+    items: list[ChannelResponse] = Field(max_length=20)
+    next_cursor: str | None
+
+
 class SubscriptionBody(JSONModel):
     subscribed: StrictBool
 
@@ -51,6 +58,12 @@ class SubscriptionResponse(JSONModel):
 
 
 def channel_problem(request: Request, error: Exception) -> JSONResponse:
+    if isinstance(error, InvalidSubscriptionCursor):
+        return problem(
+            request, 422, "invalid_cursor", "Invalid subscription cursor", headers=HEADERS
+        )
+    if isinstance(error, AuthenticationRequired):
+        return video_problem(request, error)
     if isinstance(error, SubscriptionAuthenticationRequired):
         return problem(request, 401, "unauthenticated", "Authentication required", headers=HEADERS)
     if isinstance(error, SubscriptionError):
@@ -83,6 +96,41 @@ def channels_router() -> APIRouter:
         "security": [{"SessionCookie": []}]
     }
 
+    @router.get(
+        "/subscriptions",
+        response_model=SubscribedChannelsResponse,
+        openapi_extra=subscription_security,
+    )
+    async def subscriptions(
+        request: Request,
+        response: Response,
+        scenario: FromDishka[GetSubscribedChannels],
+        cursor: str | None = None,
+    ) -> SubscribedChannelsResponse | JSONResponse:
+        response.headers.update(HEADERS)
+        if any(
+            key != "cursor" or len(request.query_params.getlist(key)) != 1
+            for key in request.query_params
+        ):
+            cursor = ""
+        try:
+            page = await scenario(actor_id(request), cursor)
+            return SubscribedChannelsResponse(
+                items=[
+                    ChannelResponse(
+                        id=item.id,
+                        name=item.name,
+                        tag=item.tag,
+                        created_at=item.created_at,
+                        updated_at=item.created_at,
+                    )
+                    for item in page.items
+                ],
+                next_cursor=page.next_cursor,
+            )
+        except Exception as error:
+            return channel_problem(request, error)
+
     @router.get("/{tag}", response_model=ChannelResponse, openapi_extra=security)
     async def channel(
         tag: str, request: Request, response: Response, scenario: FromDishka[GetChannel]
@@ -111,7 +159,7 @@ def channels_router() -> APIRouter:
         response.headers.update(HEADERS)
         try:
             check_cursor(request)
-            page = await scenario(tag, cursor)
+            page = await scenario(tag, cursor, account_id=actor_id(request))
             return FeedResponse(
                 items=[FeedCardResponse.from_value(item) for item in page.items],
                 next_cursor=page.next_cursor,

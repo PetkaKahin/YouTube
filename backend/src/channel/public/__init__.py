@@ -10,6 +10,7 @@ from channel.application.playlists import (
 from channel.application.profiles import GetPublicChannels
 from channel.application.registration import Register
 from channel.application.search import FindChannels, FindPlaylists
+from channel.application.subscription_lists import GetSubscribedChannels, GetSubscribedOwners
 from channel.application.subscriptions import GetSubscription, SetSubscription
 from channel.domain.pages import (
     ChannelIdentity,
@@ -21,6 +22,7 @@ from channel.domain.playlists import Playlist, PlaylistAuthenticationRequired, P
 from channel.domain.profiles import PublicChannel
 from channel.domain.registration import Registered, Registration, RegistrationError
 from channel.domain.search import ChannelSearchHit, PlaylistSearchHit
+from channel.domain.subscription_lists import InvalidSubscriptionCursor, SubscribedChannelPage
 from channel.domain.subscriptions import (
     SubscriptionAuthenticationRequired,
     SubscriptionError,
@@ -28,6 +30,10 @@ from channel.domain.subscriptions import (
 )
 
 __all__ = [
+    'GetSubscribedOwners',
+    'GetSubscribedChannels',
+    'InvalidSubscriptionCursor',
+    'SubscribedChannelPage',
     'GetSubscription',
     'SetSubscription',
     'SubscriptionAuthenticationRequired',

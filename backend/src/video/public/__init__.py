@@ -5,6 +5,7 @@ from video.application.delivery import GetMedia, GetThumbnailDelivery
 from video.application.discussions import RequireDiscussionVideo
 from video.application.encoding import EncodeTrack, PlanMedia, RepairEncoding
 from video.application.feed import GetChannelFeed, GetFeed
+from video.application.library import GetLibraryVideos
 from video.application.likes import GetVideoLike, SetVideoDislike, SetVideoLike
 from video.application.originals import CleanupOriginals
 from video.application.playlist_cards import (
@@ -44,6 +45,7 @@ from video.domain.access import VideoDetails, VideoView
 from video.domain.delivery import ObjectDelivery, PlaylistDelivery, PublicationError
 from video.domain.encoding import ENCODE_TASK, PLAN_TASK
 from video.domain.feed import FeedCard, FeedPage, InvalidFeedCursor
+from video.domain.library import InvalidLibraryCursor
 from video.domain.likes import InvalidLike, LikeState
 from video.domain.own_videos import InvalidVideoList, VideoSettingsPage
 from video.domain.permissions import InvalidPermissionCursor, PermissionPage
@@ -63,6 +65,8 @@ from video.domain.watch_progress import InvalidWatchProgress, WatchProgress
 
 __all__ = [
     'RequirePlaylistVideo',
+    'GetLibraryVideos',
+    'InvalidLibraryCursor',
     'ReadWatchProgress',
     'SetWatchProgress',
     'WatchProgress',

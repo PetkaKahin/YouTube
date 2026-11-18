@@ -20,6 +20,7 @@ from channel.application.playlists import (
 from channel.application.profiles import GetPublicChannels, PublicChannels
 from channel.application.registration import AccountCreator, Channels, Register
 from channel.application.search import ChannelSearch, FindChannels, FindPlaylists, PlaylistSearch
+from channel.application.subscription_lists import GetSubscribedChannels, GetSubscribedOwners
 from channel.application.subscriptions import (
     GetSubscription,
     SetSubscription,
@@ -60,6 +61,8 @@ class ChannelProvider(Provider):
     subscription_actions = provide(SubscriptionActions)
     get_subscription = provide(GetSubscription)
     set_subscription = provide(SetSubscription)
+    subscribed_channels = provide(GetSubscribedChannels)
+    subscribed_owners = provide(GetSubscribedOwners)
     playlist_actors = provide(UserPlaylistActors, provides=PlaylistActors)
     playlist_store = provide(SqlPlaylistStore, provides=PlaylistStore)
     playlist_videos = provide(VideoPlaylistAdapter, provides=PlaylistVideos)
