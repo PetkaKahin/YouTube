@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests import test_video_access_http as support
 from tests.test_videos_http import create, login
-from user.public import SetRole
+from user.public import GetPublicNames, SetRole
 
 pytestmark = pytest.mark.usefixtures("isolated_account_database")
 
@@ -50,6 +50,13 @@ def test_creation_owner_list_and_guest_metadata_visibility(client, csrf, owner, 
     value = playlist(client, csrf, visibility, channel_id=2**62, owner_id=2**62)
     assert value["title"] == "<script>as text</script>" and value["description"] == "x\ny"
     assert value["channel_id"] == owner[1]["channel_id"] and "owner_id" not in value
+    channel = {"id": owner[1]["channel_id"], "name": owner[0]["name"], "tag": owner[1]["tag"]}
+    view = client.get(f"/v1/playlists/{value['id']}")
+    assert view.status_code == 200
+    assert view.json() == {"playlist": value, "channel": channel, "items": [], "next_cursor": None}
+    profile = client.get(f"/v1/channels/{channel['tag']}")
+    assert profile.status_code == 200
+    assert {key: profile.json()[key] for key in channel} == channel
     listing = client.get("/v1/playlists/mine").json()
     assert [item["id"] for item in listing["items"]] == [value["id"]] and listing[
         "next_cursor"
@@ -59,9 +66,15 @@ def test_creation_owner_list_and_guest_metadata_visibility(client, csrf, owner, 
     response = client.get(f"/v1/playlists/{value['id']}")
     assert response.status_code == (404 if visibility == "private" else 200)
     if visibility != "private":
-        assert response.json() == {"playlist": value, "items": [], "next_cursor": None}
+        assert response.json() == {
+            "playlist": value,
+            "channel": channel,
+            "items": [],
+            "next_cursor": None,
+        }
     else:
         assert value["title"] not in response.text
+        assert "channel" not in response.json()
     assert (
         response.headers["cache-control"] == "no-store"
         and "cookie" in response.headers["vary"].lower()
@@ -118,6 +131,7 @@ def test_private_video_invitation_is_independent_of_public_playlist(
 ):
     base, draft = published
     value = playlist(client, csrf, "public")
+    channel = {"id": owner[1]["channel_id"], "name": owner[0]["name"], "tag": owner[1]["tag"]}
     assert (
         client.put(
             base + "/playlists", headers=csrf, json={"playlist_ids": [value["id"]]}
@@ -137,6 +151,7 @@ def test_private_video_invitation_is_independent_of_public_playlist(
     )
     assert client.post("/v1/auth/register", headers=csrf, json=recipient).status_code == 201
     assert login(client, csrf, recipient).status_code == 200
+    assert client.get(f"/v1/playlists/{value['id']}").json()["channel"] == channel
     assert [item["id"] for item in client.get(f"/v1/playlists/{value['id']}").json()["items"]] == [
         draft["id"]
     ]
@@ -151,6 +166,7 @@ def test_private_video_invitation_is_independent_of_public_playlist(
     )
     assert login(client, csrf, recipient).status_code == 200
     assert client.get(f"/v1/playlists/{value['id']}").json()["items"] == []
+    assert client.get(f"/v1/playlists/{value['id']}").json()["channel"] == channel
     assert client.get(base + "/hls/master.m3u8").status_code == 404
     assert client.post("/v1/auth/logout", headers=csrf).status_code == 204
     assert client.get(f"/v1/playlists/{value['id']}").json()["items"] == []
@@ -173,8 +189,11 @@ def test_foreign_playlist_and_video_actions_do_not_gain_role_bypass(
     client.portal.call(promote)
     assert login(client, csrf, other).status_code == 200
     for identity in (value["id"], 2**62):
-        response = client.get(f"/v1/playlists/{identity}")
+        with patch.object(GetPublicNames, "__call__") as names:
+            response = client.get(f"/v1/playlists/{identity}")
         assert response.status_code == 404 and value["title"] not in response.text
+        assert "channel" not in response.json()
+        names.assert_not_awaited()
     assert client.get(f"/v1/videos/{draft['id']}/playlists").status_code == 404
     assert (
         client.put(
@@ -213,3 +232,40 @@ def test_cursor_pages_no_scope_replay_and_safe_database_failure(client, csrf, ow
         response = client.get("/v1/playlists/mine")
     assert response.status_code == 500 and "private database marker" not in response.text
     assert client.get("/v1/playlists/mine").json() == first
+
+
+@pytest.mark.parametrize("failure", [False, True])
+def test_playlist_channel_missing_or_failed_never_returns_partial_metadata(
+    client, csrf, owner, failure
+):
+    value = playlist(client, csrf, "unlisted")
+    assert client.post("/v1/auth/logout", headers=csrf).status_code == 204
+    with patch.object(GetPublicNames, "__call__") as names:
+        if failure:
+            names.side_effect = SQLAlchemyError("private profile failure marker")
+        else:
+            names.return_value = {}
+        response = client.get(f"/v1/playlists/{value['id']}")
+    names.assert_awaited_once()
+    assert response.status_code == (500 if failure else 404)
+    assert not {"playlist", "channel", "items", "next_cursor"}.intersection(response.json())
+    assert (
+        value["title"] not in response.text
+        and "private profile failure marker" not in response.text
+    )
+    assert response.headers["cache-control"] == "no-store"
+    assert "cookie" in response.headers["vary"].lower()
+
+
+def test_openapi_requires_playlist_channel_without_changing_creation_or_lists(client):
+    schema = client.get("/openapi.json").json()
+    response = schema["paths"]["/v1/playlists/{playlist_id}"]["get"]["responses"]["200"]
+    model = response["content"]["application/json"]["schema"]["$ref"].rsplit("/", 1)[-1]
+    view = schema["components"]["schemas"][model]
+    assert "channel" in view["required"]
+    profile = view["properties"]["channel"]["$ref"].rsplit("/", 1)[-1]
+    channel = schema["components"]["schemas"][profile]
+    assert set(channel["properties"]) == set(channel["required"]) == {"id", "name", "tag"}
+    assert channel["properties"]["id"]["format"] == "int64"
+    assert "channel" not in schema["components"]["schemas"]["PlaylistResponse"]["properties"]
+    assert "channel" not in schema["components"]["schemas"]["PlaylistListResponse"]["properties"]

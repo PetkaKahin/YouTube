@@ -7,19 +7,22 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
-from pydantic import Field
+from pydantic import ConfigDict, Field, StrictBool
 
 from app.http.feed import FeedCardResponse, FeedChannelResponse
 from app.http.videos import actor_id
+from app.http.watch_progress import WatchProgressResponse
 from channel.public import (
     CreatePlaylist,
     GetMyPlaylists,
     GetPlaylist,
+    GetSavedPlaylists,
     Playlist,
     PlaylistAuthenticationRequired,
     PlaylistError,
     PlaylistMetadata,
     PlaylistNotFound,
+    SetSavedPlaylist,
     SetVideoPlaylists,
 )
 from common.http.errors import problem
@@ -33,6 +36,7 @@ class PlaylistBody(JSONModel):
     title: str
     description: str = ""
     visibility: str
+    video_id: Identifier | None = None
 
 
 class PlaylistResponse(JSONModel):
@@ -58,6 +62,22 @@ class PlaylistListResponse(JSONModel):
     next_cursor: str | None
 
 
+class SavedPlaylistListResponse(PlaylistListResponse):
+    saved: bool
+
+
+class SavedSelectionBody(JSONModel):
+    model_config = ConfigDict(strict=True, extra="forbid")
+    selected: StrictBool
+
+
+class SavedSelectionResponse(JSONModel):
+    playlist_id: Identifier
+    video_id: Identifier
+    selected: bool
+    saved: bool
+
+
 class SelectionBody(JSONModel):
     playlist_ids: list[Identifier]
 
@@ -68,6 +88,7 @@ class SelectionResponse(JSONModel):
 
 class PlaylistViewResponse(JSONModel):
     playlist: PlaylistResponse
+    channel: FeedChannelResponse
     items: list[FeedCardResponse] = Field(max_length=20)
     next_cursor: str | None
 
@@ -117,6 +138,7 @@ def playlists_router() -> APIRouter:
                 await scenario(
                     actor_id(request),
                     PlaylistMetadata(body.title, body.description, body.visibility),
+                    body.video_id,
                 )
             )
         except Exception as error:
@@ -140,6 +162,57 @@ def playlists_router() -> APIRouter:
                 ],
                 next_cursor=value.next_cursor,
             )
+        except Exception as error:
+            return playlist_problem(request, error)
+
+    @router.get(
+        "/videos/{video_id}/saved-playlists",
+        response_model=SavedPlaylistListResponse,
+        openapi_extra=owner_security,
+    )
+    async def saved_playlists(
+        video_id: Identifier,
+        request: Request,
+        response: Response,
+        scenario: FromDishka[GetSavedPlaylists],
+        cursor: str | None = None,
+    ) -> SavedPlaylistListResponse | JSONResponse:
+        response.headers.update(HEADERS)
+        if any(
+            key != "cursor" or len(request.query_params.getlist(key)) > 1
+            for key in request.query_params
+        ):
+            cursor = ""  # Authentication precedes invalid cursor handling inside the scenario.
+        try:
+            page = await scenario(actor_id(request), video_id, cursor)
+            return SavedPlaylistListResponse(
+                items=[
+                    PlaylistOptionResponse(**asdict(item.playlist), selected=item.selected)
+                    for item in page.items
+                ],
+                next_cursor=page.next_cursor,
+                saved=page.saved,
+            )
+        except Exception as error:
+            return playlist_problem(request, error)
+
+    @router.put(
+        "/playlists/{playlist_id}/videos/{video_id}",
+        response_model=SavedSelectionResponse,
+        openapi_extra=owner_security,
+    )
+    async def saved_selection(
+        playlist_id: Identifier,
+        video_id: Identifier,
+        body: SavedSelectionBody,
+        request: Request,
+        response: Response,
+        scenario: FromDishka[SetSavedPlaylist],
+    ) -> SavedSelectionResponse | JSONResponse:
+        response.headers.update(HEADERS)
+        try:
+            value = await scenario(actor_id(request), playlist_id, video_id, body.selected)
+            return SavedSelectionResponse.model_validate(asdict(value))
         except Exception as error:
             return playlist_problem(request, error)
 
@@ -208,6 +281,9 @@ def playlists_router() -> APIRouter:
             value = await scenario(actor_id(request), playlist_id, cursor)
             return PlaylistViewResponse(
                 playlist=PlaylistResponse.from_value(value.playlist),
+                channel=FeedChannelResponse(
+                    id=value.channel.id, name=value.channel.name, tag=value.channel.tag
+                ),
                 items=[
                     FeedCardResponse(
                         id=card.id,
@@ -219,6 +295,11 @@ def playlists_router() -> APIRouter:
                         ),
                         preview_url=f"/api/v1/videos/{card.id}/preview.webp"
                         if card.preview_ready
+                        else None,
+                        watch_progress=WatchProgressResponse.model_validate(
+                            asdict(card.watch_progress)
+                        )
+                        if card.watch_progress is not None
                         else None,
                     )
                     for card in value.items

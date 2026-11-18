@@ -28,6 +28,7 @@ from channel.application.subscriptions import (
     SubscriptionActors,
     Subscriptions,
 )
+from channel.application.watch_save import GetSavedPlaylists, SetSavedPlaylist
 from channel.infrastructure.pages import SqlChannelPages
 from channel.infrastructure.playlists import (
     SqlPlaylistStore,
@@ -71,3 +72,5 @@ class ChannelProvider(Provider):
     get_my_playlists = provide(GetMyPlaylists)
     get_playlist = provide(GetPlaylist)
     set_video_playlists = provide(SetVideoPlaylists)
+    get_saved_playlists = provide(GetSavedPlaylists)
+    set_saved_playlist = provide(SetSavedPlaylist)
