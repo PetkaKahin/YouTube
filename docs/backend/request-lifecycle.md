@@ -84,6 +84,8 @@ Middleware не буферизует поток и не делает commit тр
 
 Ошибки используют `application/problem+json`: `type`, `title`, `status`,
 `detail`, `code`, `request_id`, `errors`. Для стандартных ошибок `type=about:blank`.
+Все Problem Details по умолчанию имеют `Cache-Control: no-store` и `Vary: Cookie`,
+включая ошибки валидации и CSRF до входа в контроллер.
 Ошибка поля содержит только `location` и машинный `code`; входное значение,
 Pydantic context и внутренние сообщения исключений не возвращаются.
 Общий обработчик сохраняет служебные HTTP-заголовки, например `Allow`.

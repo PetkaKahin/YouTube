@@ -105,6 +105,8 @@ Bootstrap пишет файлы с UID/GID пользователя хоста. 
 | make help | Полный список команд |
 | make init | Несекретный env, secrets, недостающие lock-файлы |
 | make up / make build | Сборка и запуск с ожиданием готовности / только сборка |
+| make frontend-dev | Собрать Node/Nginx и поднять dev-фронтенд с зависимостями API |
+| make frontend-build | Одноразовый Node-контейнер: vue-tsc и Vite в frontend/dist |
 | make start / make stop | Поднять без принудительной сборки / остановить контейнеры |
 | make restart | Перезапустить и дождаться готовности |
 | make down | Удалить контейнеры и сеть, сохранив тома |
@@ -117,6 +119,9 @@ Bootstrap пишет файлы с UID/GID пользователя хоста. 
 | make shell / make shell-front | Shell Python / Node |
 
 Для test/check, назначения ролей и shell требуется поднятый dev.
+`frontend-build` использует `dev run --rm --no-deps`, поэтому работающий
+Node-контейнер не требуется. `frontend-dev` собирает только Node/Nginx,
+поднимает их и зависимости API; фоновые worker запускаются через `make up`.
 Роли читаются/меняются через `app.cli role get/set` и User.public.
 EMAIL обязателен для обеих команд, ROLE — для set; пустые значения отклоняются до Docker.
 Make не перечисляет названия ролей: допустимые значения проверяет бэкенд.
