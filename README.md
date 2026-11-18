@@ -25,6 +25,14 @@ bash install.sh
 | Swagger UI | http://localhost:8080/api/docs |
 | OpenAPI | http://localhost:8080/api/openapi.json |
 
+Ручная установка:
+```
+git clone https://github.com/PetkaKahin/YouTube.git
+cd YouTube
+make init
+make up
+```
+
 ## Тестовые и демонстрационные данные
 
 ```bash
