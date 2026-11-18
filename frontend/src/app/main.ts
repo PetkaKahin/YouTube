@@ -16,16 +16,78 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: HomePage },
-    ...(['subscriptions', 'history', 'liked', 'playlists'] as const).map((kind) => ({ path: `/feed/${kind}`, component: () => import('../pages/library').then((m) => m.LibraryPage), props: { kind }, meta: { library: true } })),
+    ...(['subscriptions', 'history', 'liked', 'playlists'] as const).map(
+      (kind) => ({
+        path: `/feed/${kind}`,
+        component: () => import('../pages/library').then((m) => m.LibraryPage),
+        props: { kind },
+        meta: { library: true },
+      }),
+    ),
+    {
+      path: '/admin/jobs',
+      component: () =>
+        import('../pages/job-administration').then(
+          (m) => m.JobAdministrationPage,
+        ),
+      meta: { standalone: true },
+    },
+    {
+      path: '/moderation/:reportId?',
+      component: () =>
+        import('../pages/moderation').then((m) => m.ModerationPage),
+      meta: { standalone: true },
+    },
     { path: '/results', component: SearchPage },
-    { path: '/playlist', component: () => import('../pages/playlist-link').then((m) => m.PlaylistLinkPage) },
-    { path: '/@:tag/:tab(videos|playlists)?', component: () => import('../pages/channel').then((m) => m.ChannelPage) },
-    { path: '/watch', component: () => import('../pages/watch').then((m) => m.WatchPage), meta: { watchLayout: true } },
+    {
+      path: '/studio/content/playlists',
+      component: () =>
+        import('../pages/studio-playlists').then(
+          (module) => module.StudioPlaylistsPage,
+        ),
+      meta: { standalone: true },
+    },
     { path: '/studio', redirect: '/studio/content/videos' },
-    { path: '/studio/content/videos', component: () => import('../pages/studio-videos').then((m) => m.StudioVideosPage), meta: { standalone: true } },
-    { path: '/studio/content/playlists', component: () => import('../pages/studio-playlists').then((m) => m.StudioPlaylistsPage), meta: { standalone: true } },
-    { path: '/studio/video/:videoId/edit', component: () => import('../pages/video-settings').then((m) => m.VideoSettingsPage), meta: { standalone: true } },
-    { path: '/studio/upload', component: () => import('../pages/upload').then((m) => m.UploadPage), meta: { standalone: true } },
+    {
+      path: '/studio/content/videos',
+      component: () =>
+        import('../pages/studio-videos').then(
+          (module) => module.StudioVideosPage,
+        ),
+      meta: { standalone: true },
+    },
+    {
+      path: '/studio/video/:videoId/edit',
+      component: () =>
+        import('../pages/video-settings').then(
+          (module) => module.VideoSettingsPage,
+        ),
+      meta: { standalone: true },
+    },
+    {
+      path: '/studio/upload',
+      component: () =>
+        import('../pages/upload').then((module) => module.UploadPage),
+      meta: { standalone: true },
+    },
+    {
+      path: '/playlist',
+      component: () =>
+        import('../pages/playlist-link').then(
+          (module) => module.PlaylistLinkPage,
+        ),
+    },
+    {
+      path: '/@:tag/:tab(videos|playlists)?',
+      component: () =>
+        import('../pages/channel').then((module) => module.ChannelPage),
+    },
+    {
+      path: '/watch',
+      component: () =>
+        import('../pages/watch').then((module) => module.WatchPage),
+      meta: { watchLayout: true },
+    },
     { path: '/login', component: LoginPage, meta: { standalone: true } },
     { path: '/register', component: RegisterPage, meta: { standalone: true } },
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
