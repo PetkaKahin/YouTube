@@ -92,6 +92,7 @@ check() {
     compose dev exec -T python uv audit --locked
     compose dev exec -T node npm run lint
     compose dev exec -T node npm run format:check
+    compose dev exec -T node npm test
     compose dev exec -T node npm audit
     compose dev exec -T node npm run build
     compose dev exec -T python python - < docker/python/smoke.py

@@ -10,6 +10,7 @@
     "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
     "build": "npm run typecheck && vite build",
     "typecheck": "vue-tsc --noEmit",
+    "test": "tsc --project tests/tsconfig.json && node --test tests/*.test.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -17,6 +18,8 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "5.107.1",
+    "hls.js": "1.7.4",
+    "lossless-json": "4.3.3",
     "pinia": "4.1.0",
     "vue": "3.5.45",
     "vue-router": "5.5.0"
@@ -35,6 +38,7 @@
     "eslint-plugin-vue": "10.12.1",
     "globals": "17.14.0",
     "prettier": "3.10.1",
+    "sass": "1.108.2",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.2",
     "vite": "8.3.8",

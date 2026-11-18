@@ -1,4 +1,6 @@
-dist
-node_modules
+src/shared/api/generated/
+src/shared/assets/
+Reference/
+dist/
+node_modules/
 package-lock.json
-src/shared/api/generated

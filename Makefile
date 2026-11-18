@@ -9,7 +9,7 @@ override EMAIL := $(value EMAIL)
 override ROLE := $(value ROLE)
 export EMAIL ROLE ROLE_ACTION
 
-.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front role seed
+.PHONY: help init up down build start stop restart logs ps test check audit context-check lock shell shell-front role frontend-dev frontend-build seed
 
 ifneq ($(filter role,$(MAKECMDGOALS)),)
 ifneq ($(firstword $(MAKECMDGOALS)),role)
@@ -39,6 +39,13 @@ down: ## Остановить и удалить контейнеры dev, сох
 
 build: ## Собрать образы dev
 	$(DOCKER_RUN) dev build
+
+frontend-dev: ## Собрать и поднять dev-фронтенд через Nginx с API
+	$(DOCKER_RUN) dev build node nginx
+	$(DOCKER_RUN) dev up -d --wait node nginx
+
+frontend-build: ## Проверить типы и собрать frontend/dist в Docker
+	$(DOCKER_RUN) dev run --rm --no-deps -T node npm run build
 
 start: ## Поднять dev без принудительной пересборки
 	$(DOCKER_RUN) dev up -d --wait
